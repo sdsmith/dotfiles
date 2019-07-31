@@ -318,6 +318,8 @@ function mosh_server_killall()
 }
 
 ### Additional config files
-if [ -f ".bashrc_nvidia" ]; then
-    source ~/.bashrc_nvidia
+if [ -f "${HOME}/.bashrc_nvidia" ]; then
+    source "${HOME}/.bashrc_nvidia"
+else
+    echo "WARNING: .bashrc_nvidia: not found"
 fi
