@@ -278,17 +278,6 @@ function ws() {
     export P4ROOT="$CLIENT_ROOT"
     export P4_WS_NAME="$1"
     export P4PORT
-
-    # TODO: not working?
-    # ## Setup branch specific defines
-    # # https://wiki.nvidia.com/engwiki/index.php/Resman/Debugging_Documentation/nvWatch/SimNvwatch
-    # # https://wiki.nvidia.com/engwiki/index.php/Nvwatch#nvWatch_on_MODS
-    # if [[ ( $1 -eq "r400" ) || ( $1 -eq "chips_a" ) ]]
-    # then
-    #     export INCLUDE_NVWATCH=true
-    # else
-    #     export INCLUDE_NVWATCH=false
-    # fi
 }
 ################################################################################
 
