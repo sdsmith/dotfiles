@@ -328,6 +328,7 @@ function mosh_server_killall()
     kill $(ps --no-headers --sort=start_time -C mosh-server -o pid | head -n -1)
 }
 
-if [ -f "~/.bashrc_nvidia" ]; then
+### Additional config files
+if [ -f ".bashrc_nvidia" ]; then
     source ~/.bashrc_nvidia
 fi
