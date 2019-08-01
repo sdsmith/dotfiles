@@ -4,6 +4,22 @@
 ;; - project management, including TODO file(s) and comment management
 ;; - insert biolerplate into files
 ;; (server-start)
+;; TODO(stewarts): don't use setq! https://emacs.stackexchange.com/questions/17386/display-all-setq-possibilities
+
+;; NOTE(sdsmith): ALWAYS DO THIS FIRST
+(defun set-package-archives ()
+  "Set the package archives to search for packages."
+  ;; Add package sources
+  (require 'package)
+  (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+                      (not (gnutls-available-p))))
+         (url (concat (if no-ssl "http" "https") "://melpa.org/packages/")))
+    (add-to-list 'package-archives (cons "melpa" url) t))
+  (when (< emacs-major-version 24)
+    ;; For important compatibility libraries like cl-lib
+    (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
+  (package-initialize)) ;; You might already have this line
+(set-package-archives)
 
 ;; Move backup files (*.~) to seperate directory
 (setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
@@ -110,6 +126,13 @@
 (add-hook 'js-mode-hook #'del-t-on-save)
 (add-hook 'c-mode-hook #'del-t-on-save)
 (add-hook 'c++-mode-hook #'del-t-on-save)
+
+(require 'highlight-doxygen)
+(add-hook 'c++-mode-hook 'highlight-doxygen-mode)
+(add-hook 'c-mode-hook 'highlight-doxygen-mode)
+(add-hook 'js-mode-hook 'highlight-doxygen-mode)
+(set-face-attribute 'highlight-doxygen-comment nil :foreground "grey60" :background "grey20")
+(set-face-attribute 'highlight-doxygen-variable nil :foreground "grey80")
 
 ;; TODO: make interactive
 (defun split-string-every (string chars)
@@ -226,22 +249,6 @@ This returns a list of strings"
 ;; No more typing the whole yes or no. Just y or n will do.
 (fset 'yes-or-no-p 'y-or-n-p)
 
-
-
-(defun set-package-archives ()
-  "Set the package archives to search for packages."
-  ;; Add package sources
-  (require 'package)
-  (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
-                      (not (gnutls-available-p))))
-         (url (concat (if no-ssl "http" "https") "://melpa.org/packages/")))
-    (add-to-list 'package-archives (cons "melpa" url) t))
-  (when (< emacs-major-version 24)
-    ;; For important compatibility libraries like cl-lib
-    (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
-  (package-initialize)) ;; You might already have this line
-
-
 (defun configure-emacs ()
   "Configure various emacs settings."
   (progn
@@ -260,7 +267,12 @@ This returns a list of strings"
 
     ;; Highlight current line
     (global-hl-line-mode 1)
-    (set-face-background 'highlight "#232323")
+    (set-face-background 'highlight
+                                        ; "#232323" ; dark gray
+                                        ; "#b22222" ; red pop
+                                        ; "#8b1a1a" ; deep red
+                         "#8b0000"
+                         )
 
     ;; Switching windows easier navigation
     ;; S-<left>, S-<right>, S-<up>, S-<down>
@@ -402,17 +414,18 @@ This returns a list of strings"
     (add-to-list 'default-frame-alist '(font . "Liberation Mono-9.5"))
     ;; (set-face-attribute 'default t :font "Liberation Mono-10") ;; BUG(sdsmith): causes 'emacs --daemon' to error during startup
     (set-face-attribute 'font-lock-builtin-face nil :foreground "#DAB98F")
-    (set-face-attribute 'font-lock-comment-face nil :foreground "gray60");;"dark grey");;"thistle4" ;;"gray50")
-    (set-face-attribute 'font-lock-constant-face nil :foreground "olive drab")
+    (set-face-attribute 'font-lock-comment-face nil :foreground "gray60")
+    (set-face-attribute 'font-lock-constant-face nil
+                        :foreground "DarkKhaki")
     (set-face-attribute 'font-lock-doc-face nil :foreground "burlywood3")
     (set-face-attribute 'font-lock-function-name-face nil
-                        :foreground "DarkGoldenrod3")
+                        :foreground "IndianRed1")
     (set-face-attribute 'font-lock-keyword-face nil
                         :foreground "DarkGoldenrod3")
     (set-face-attribute 'font-lock-string-face nil
-                        :foreground "LightYellow1");;"#b0e0e6");;"#708090");;"antique white")
+                        :foreground "LightYellow1")
     (set-face-attribute 'font-lock-type-face nil
-                        :foreground "PaleGreen")
+                        :foreground "IndianRed1")
     (set-face-attribute 'font-lock-variable-name-face nil
                         :foreground "burlywood3")
     (set-face-attribute 'font-lock-preprocessor-face nil
@@ -420,6 +433,31 @@ This returns a list of strings"
     (set-face-attribute 'default nil
                         :foreground "burlywood3")
 
+    ;; Original config
+    ;; 
+    ;; (add-to-list 'default-frame-alist '(font . "Liberation Mono-9.5"))
+    ;; ;; (set-face-attribute 'default t :font "Liberation Mono-10") ;; BUG(sdsmith): causes 'emacs --daemon' to error during startup
+    ;; (set-face-attribute 'font-lock-builtin-face nil :foreground "#DAB98F")
+    ;; (set-face-attribute 'font-lock-comment-face nil :foreground "gray60");;"dark grey");;"thistle4" ;;"gray50")
+    ;; (set-face-attribute 'font-lock-constant-face nil :foreground "olive drab")
+    ;; (set-face-attribute 'font-lock-doc-face nil :foreground "burlywood3")
+    ;; (set-face-attribute 'font-lock-function-name-face nil
+    ;;                                     ; :foreground "DarkGoldenrod3")
+    ;;                                     ; :foreground "IndianRed1")
+    ;; (set-face-attribute 'font-lock-keyword-face nil
+    ;;                     :foreground "DarkGoldenrod3")
+    ;; (set-face-attribute 'font-lock-string-face nil
+    ;;                     :foreground "LightYellow1");;"#b0e0e6");;"#708090");;"antique white")
+    ;; (set-face-attribute 'font-lock-type-face nil
+    ;;                     :foreground "PaleGreen")
+    ;; (set-face-attribute 'font-lock-variable-name-face nil
+    ;;                     :foreground "burlywood3")
+    ;; (set-face-attribute 'font-lock-preprocessor-face nil
+    ;;                     :foreground "MediumPurple1")
+    ;; (set-face-attribute 'default nil
+    ;;                     :foreground "burlywood3")
+
+    
     (defun post-load-settings ()
       (set-foreground-color "burlywood3")
       (set-background-color "#161616")
@@ -756,7 +794,7 @@ This returns a list of strings"
 (defun main ()
   "Main .emacs function"
   (progn
-    (set-package-archives)
+;    (set-package-archives)
     (set-abbrev-table)
     (configure-emacs)
     (configure-syntax)
@@ -780,7 +818,7 @@ This returns a list of strings"
  '(org-agenda-files nil)
  '(package-selected-packages
    (quote
-    (0xc xterm-color json-mode irony highlight-indentation p4 cuda-mode matlab-mode glsl-mode php-mode js2-mode git-gutter git-gutter+)))
+    (highlight-doxygen xterm-color json-mode irony highlight-indentation p4 cuda-mode matlab-mode glsl-mode php-mode js2-mode git-gutter git-gutter+)))
  '(reb-re-syntax (quote string)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
