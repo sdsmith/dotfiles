@@ -3,7 +3,9 @@
 ;; TODO(sdsmith):
 ;; - project management, including TODO file(s) and comment management
 ;; - insert biolerplate into files
-;; (server-start)
+;; - emacs deamon (server-start)
+;;   - run emacs --daemon from .profile
+;;   - use emacs client to open a file
 ;; TODO(stewarts): don't use setq! https://emacs.stackexchange.com/questions/17386/display-all-setq-possibilities
 
 ;; NOTE(sdsmith): ALWAYS DO THIS FIRST
@@ -68,7 +70,7 @@
 ;; status                  C-x p s         Identify differences between the workspace and the depot.
 ;; submit                  C-x p S         Submit changes to the depot.
 ;; update                  C-x p g         Get files from depot.
-(add-to-list 'load-path "~/.emacs.d/elpa/p4-20150721.1237/")
+;(add-to-list 'load-path "~/.emacs.d/elpa/p4-20150721.1237/")
 (require 'p4)
 
 ;;; Globals
