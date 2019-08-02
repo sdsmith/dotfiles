@@ -13,7 +13,7 @@
 (load custom-file)
 
 ;; NOTE(sdsmith): ALWAYS DO THIS BEFORE ANY PACKAGE CUSTOMIZATION
-(defun set-package-archives ()
+(defun setup-packages ()
   "Set the package archives to search for packages."
   ;; Add package sources
   (require 'package)
@@ -24,8 +24,11 @@
   (when (< emacs-major-version 24)
     ;; For important compatibility libraries like cl-lib
     (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
-  (package-initialize)) ;; You might already have this line
-(set-package-archives)
+  (package-initialize)
+  (unless package-archive-contents
+    (package-refresh-contents))
+  (package-install-selected-packages))
+(setup-packages)
 
 ;; Move backup files (*.~) to seperate directory
 (setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
