@@ -8,6 +8,11 @@
 ;;   - use emacs client to open a file
 ;; TODO(stewarts): don't use setq! https://emacs.stackexchange.com/questions/17386/display-all-setq-possibilities
 
+;; Tips
+;;
+;; - describe-face: Describes font face. Defaults to face at point.
+;; - ibuffer: nice table of open buffers
+
 ;; Set this right away so all prompts are readable
 (set-face-attribute 'minibuffer-prompt nil :foreground "cyan")
 
