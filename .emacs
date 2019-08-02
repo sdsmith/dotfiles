@@ -77,7 +77,6 @@
 ;; status                  C-x p s         Identify differences between the workspace and the depot.
 ;; submit                  C-x p S         Submit changes to the depot.
 ;; update                  C-x p g         Get files from depot.
-;(add-to-list 'load-path "~/.emacs.d/elpa/p4-20150721.1237/")
 (require 'p4)
 
 ;;; Globals
@@ -107,7 +106,10 @@
         js-mode-hook
         488-lang-mode-hook
         asm-mode-hook))
-(setq-default fill-column 80) ;; Wrap column for fill commands
+
+;; Set fill column
+(dolist (hook regular-mode-hooks)
+  (add-hook hook (lambda () (set-fill-column 80))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -369,7 +371,7 @@ This returns a list of strings"
     ;; Enabling abbrevs for code highlighting
     (dolist (hook regular-mode-hooks)
       (add-hook hook (lambda () (abbrev-mode 1))))
-
+    
     ;; Add keywords to cpp
     (font-lock-add-keywords 'c++-mode
                             '(("constexpr" . font-lock-keyword-face))
