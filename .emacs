@@ -8,6 +8,9 @@
 ;;   - use emacs client to open a file
 ;; TODO(stewarts): don't use setq! https://emacs.stackexchange.com/questions/17386/display-all-setq-possibilities
 
+;; Set this right away so all prompts are readable
+(set-face-attribute 'minibuffer-prompt nil :foreground "cyan")
+
 ;; Setup customize system
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
