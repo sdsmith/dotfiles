@@ -43,7 +43,9 @@ export P4_WS_NAME="" # Used to track the current p4 workspace
 export TERM=xterm-256color
 
 # Default editor
-export EDITOR="emacs -nw --no-desktop"
+export ALTERNATE_EDITOR=""
+export EDITOR="emacsclient -t"          # opens in term
+export VISUAL="emacsclient -c -a emacs" # opens in GUI mode
 
 # Set terminal prompt
 # \d - current date
@@ -61,7 +63,7 @@ export PS1="\h \[$green\]\${P4_WS_NAME}\[$reset\] \W> "
 
 ### Alias ###
 # General
-alias enw="emacs -nw"
+alias enw="emacsclient -t"
 alias l="ls --color -F"
 alias p4_clean_tree="p4 clean; find . -type d -empty -delete"
 
