@@ -8,7 +8,11 @@
 ;;   - use emacs client to open a file
 ;; TODO(stewarts): don't use setq! https://emacs.stackexchange.com/questions/17386/display-all-setq-possibilities
 
-;; NOTE(sdsmith): ALWAYS DO THIS FIRST
+;; Setup customize system
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(load custom-file)
+
+;; NOTE(sdsmith): ALWAYS DO THIS BEFORE ANY PACKAGE CUSTOMIZATION
 (defun set-package-archives ()
   "Set the package archives to search for packages."
   ;; Add package sources
@@ -793,6 +797,12 @@ This returns a list of strings"
 ;;            (put-text-property beg end 'face face)))))
 ;;   (ansi-color-apply-on-region (point-min) (point-max)))
 
+(defun my-comint-clear-buffer ()
+  (interactive)
+  (let ((comint-buffer-maximum-size 0))
+    (comint-truncate-buffer)))
+(define-key comint-mode-map "\C-c\M-o" #'my-comint-clear-buffer)
+
 (defun main ()
   "Main .emacs function"
   (progn
@@ -803,36 +813,3 @@ This returns a list of strings"
     (configure-additional-packages)
     ))
 (main)
-
-;; (custom-set-variables
-;;  ;; custom-set-variables was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-
-;;  ;; STUDY(sdsmith): this has some cool colours. Should look into it.
-;;  ;; '(custom-enabled-themes (quote (whiteboard)))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(org-agenda-files nil)
- '(package-selected-packages
-   (quote
-    (highlight-doxygen xterm-color json-mode irony highlight-indentation p4 cuda-mode matlab-mode glsl-mode php-mode js2-mode git-gutter git-gutter+)))
- '(reb-re-syntax (quote string)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-(put 'downcase-region 'disabled nil)
-(put 'upcase-region 'disabled t)
-
-(defun my-comint-clear-buffer ()
-  (interactive)
-  (let ((comint-buffer-maximum-size 0))
-    (comint-truncate-buffer)))
-(define-key comint-mode-map "\C-c\M-o" #'my-comint-clear-buffer)
