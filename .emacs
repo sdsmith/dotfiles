@@ -1,4 +1,4 @@
-;;; .emacs Configuration file
+;; .emacs Configuration file
 ;;
 ;; TODO(sdsmith):
 ;; - project management, including TODO file(s) and comment management
@@ -269,7 +269,7 @@ This returns a list of strings"
 (fset 'yes-or-no-p 'y-or-n-p)
 
 (defun configure-emacs ()
-  "Configure various emacs settings."
+  "Configure various Emacs settings."
   (progn
     ;; Stop Emacs from losing undo information by setting very high limits
     ;; for undo buffers
@@ -699,32 +699,32 @@ This returns a list of strings"
     ))
 
 
-(defvar my-php-symbol-hash)
-(defun company-my-php-backend (command &optional arg &rest ignored)
-  (case command
-    (prefix (and (eq major-mode 'php-mode)
-                 (company-grab-symbol)))
-    (sorted t)
-    (candidates (all-completions
-                 arg
-                 (if (and (boundp 'my-php-symbol-hash)
-                          my-php-symbol-hash)
-                     my-php-symbol-hash
+;; (defvar my-php-symbol-hash)
+;; (defun company-my-php-backend (command &optional arg &rest ignored)
+;;   (case command
+;;     (prefix (and (eq major-mode 'php-mode)
+;;                  (company-grab-symbol)))
+;;     (sorted t)
+;;     (candidates (all-completions
+;;                  arg
+;;                  (if (and (boundp 'my-php-symbol-hash)
+;;                           my-php-symbol-hash)
+;;                      my-php-symbol-hash
 
-                   (with-temp-buffer
-                     (call-process-shell-command
-                      "php -r '$all=get_defined_functions();foreach ($all[\"internal\"] as $fun) { echo $fun . \";\";};'"
-                      nil t)
-                     (goto-char (point-min))
-                     (let ((hash (make-hash-table)))
-                       (while (re-search-forward "\\([^;]+\\);" (point-max) t)
-                         (puthash (match-string 1) t hash))
-                       (setq my-php-symbol-hash hash))))))))
+;;                    (with-temp-buffer
+;;                      (call-process-shell-command
+;;                       "php -r '$all=get_defined_functions();foreach ($all[\"internal\"] as $fun) { echo $fun . \";\";};'"
+;;                       nil t)
+;;                      (goto-char (point-min))
+;;                      (let ((hash (make-hash-table)))
+;;                        (while (re-search-forward "\\([^;]+\\);" (point-max) t)
+;;                          (puthash (match-string 1) t hash))
+;;                        (setq my-php-symbol-hash hash))))))))
 
-(defvar company-backends)
-(defun my-php ()
-  (add-to-list 'company-backends 'company-my-php-backend))
-(add-hook 'php-mode-hook 'my-php)
+;; (defvar company-backends)
+;; (defun my-php ()
+;;   (add-to-list 'company-backends 'company-my-php-backend))
+;; (add-hook 'php-mode-hook 'my-php)
 
 ;; TODO: screws up the config
 ;; (require 'xterm-color)
@@ -829,3 +829,108 @@ This returns a list of strings"
     (configure-additional-packages)
     ))
 (main)
+
+;; Company: Front end of code completion
+;;
+(require 'company)
+(add-hook 'after-init-hook 'global-company-mode)
+(global-set-key (kbd "M-/") 'company-complete-common-or-cycle)
+(setq company-idle-delay 0)
+
+;; Flycheck: On the fly syntax checking
+;;
+(require 'flycheck)
+(global-flycheck-mode)
+
+;; RTags: heavyweight, but quality, indexer
+;;
+(unless (rtags-executable-find "rc") (error "rtags: binary 'rc' is not installed"))
+(unless (rtags-executable-find "rdm") (error "rtags: binary rdm is not installed"))
+
+(define-key c-mode-base-map (kbd "M-.") 'rtags-find-symbol-at-point)
+(define-key c-mode-base-map (kbd "M-,") 'rtags-find-references-at-point)
+(define-key c-mode-base-map (kbd "M-?") 'rtags-display-summary)
+(rtags-enable-standard-keybindings)
+
+(setq rtags-use-helm t)
+
+;; shutodwn rdm when leaving emacs
+(add-hook 'kill-emacs-hook 'rtags-quit-rdm)
+
+;; TODO: has no coloring
+(setq rtags-display-result-backend 'helm)
+
+;; use rtags for completion
+(require 'company-rtags)
+(require 'company)
+(require 'rtags)
+(setq rtags-autostart-diagnostics t)
+(rtags-diagnostics)
+(setq rtags-completions-enabled t)
+(push 'company-rtags company-backends)
+
+;; Live code checking
+(require 'flycheck-rtags)
+(require 'flycheck)
+(defun setup-flycheck-rtags ()
+  (flycheck-select-checker 'rtags)
+  (setq-local flycheck-highlighting-mode nil) ;; rtags creates more accurate overlays
+  (setq-local flycheck-check-syntax-automatically nil)
+  (rtags-set-periodic-reparse-timeout 2.0) ;; run flycheck 2s after being idle
+  )
+(add-hook 'c-mode-hook #'setup-flycheck-rtags)
+(add-hook 'c++-mode-hook #'setup-flycheck-rtags)
+
+;; Helm makes searching for anything nicer
+;;
+(require 'helm)
+
+;; Use C-c h instead of default C-x c
+(global-set-key (kbd "C-c h") 'helm-command-prefix)
+(global-unset-key (kbd "C-x c"))
+
+(setq
+ ;; wrap top-bottom file navigation
+ helm-move-to-line-cycle-in-source t
+ ;; search for library in `require` and `declare-function` sexp
+ helm-ff-search-library-in-sexp t
+ ;; scroll 8 lines other window using M-<next>/M-<prev>
+ helm-scroll-amount 8
+ helm-ff-file-name-history-use-recentf t
+ helm-echo-input-in-header-line t)
+
+(global-set-key (kbd "M-x") 'helm-M-x)
+(setq helm-M-x-fuzzy-match t) ;; fuzzy matching for helm-M-x
+
+(global-set-key (kbd "C-x C-f") 'helm-find-files)
+
+(global-set-key (kbd "C-x b") 'helm-mini)
+(setq helm-buffers-fuzzy-matching t
+      helm-recentf-fuzzy-match t)
+
+;; TODO: helm-semantic has no syntax highlighting
+(setq helm-semantic-fuzzy-match t
+      helm-imenu-fuzzy-match t)
+
+;; List all occurences of a pattern in buffer
+(global-set-key (kbd "C-c h o") 'helm-occur)
+
+(global-set-key (kbd "C-h SPC") 'helm-all-mark-rings)
+
+;; open helm buffer inside current window, not occupy whole other window
+(setq helm-split-window-in-side-p t)
+(setq helm-autoresize-max-height 50)
+(setq helm-autoresize-min-height 30)
+(helm-autoresize-mode 1)
+
+(helm-mode 1)
+
+;; Projectile learns the concept of a project. Source navigation.
+;;
+(require 'projectile)
+(projectile-global-mode)
+
+;; Use helm in projectile
+(require 'helm-projectile)
+(setq projectile-completion-system 'helm)
+(helm-projectile-on)
