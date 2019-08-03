@@ -293,6 +293,9 @@ This returns a list of strings"
                          "#8b0000"
                          )
 
+    (set-face-background 'isearch-fail "red")
+    (set-face-background 'region "blue")
+    
     ;; Switching windows easier navigation
     ;; S-<left>, S-<right>, S-<up>, S-<down>
     (windmove-default-keybindings)
