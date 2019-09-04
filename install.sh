@@ -1,6 +1,7 @@
 #!/bin/sh
 
 ln -s $(readlink -f .bashrc)    ~/.bashrc
+ln -s $(readlink -f .bashrc)    ~/.bash_aliases
 
 ln -s $(readlink -f .emacs)             ~/.emacs
 mkdir -p ~/.emacs.d

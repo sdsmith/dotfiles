@@ -63,6 +63,7 @@ export PS1="\h \[$green\]\${P4_WS_NAME}\[$reset\] \W> "
 
 ### Alias ###
 # General
+alias sudo="sudo " # space in alias causes all following aliases to be expanded prior to command being run
 alias enw="emacsclient -t"
 alias l="ls --color -F"
 alias p4_clean_tree="p4 clean; find . -type d -empty -delete"
@@ -320,6 +321,10 @@ function mosh_server_killall()
 }
 
 ### Additional config files
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
 if [ -f "${HOME}/.bashrc_nvidia" ]; then
     source "${HOME}/.bashrc_nvidia"
 else
