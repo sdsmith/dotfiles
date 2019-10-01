@@ -105,6 +105,19 @@ function mosh_server_killall()
     kill $(ps --no-headers --sort=start_time -C mosh-server -o pid | head -n -1)
 }
 
+function remove_files_with_extension_recursive()
+{
+    local START_PATH=$1
+    local EXTENSION=$2
+
+    if [ $# -ne 2 ]; then
+        echo "Usage: ${FUNCNAME[0]} <path> <extension>"
+        return 1
+    fi
+
+    find ${START_PATH} -name "*.${EXTENSION}" -type f -delete
+}
+
 ### Additional config files
 if [ -f "${HOME}/.bashrc_nvidia" ]; then
     source "${HOME}/.bashrc_nvidia"
