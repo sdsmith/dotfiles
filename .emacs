@@ -13,6 +13,9 @@
 ;; - describe-face: Describes font face. Defaults to face at point.
 ;; - ibuffer: nice table of open buffers
 
+;; Stop the beeping!!!
+(setq visible-bell t)
+
 ;; Set this right away so all prompts are readable
 (set-face-attribute 'minibuffer-prompt nil :foreground "cyan")
 
@@ -52,13 +55,19 @@
 ;; Change window configuration (C-c Left|Right to navigate history)
 (when (fboundp 'winner-mode)
   (winner-mode 1))
+  ;; (global-set-key (kbd "M-<up>") 'enlarge-window)
+  ;; (global-set-key (kbd "M-<down>") 'shrink-window)
+  ;; (global-set-key (kbd "M-<left>") 'shrink-window-horizontally)
+  ;; (global-set-key (kbd "M-<right>") 'enlarge-window-horizontally))
 
 (setq inhibit-startup-message t)
 (savehist-mode 1)
 
-;; https://stackoverflow.com/questions/10946219/emacs-compilation-mode-wont-see-bash-alias
-(setq shell-file-name "bash")
-(setq shell-command-switch "-ic")
+;; ;; https://stackoverflow.com/questions/10946219/emacs-compilation-mode-wont-see-bash-alias
+;; (setq shell-file-name "bash")
+;; (setq shell-command-switch "-ic")
+;; https://emacs.stackexchange.com/questions/3447/cannot-set-terminal-process-group-error-when-running-bash-script
+(setenv "BASH_ENV" "~/.bashrc")
 
 ;; line-move-partial is the scrolling lag scurge of the universe. This causes line-move to skip calling line-move-partial. When compiling MODS in a compilation buffer line-move-partial was responsible for _90%_ of the execution time. And it was laggy. Multiple seconds responce laggy. Kill the demon.
 ;; ref: https://emacs.stackexchange.com/questions/28736/emacs-pointcursor-movement-lag
@@ -118,6 +127,12 @@
 ;; Set fill column
 (dolist (hook regular-mode-hooks)
   (add-hook hook (lambda () (set-fill-column 80))))
+(add-hook 'fundamental-mode-hook (lambda () (set-fill-column 80)))
+
+;; Display the current function in the mode line
+(dolist (hook regular-mode-hooks)
+  (add-hook hook (lambda () (which-function-mode))))
+;; TODO: Set the font face of face `which-func`
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -829,3 +844,5 @@ This returns a list of strings"
     (configure-additional-packages)
     ))
 (main)
+
+(add-hook 'fundamental-mode-hook 'perforce-cl-desc-setup)
