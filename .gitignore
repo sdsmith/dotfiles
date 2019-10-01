@@ -1,2 +1,7 @@
 *.elc
 *~
+*.pyc
+/.vnc/*
+!/.vnc/config.d
+/.vnc/config.d/*
+!/.vnc/config.d/Xvnc
