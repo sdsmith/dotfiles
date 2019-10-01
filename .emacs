@@ -519,7 +519,23 @@ This returns a list of strings"
   (global-set-key "\C-ca" 'org-agenda)
   (global-set-key "\C-cc" 'org-capture)
   (global-set-key "\C-cb" 'org-iswitchb)
-  (org-agenda-list))
+  (org-agenda-list)
+
+  ;; TODO: not working???
+  (setq org-emphasis-alist (
+                            ;; Defaults
+                            ("!" (:foreground "red"))
+                            ("/" italic)
+                            ("_" underline)
+                            ("~" org-code verbatim)
+                            ("=" org-verbatim verbatim)
+                            ("+" (:strike-through t))
+                            
+                            ;; Custom
+                            ("-" (:strike-through t))
+                            ("`" org-code verbatim)
+                            ))
+  )
 
 (defun add-highlight-indentation ()
   (progn
