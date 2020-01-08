@@ -118,6 +118,23 @@ function remove_files_with_extension_recursive()
     find ${START_PATH} -name "*.${EXTENSION}" -type f -delete
 }
 
+function enwgdb()
+{
+    emacs -nw --eval "(gdb \"gdb --annotate=3 $*\")";
+}
+
+function kbn()
+{
+    ps ux | grep $1 | cut -d' ' -f3 | xargs kill -9
+}
+
+function get_nvidia_gpu_driver()
+{
+    # Find the driver that is associated with the NVIDIA VGA device (GPU) on
+    # the system.
+    find /sys | grep driver.*$(lspci | grep NV | grep VGA | cut -d ' ' -f1)
+}
+
 ### Additional config files
 if [ -f "${HOME}/.bashrc_nvidia" ]; then
     source "${HOME}/.bashrc_nvidia"
