@@ -120,12 +120,15 @@ function remove_files_with_extension_recursive()
 
 function enwgdb()
 {
+    # Start emacs gdb session.
     emacs -nw --eval "(gdb \"gdb --annotate=3 $*\")";
 }
 
 function kbn()
 {
-    ps ux | grep $1 | cut -d' ' -f3 | xargs kill -9
+    # Kill processes that match the given name.
+    # TODO: Why did I name it kbn??
+    ps ux | grep $1 | cut -d' ' -f2 | xargs kill -9
 }
 
 function get_nvidia_gpu_driver()
