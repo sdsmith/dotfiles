@@ -30,6 +30,10 @@
 #   https://sourceware.org/gdb/current/onlinedocs/gdb/Hooks.html#Hooks
 #
 
+# Log gdb output (gdb.txt in working dir)
+set trace-commands on
+set logging on
+
 # Save command history
 set history save on
 set history size 10000
