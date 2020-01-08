@@ -78,6 +78,13 @@
 (require 're-builder)
 (setq reb-re-syntax 'string)
 
+;; Stopping the emacs server
+(defun server-shutdown ()
+  "Save buffers, quit, and shutdown (kill) server"
+  (interactive)
+  (save-some-buffers)
+  (kill-emacs))
+
 ;;; Perforce integration
 ;; Perforce command        Key sequence    Description
 ;; add                     C-x p a         Open file for add.
@@ -350,6 +357,7 @@ This returns a list of strings"
       ("0bug" "BUG(stewarts):" nil)
       ("0debug" "DEBUG(stewarts):" nil)
       ("0doc" "DOC(stewarts):" nil)
+      ("0war" "WAR():" nil)
       )))
 
 
@@ -358,41 +366,48 @@ This returns a list of strings"
   (progn
     ;; Additional Highlighting
     (make-face 'font-lock-comment-user-face)
-    (make-face 'font-lock-todo-face)
-    (make-face 'font-lock-note-face)
-    (make-face 'font-lock-important-face)
-    (make-face 'font-lock-study-face)
-    (make-face 'font-lock-readme-face)
-    (make-face 'font-lock-bug-face)
-    (make-face 'font-lock-debug-face)
-    (make-face 'font-lock-documentation-face)
-
+    (make-face 'font-lock-comment-todo-face)
+    (make-face 'font-lock-comment-note-face)
+    (make-face 'font-lock-comment-important-face)
+    (make-face 'font-lock-comment-study-face)
+    (make-face 'font-lock-comment-readme-face)
+    (make-face 'font-lock-comment-bug-face)
+    (make-face 'font-lock-comment-debug-face)
+    (make-face 'font-lock-comment-doc-face)
+    (make-face 'font-lock-comment-war-face)
+    (make-face 'font-lock-comment-bug-ref-face)
+    
     ;; TODO(stewarts): add doxygen comment highlighting
     (mapc (lambda (mode)
             (font-lock-add-keywords
              mode
              '(
-               ("\\<\\(TODO(\\w+?):\\)" 1 'font-lock-todo-face t)
-               ("\\<\\(NOTE(\\w+?):\\)" 1 'font-lock-note-face t)
-               ("\\<\\(IMPORTANT(\\w+?):\\)" 1 'font-lock-important-face t)
-               ("\\<\\(STUDY(\\w+?):\\)" 1 'font-lock-study-face t)
-               ("\\<\\(README(\\w+?):\\)" 1 'font-lock-readme-face t)
-               ("\\<\\(BUG(\\w+?):\\)" 1 'font-lock-bug-face t)
-               ("\\<\\(DEBUG(\\w+?):\\)" 1 'font-lock-debug-face t)
-               ("\\<\\(DOC(\\w+?):\\)" 1 'font-lock-documentation-face t)
+               ("\\<\\(TODO(\\w+?):\\)" 1 'font-lock-comment-todo-face t)
+               ("\\<\\(NOTE(\\w+?):\\)" 1 'font-lock-comment-note-face t)
+               ("\\<\\(IMPORTANT(\\w+?):\\)" 1 'font-lock-comment-important-face t)
+               ("\\<\\(STUDY(\\w+?):\\)" 1 'font-lock-comment-study-face t)
+               ("\\<\\(README(\\w+?):\\)" 1 'font-lock-comment-readme-face t)
+               ("\\<\\(BUG(\\w+?):\\)" 1 'font-lock-comment-bug-face t)
+               ("\\<\\(DEBUG(\\w+?):\\)" 1 'font-lock-comment-debug-face t)
+               ("\\<\\(DOC(\\w+?):\\)" 1 'font-lock-comment-doc-face t)
+               ("\\<\\(WAR(\\w+?):\\)" 1 'font-lock-comment-war-face t)
                ("\\(TODO\\|NOTE\\|IMPORTANT\\|STUDY\\|README\\|BUG\\|DOC\\)(\\(\\w+?\\)):"
-                2 'font-lock-comment-user-face t))))
+                2 'font-lock-comment-user-face t)
+               ("WAR(\\(\\w+?\\)):" 1 'font-lock-comment-bug-ref-face t)
+               )))          
           regular-modes)
 
     (modify-face 'font-lock-comment-user-face "thistle4" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-todo-face "Red3" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-note-face "DarkOliveGreen" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-important-face "gold" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-study-face "gold" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-readme-face "DodgerBlue" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-bug-face "chartreuse" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-debug-face "chartreuse" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-documentation-face "DeepPink2" nil nil t nil nil nil nil)
+    (modify-face 'font-lock-comment-todo-face "Red3" nil nil t nil nil nil nil)
+    (modify-face 'font-lock-comment-note-face "DarkOliveGreen" nil nil t nil nil nil nil)
+    (modify-face 'font-lock-comment-important-face "gold" nil nil t nil nil nil nil)
+    (modify-face 'font-lock-comment-study-face "gold" nil nil t nil nil nil nil)
+    (modify-face 'font-lock-comment-readme-face "DodgerBlue" nil nil t nil nil nil nil)
+    (modify-face 'font-lock-comment-bug-face "chartreuse" nil nil t nil nil nil nil)
+    (modify-face 'font-lock-comment-debug-face "chartreuse" nil nil t nil nil nil nil)
+    (modify-face 'font-lock-comment-doc-face "DeepPink2" nil nil t nil nil nil nil)
+    (modify-face 'font-lock-comment-war-face "Red3" nil nil t nil nil nil nil)
+    (modify-face 'font-lock-comment-bug-ref-face "chartreuse" nil nil t nil nil nil nil)
 
     ;; Enabling abbrevs for code highlighting
     (dolist (hook regular-mode-hooks)
@@ -438,6 +453,9 @@ This returns a list of strings"
              ("make.+\\.inc$"     . makefile-gmake-mode)
              ("\\.spc$"           . js-mode)
              ("\\.nvasm$"         . asm-mode)
+             ("\\.gdb$"           . gdb-script-mode)
+             ("\\.bashrc$"        . sh-mode)
+             ("\\.bashrc_.+$"     . sh-mode)
              ) auto-mode-alist))
 
   (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
@@ -522,19 +540,20 @@ This returns a list of strings"
   (org-agenda-list)
 
   ;; TODO: not working???
-  (setq org-emphasis-alist (
-                            ;; Defaults
-                            ("!" (:foreground "red"))
-                            ("/" italic)
-                            ("_" underline)
-                            ("~" org-code verbatim)
-                            ("=" org-verbatim verbatim)
-                            ("+" (:strike-through t))
-                            
-                            ;; Custom
-                            ("-" (:strike-through t))
-                            ("`" org-code verbatim)
-                            ))
+  (setq org-emphasis-alist
+        '(
+          ;; Defaults
+          ("!" (:foreground "red"))
+          ("/" italic)
+          ("_" underline)
+          ("~" org-code verbatim)
+          ("=" org-verbatim verbatim)
+          ("+" (:strike-through t))
+          
+          ;; Custom
+          ("-" (:strike-through t))
+          ("`" org-code verbatim)
+          ))
   )
 
 (defun add-highlight-indentation ()
