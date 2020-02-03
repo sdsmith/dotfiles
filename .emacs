@@ -526,10 +526,12 @@ This returns a list of strings"
   ;; http://orgmode.org/manual/Workflow-states.html#Workflow-states
   ;; http://orgmode.org/manual/Fast-access-to-TODO-states.html#Fast-access-to-TODO-states
   ;;(setq org-agenda-include-diary t)
-  ;; (setq org-agenda-files (list "~/org/home.org"
-  ;;                              "~/org/school.org"
-  ;;                              "~/org/events.org"))
+  (setq org-agenda-files "~/.emacs.d/org_mode_agenda_files.txt")
 
+  ;; put time stamp when tasks are completed
+  ;; ref: https://orgmode.org/guide/Closing-items.html#Closing-items
+  (setq org-log-done 'time)
+  
   (setq org-todo-keywords
         '((sequence "TODO(t)" "STARTED(s!)" "BLOCKED(b@)" "BUG(g)" "|")
           (sequence "|" "POSTPONED(p@)" "CANCELED(c@)" "FIXED(f!)" "DONE(d!)")))
@@ -539,6 +541,9 @@ This returns a list of strings"
   (global-set-key "\C-cb" 'org-iswitchb)
   (org-agenda-list)
 
+  ;; TODO: Create a template for new TODO items
+  ;; - track status changes by default  
+  
   ;; TODO: not working???
   (setq org-emphasis-alist
         '(
@@ -741,7 +746,7 @@ This returns a list of strings"
     ;;(add-cpp-auto-complete) ; TODO(sdsmith): undo later for cpp completion. Competes with php-mode
     (add-desktop)
     ;;(add-cedet)
-    ;;(add-org-mode)
+    (add-org-mode)
     ;; (add-git-gutter)
     ;; (remove-irony-from-php-mode)
     (add-highlight-indentation)
