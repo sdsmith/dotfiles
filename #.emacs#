@@ -360,7 +360,6 @@ This returns a list of strings"
       ("0war" "WAR():" nil)
       )))
 
-
 (defun configure-syntax ()
   "Configure syntax and highlighting."
   (progn
