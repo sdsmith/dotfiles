@@ -139,8 +139,8 @@ function get_nvidia_gpu_driver()
 }
 
 ### Additional config files
-if [ -f "${HOME}/.bashrc_nvidia" ]; then
-    source "${HOME}/.bashrc_nvidia"
+if [ -f "${HOME}/workdotfiles/.bashrc_work" ]; then
+    source "${HOME}/workdotfiles/.bashrc_work"
 else
-    echo "WARNING: .bashrc_nvidia: not found"
+    echo "WARNING: .bashrc_work not found"
 fi
