@@ -84,7 +84,7 @@ alias tmk='tmux kill-session -t $*'
 # create
 alias tmc='tmux -CC'
 # resume (and detatch from any other clients connected to session)
-alias tmresume = 'tmux -CC a -d'
+alias tmresume='tmux -CC a -d'
 # resume/new named session
 alias tma='tmux -CC new-session -AD -s $*'
 
