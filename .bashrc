@@ -72,13 +72,21 @@ p4_synced_to_cl() {
 export LS_COLORS=$LS_COLORS:'di=0;94:'
 
 # Tmux attach alias with session name auto complete
-alias tma='tmux attach -t $*'
+#alias tma='tmux attach -t $*'
 # if [ -f ~/.bash_completion ]; then
 #     . ~/.bash_completion
 # fi
 
 alias tml='tmux ls'
 alias tmk='tmux kill-session -t $*'
+
+## tmux control mode (best used with iterm2)
+# create
+alias tmc='tmux -CC'
+# resume (and detatch from any other clients connected to session)
+alias tmresume = 'tmux -CC a -d'
+# resume/new named session
+alias tma='tmux -CC new-session -AD -s $*'
 
 function p4c()
 {

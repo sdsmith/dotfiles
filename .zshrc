@@ -2,14 +2,14 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-  export ZSH="/home/stewarts/.oh-my-zsh"
+#  export ZSH="/home/stewarts/.oh-my-zsh" # TODO
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-#ZSH_THEME="agnoster"
-ZSH_THEME="stewarts-agnoster"
+ZSH_THEME="agnoster"
+#ZSH_THEME="stewarts-agnoster" # TODO
 #ZSH_THEME="bira"
 #ZSH_THEME="remy"
 
@@ -69,7 +69,7 @@ plugins=(
   git
 )
 
-source $ZSH/oh-my-zsh.sh
+# source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
@@ -101,3 +101,4 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias enw="emacs -nw $*"
 export PATH="$HOME/bin:$PATH"
+
