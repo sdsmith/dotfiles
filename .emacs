@@ -13,6 +13,19 @@
 ;; - describe-face: Describes font face. Defaults to face at point.
 ;; - ibuffer: nice table of open buffers
 
+;; FB: setup proxy to talk to internet
+(setq url-proxy-services
+      '(("no_proxy" . "^\\(localhost\\|10.*\\)")
+        ("http" . "fwdproxy:8080")
+             ("https" . "fwdproxy:8080")))
+
+;; FB: Skip checking the package signatures.
+;;
+;; NOTE: setting the proxy settings causes package signature checks to
+;; fail. Skip those checks. TODO: for now.
+(setq package-check-signature nil)
+
+
 ;; Stop the beeping!!!
 (setq visible-bell t)
 
@@ -226,7 +239,7 @@ This returns a list of strings"
   (global-git-gutter+-mode)
   (global-set-key (kbd "C-x g") 'git-gutter+-mode) ; toggle in current buffer
   (global-set-key (kbd "C-x G") 'global-git-gutter+-mode) ; Turn on/off globally
-  
+
   (eval-after-load 'git-gutter+
     '(progn
      ;;; Jump between hunks
@@ -317,7 +330,7 @@ This returns a list of strings"
 
     (set-face-background 'isearch-fail "red")
     (set-face-background 'region "blue")
-    
+
     ;; Switching windows easier navigation
     ;; S-<left>, S-<right>, S-<up>, S-<down>
     (windmove-default-keybindings)
@@ -376,7 +389,7 @@ This returns a list of strings"
     (make-face 'font-lock-comment-doc-face)
     (make-face 'font-lock-comment-war-face)
     (make-face 'font-lock-comment-bug-ref-face)
-    
+
     ;; TODO(stewarts): add doxygen comment highlighting
     (mapc (lambda (mode)
             (font-lock-add-keywords
@@ -394,7 +407,7 @@ This returns a list of strings"
                ("\\(TODO\\|NOTE\\|IMPORTANT\\|STUDY\\|README\\|BUG\\|DOC\\)(\\(\\w+?\\)):"
                 2 'font-lock-comment-user-face t)
                ("WAR(\\(\\w+?\\)):" 1 'font-lock-comment-bug-ref-face t)
-               )))          
+               )))
           regular-modes)
 
     (modify-face 'font-lock-comment-user-face "thistle4" nil nil t nil nil nil nil)
@@ -412,7 +425,7 @@ This returns a list of strings"
     ;; Enabling abbrevs for code highlighting
     (dolist (hook regular-mode-hooks)
       (add-hook hook (lambda () (abbrev-mode 1))))
-    
+
     ;; Add keywords to cpp
     (font-lock-add-keywords 'c++-mode
                             '(("constexpr" . font-lock-keyword-face))
@@ -426,7 +439,7 @@ This returns a list of strings"
     (require 'json-mode)
     (require 'glsl-mode)
     (require 'asm-mode)
-    
+
     ;; Associate file extentions and their appropriate modes
     (setq auto-mode-alist
           (append
@@ -489,7 +502,7 @@ This returns a list of strings"
                         :foreground "burlywood3")
 
     ;; Original config
-    ;; 
+    ;;
     ;; (add-to-list 'default-frame-alist '(font . "Liberation Mono-9.5"))
     ;; ;; (set-face-attribute 'default t :font "Liberation Mono-10") ;; BUG(sdsmith): causes 'emacs --daemon' to error during startup
     ;; (set-face-attribute 'font-lock-builtin-face nil :foreground "#DAB98F")
@@ -512,7 +525,7 @@ This returns a list of strings"
     ;; (set-face-attribute 'default nil
     ;;                     :foreground "burlywood3")
 
-    
+
     (defun post-load-settings ()
       (set-foreground-color "burlywood3")
       (set-background-color "#161616")
@@ -531,7 +544,7 @@ This returns a list of strings"
   ;; put time stamp when tasks are completed
   ;; ref: https://orgmode.org/guide/Closing-items.html#Closing-items
   (setq org-log-done 'time)
-  
+
   (setq org-todo-keywords
         '((sequence "TODO(t)" "STARTED(s!)" "BLOCKED(b@)" "BUG(g)" "|")
           (sequence "|" "POSTPONED(p@)" "CANCELED(c@)" "FIXED(f!)" "DONE(d!)")))
@@ -542,8 +555,8 @@ This returns a list of strings"
   (org-agenda-list)
 
   ;; TODO: Create a template for new TODO items
-  ;; - track status changes by default  
-  
+  ;; - track status changes by default
+
   ;; TODO: not working???
   (setq org-emphasis-alist
         '(
@@ -554,7 +567,7 @@ This returns a list of strings"
           ("~" org-code verbatim)
           ("=" org-verbatim verbatim)
           ("+" (:strike-through t))
-          
+
           ;; Custom
           ("-" (:strike-through t))
           ("`" org-code verbatim)
