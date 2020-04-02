@@ -98,6 +98,37 @@
   (save-some-buffers)
   (kill-emacs))
 
+;; line numbers
+(require 'linum)
+(global-linum-mode 1)
+
+;; simpler column numbers
+(column-number-mode t)
+
+;; switch multiple buffer with typeahead using C-x b
+(require 'ido)
+(iswitchb-mode 1)
+(defun iswitchb-local-keys ()
+  (mapc (lambda (k)
+          (let* ((key (car k)) (fun (cdr k)))
+            (define-key iswitchb-mode-map (edmacro-parse-keys key) fun)))
+        '(("<right>" . iswitchb-next-match)
+          ("<left>"  . iswtichb-prev-match)
+          ("<up>"    . ignore)
+          ("<down>"  . ignore))))
+(add-hook 'iswitch-define-mode-map-hook 'iswitch-local-keys)
+
+;; scoll one line at a time instead of jumping on cursor up/down
+; (require 'smooth-scrolling)
+
+;; go to last edit location
+(require 'goto-last-change)
+(global-set-key "\C-q" 'goto-last-change)
+
+;; tree representation of changes to walk the undo/redo graph. "C-x u" to open tree for current file.
+(require 'undo-tree)
+(global-undo-tree-mode)
+
 ;;; MacOS clipboard integration
 ;; ref: http://iancmacdonald.com/macos/emacs/tmux/2017/01/15/macOS-tmux-emacs-copy-past.html
 ;; NOTE: requires reattach-to-user-namespace
@@ -117,6 +148,13 @@
     (progn
       (setq interprogram-cut-function 'paste-to-osx)
       (setq interprogram-paste-function 'copy-from-osx)))
+
+;;; Alternative MacOS clipboard integration
+;; Copying/Cutting in console emacs will add it to your mac clipboard
+;; Need to also "sudo ym install xclip" along with installing xcip.el
+;; Need to also enable X11 Forwarding & trusted X11 Forwarding (ssh -X -Y)
+;; (require 'xclip)
+;; (turn-on-xclip)
 
 ;;; Perforce integration
 ;; Perforce command        Key sequence    Description
@@ -304,7 +342,7 @@ This returns a list of strings"
 ;; ;; Removes *messages* from the buffer.
 ;; (setq-default message-log-max nil)
 ;; (kill-buffer "*Messages*")
-
+;; tree representation of changes to to walk the undo/redo graph. "C-x u" to open tree for current file.
 ;; Removes *Completions* from buffer after you've opened a file.
 (add-hook 'minibuffer-exit-hook
       '(lambda ()
@@ -775,7 +813,7 @@ This returns a list of strings"
     ;; (add-haskell-mode)
     ;; (add-jedi-python-auto-complete)
     ;;(add-cpp-auto-complete) ; TODO(sdsmith): undo later for cpp completion. Competes with php-mode
-    (add-desktop)
+    ;;(add-desktop)
     ;;(add-cedet)
     (add-org-mode)
     ;; (add-git-gutter)
