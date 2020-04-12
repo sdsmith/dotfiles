@@ -13,6 +13,19 @@
 ;; - describe-face: Describes font face. Defaults to face at point.
 ;; - ibuffer: nice table of open buffers
 
+;; FB: setup proxy to talk to internet
+(setq url-proxy-services
+      '(("no_proxy" . "^\\(localhost\\|10.*\\)")
+        ("http" . "fwdproxy:8080")
+             ("https" . "fwdproxy:8080")))
+
+;; FB: Skip checking the package signatures.
+;;
+;; NOTE: setting the proxy settings causes package signature checks to
+;; fail. Skip those checks. TODO: for now.
+(setq package-check-signature nil)
+
+
 ;; Stop the beeping!!!
 (setq visible-bell t)
 
@@ -77,6 +90,71 @@
 ;; ref: https://www.masteringemacs.org/article/re-builder-interactive-regexp-builder
 (require 're-builder)
 (setq reb-re-syntax 'string)
+
+;; Stopping the emacs server
+(defun server-shutdown ()
+  "Save buffers, quit, and shutdown (kill) server"
+  (interactive)
+  (save-some-buffers)
+  (kill-emacs))
+
+;; line numbers
+(require 'linum)
+(global-linum-mode 1)
+
+;; simpler column numbers
+(column-number-mode t)
+
+;; switch multiple buffer with typeahead using C-x b
+(require 'ido)
+(iswitchb-mode 1)
+(defun iswitchb-local-keys ()
+  (mapc (lambda (k)
+          (let* ((key (car k)) (fun (cdr k)))
+            (define-key iswitchb-mode-map (edmacro-parse-keys key) fun)))
+        '(("<right>" . iswitchb-next-match)
+          ("<left>"  . iswtichb-prev-match)
+          ("<up>"    . ignore)
+          ("<down>"  . ignore))))
+(add-hook 'iswitch-define-mode-map-hook 'iswitch-local-keys)
+
+;; scoll one line at a time instead of jumping on cursor up/down
+; (require 'smooth-scrolling)
+
+;; go to last edit location
+(require 'goto-last-change)
+(global-set-key "\C-q" 'goto-last-change)
+
+;; tree representation of changes to walk the undo/redo graph. "C-x u" to open tree for current file.
+(require 'undo-tree)
+(global-undo-tree-mode)
+
+;;; MacOS clipboard integration
+;; ref: http://iancmacdonald.com/macos/emacs/tmux/2017/01/15/macOS-tmux-emacs-copy-past.html
+;; NOTE: requires reattach-to-user-namespace
+;; (https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard)
+(defun copy-from-osx ()
+  "Use OSX clipboard to paste."
+  (shell-command-to-string "reattach-to-user-namespace pbpaste"))
+
+(defun paste-to-osx (text &optional push)
+  "Add kill rinf entries (TEXT) to OSX clipboard. PUSH."
+  (let ((process-connection-type nil))
+    (let ((proc (start-process "pbcopy" "*Messages*" "reattach-to-user-namespace" "pbcopy")))
+      (process-send-string proc text)
+      (process-send-eof proc))))
+
+(if (eq system-type 'darwin)
+    (progn
+      (setq interprogram-cut-function 'paste-to-osx)
+      (setq interprogram-paste-function 'copy-from-osx)))
+
+;;; Alternative MacOS clipboard integration
+;; Copying/Cutting in console emacs will add it to your mac clipboard
+;; Need to also "sudo ym install xclip" along with installing xcip.el
+;; Need to also enable X11 Forwarding & trusted X11 Forwarding (ssh -X -Y)
+;; (require 'xclip)
+;; (turn-on-xclip)
 
 ;;; Perforce integration
 ;; Perforce command        Key sequence    Description
@@ -206,8 +284,6 @@ This returns a list of strings"
 
 ;; ;; format options
 ;; (setq tide-format-options '(:insertSpaceAfterFunctionKeywordForAnonymousFunctions t :placeOpenBraceOnNewLineForFunctions nil))
-
-
 ;; (add-hook 'js2-mode-hook #'setup-tide-mode)
 
 
@@ -219,7 +295,7 @@ This returns a list of strings"
   (global-git-gutter+-mode)
   (global-set-key (kbd "C-x g") 'git-gutter+-mode) ; toggle in current buffer
   (global-set-key (kbd "C-x G") 'global-git-gutter+-mode) ; Turn on/off globally
-  
+
   (eval-after-load 'git-gutter+
     '(progn
      ;;; Jump between hunks
@@ -266,7 +342,7 @@ This returns a list of strings"
 ;; ;; Removes *messages* from the buffer.
 ;; (setq-default message-log-max nil)
 ;; (kill-buffer "*Messages*")
-
+;; tree representation of changes to to walk the undo/redo graph. "C-x u" to open tree for current file.
 ;; Removes *Completions* from buffer after you've opened a file.
 (add-hook 'minibuffer-exit-hook
       '(lambda ()
@@ -310,7 +386,7 @@ This returns a list of strings"
 
     (set-face-background 'isearch-fail "red")
     (set-face-background 'region "blue")
-    
+
     ;; Switching windows easier navigation
     ;; S-<left>, S-<right>, S-<up>, S-<down>
     (windmove-default-keybindings)
@@ -350,6 +426,7 @@ This returns a list of strings"
       ("0bug" "BUG(stewarts):" nil)
       ("0debug" "DEBUG(stewarts):" nil)
       ("0doc" "DOC(stewarts):" nil)
+      ("0war" "WAR():" nil)
       )))
 
 
@@ -358,46 +435,53 @@ This returns a list of strings"
   (progn
     ;; Additional Highlighting
     (make-face 'font-lock-comment-user-face)
-    (make-face 'font-lock-todo-face)
-    (make-face 'font-lock-note-face)
-    (make-face 'font-lock-important-face)
-    (make-face 'font-lock-study-face)
-    (make-face 'font-lock-readme-face)
-    (make-face 'font-lock-bug-face)
-    (make-face 'font-lock-debug-face)
-    (make-face 'font-lock-documentation-face)
+    (make-face 'font-lock-comment-todo-face)
+    (make-face 'font-lock-comment-note-face)
+    (make-face 'font-lock-comment-important-face)
+    (make-face 'font-lock-comment-study-face)
+    (make-face 'font-lock-comment-readme-face)
+    (make-face 'font-lock-comment-bug-face)
+    (make-face 'font-lock-comment-debug-face)
+    (make-face 'font-lock-comment-doc-face)
+    (make-face 'font-lock-comment-war-face)
+    (make-face 'font-lock-comment-bug-ref-face)
 
     ;; TODO(stewarts): add doxygen comment highlighting
     (mapc (lambda (mode)
             (font-lock-add-keywords
              mode
              '(
-               ("\\<\\(TODO(\\w+?):\\)" 1 'font-lock-todo-face t)
-               ("\\<\\(NOTE(\\w+?):\\)" 1 'font-lock-note-face t)
-               ("\\<\\(IMPORTANT(\\w+?):\\)" 1 'font-lock-important-face t)
-               ("\\<\\(STUDY(\\w+?):\\)" 1 'font-lock-study-face t)
-               ("\\<\\(README(\\w+?):\\)" 1 'font-lock-readme-face t)
-               ("\\<\\(BUG(\\w+?):\\)" 1 'font-lock-bug-face t)
-               ("\\<\\(DEBUG(\\w+?):\\)" 1 'font-lock-debug-face t)
-               ("\\<\\(DOC(\\w+?):\\)" 1 'font-lock-documentation-face t)
+               ("\\<\\(TODO(\\w+?):\\)" 1 'font-lock-comment-todo-face t)
+               ("\\<\\(NOTE(\\w+?):\\)" 1 'font-lock-comment-note-face t)
+               ("\\<\\(IMPORTANT(\\w+?):\\)" 1 'font-lock-comment-important-face t)
+               ("\\<\\(STUDY(\\w+?):\\)" 1 'font-lock-comment-study-face t)
+               ("\\<\\(README(\\w+?):\\)" 1 'font-lock-comment-readme-face t)
+               ("\\<\\(BUG(\\w+?):\\)" 1 'font-lock-comment-bug-face t)
+               ("\\<\\(DEBUG(\\w+?):\\)" 1 'font-lock-comment-debug-face t)
+               ("\\<\\(DOC(\\w+?):\\)" 1 'font-lock-comment-doc-face t)
+               ("\\<\\(WAR(\\w+?):\\)" 1 'font-lock-comment-war-face t)
                ("\\(TODO\\|NOTE\\|IMPORTANT\\|STUDY\\|README\\|BUG\\|DOC\\)(\\(\\w+?\\)):"
-                2 'font-lock-comment-user-face t))))
+                2 'font-lock-comment-user-face t)
+               ("WAR(\\(\\w+?\\)):" 1 'font-lock-comment-bug-ref-face t)
+               )))
           regular-modes)
 
     (modify-face 'font-lock-comment-user-face "thistle4" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-todo-face "Red3" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-note-face "DarkOliveGreen" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-important-face "gold" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-study-face "gold" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-readme-face "DodgerBlue" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-bug-face "chartreuse" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-debug-face "chartreuse" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-documentation-face "DeepPink2" nil nil t nil nil nil nil)
+    (modify-face 'font-lock-comment-todo-face "Red3" nil nil t nil nil nil nil)
+    (modify-face 'font-lock-comment-note-face "DarkOliveGreen" nil nil t nil nil nil nil)
+    (modify-face 'font-lock-comment-important-face "gold" nil nil t nil nil nil nil)
+    (modify-face 'font-lock-comment-study-face "gold" nil nil t nil nil nil nil)
+    (modify-face 'font-lock-comment-readme-face "DodgerBlue" nil nil t nil nil nil nil)
+    (modify-face 'font-lock-comment-bug-face "chartreuse" nil nil t nil nil nil nil)
+    (modify-face 'font-lock-comment-debug-face "chartreuse" nil nil t nil nil nil nil)
+    (modify-face 'font-lock-comment-doc-face "DeepPink2" nil nil t nil nil nil nil)
+    (modify-face 'font-lock-comment-war-face "Red3" nil nil t nil nil nil nil)
+    (modify-face 'font-lock-comment-bug-ref-face "chartreuse" nil nil t nil nil nil nil)
 
     ;; Enabling abbrevs for code highlighting
     (dolist (hook regular-mode-hooks)
       (add-hook hook (lambda () (abbrev-mode 1))))
-    
+
     ;; Add keywords to cpp
     (font-lock-add-keywords 'c++-mode
                             '(("constexpr" . font-lock-keyword-face))
@@ -411,7 +495,7 @@ This returns a list of strings"
     (require 'json-mode)
     (require 'glsl-mode)
     (require 'asm-mode)
-    
+
     ;; Associate file extentions and their appropriate modes
     (setq auto-mode-alist
           (append
@@ -438,6 +522,9 @@ This returns a list of strings"
              ("make.+\\.inc$"     . makefile-gmake-mode)
              ("\\.spc$"           . js-mode)
              ("\\.nvasm$"         . asm-mode)
+             ("\\.gdb$"           . gdb-script-mode)
+             ("\\.bashrc$"        . sh-mode)
+             ("\\.bashrc_.+$"     . sh-mode)
              ) auto-mode-alist))
 
   (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
@@ -471,7 +558,7 @@ This returns a list of strings"
                         :foreground "burlywood3")
 
     ;; Original config
-    ;; 
+    ;;
     ;; (add-to-list 'default-frame-alist '(font . "Liberation Mono-9.5"))
     ;; ;; (set-face-attribute 'default t :font "Liberation Mono-10") ;; BUG(sdsmith): causes 'emacs --daemon' to error during startup
     ;; (set-face-attribute 'font-lock-builtin-face nil :foreground "#DAB98F")
@@ -494,7 +581,7 @@ This returns a list of strings"
     ;; (set-face-attribute 'default nil
     ;;                     :foreground "burlywood3")
 
-    
+
     (defun post-load-settings ()
       (set-foreground-color "burlywood3")
       (set-background-color "#161616")
@@ -508,12 +595,12 @@ This returns a list of strings"
   ;; http://orgmode.org/manual/Workflow-states.html#Workflow-states
   ;; http://orgmode.org/manual/Fast-access-to-TODO-states.html#Fast-access-to-TODO-states
   ;;(setq org-agenda-include-diary t)
-  (setq org-agenda-files "~/.emacs.d/org_mode_agenda_files.txt")
+  ;;(setq org-agenda-files "~/.emacs.d/org_mode_agenda_files.txt") ;; TODO: setup
 
   ;; put time stamp when tasks are completed
   ;; ref: https://orgmode.org/guide/Closing-items.html#Closing-items
   (setq org-log-done 'time)
-  
+
   (setq org-todo-keywords
         '((sequence "TODO(t)" "STARTED(s!)" "BLOCKED(b@)" "BUG(g)" "|")
           (sequence "|" "POSTPONED(p@)" "CANCELED(c@)" "FIXED(f!)" "DONE(d!)")))
@@ -524,22 +611,23 @@ This returns a list of strings"
   (org-agenda-list)
 
   ;; TODO: Create a template for new TODO items
-  ;; - track status changes by default  
-  
+  ;; - track status changes by default
+
   ;; TODO: not working???
-  (setq org-emphasis-alist (
-                            ;; Defaults
-                            ("!" (:foreground "red"))
-                            ("/" italic)
-                            ("_" underline)
-                            ("~" org-code verbatim)
-                            ("=" org-verbatim verbatim)
-                            ("+" (:strike-through t))
-                            
-                            ;; Custom
-                            ("-" (:strike-through t))
-                            ("`" org-code verbatim)
-                            ))
+  (setq org-emphasis-alist
+        '(
+          ;; Defaults
+          ("!" (:foreground "red"))
+          ("/" italic)
+          ("_" underline)
+          ("~" org-code verbatim)
+          ("=" org-verbatim verbatim)
+          ("+" (:strike-through t))
+
+          ;; Custom
+          ("-" (:strike-through t))
+          ("`" org-code verbatim)
+          ))
   )
 
 (defun add-highlight-indentation ()
@@ -725,7 +813,7 @@ This returns a list of strings"
     ;; (add-haskell-mode)
     ;; (add-jedi-python-auto-complete)
     ;;(add-cpp-auto-complete) ; TODO(sdsmith): undo later for cpp completion. Competes with php-mode
-    (add-desktop)
+    ;;(add-desktop)
     ;;(add-cedet)
     (add-org-mode)
     ;; (add-git-gutter)

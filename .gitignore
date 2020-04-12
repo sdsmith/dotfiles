@@ -5,3 +5,4 @@
 !/.vnc/config.d
 /.vnc/config.d/*
 !/.vnc/config.d/Xvnc
+\#*#
