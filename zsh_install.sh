@@ -44,9 +44,11 @@ cd $POWERLINE_FONTS_DIR
 cd ..
 rm -rf $POWERLINE_FONTS_DIR
 
-if [ ! -f $ZSH_CUSTOM/themes/zeta.zsh-theme ]; then
+if [ ! -f $ZSH/themes/zeta.zsh-theme ]; then
     echo "Installing theme..."
-    curl -fsSL https://raw.githubusercontent.com/skylerlee/zeta-zsh-theme/master/zeta.zsh-theme > "$ZSH_CUSTOM/themes/zeta.zsh-theme"
+    # TODO: The Zeta theme installer modifies the symlink in home. Do a pull
+    # request to add a --keep-zshrc arg. https://github.com/skylerlee/zeta-zsh-theme
+    curl -fsSL https://raw.githubusercontent.com/skylerlee/zeta-zsh-theme/master/zeta.zsh-theme > "$ZSH/themes/zeta.zsh-theme"
 fi;
 
 echo "Done. Starting new shell."
