@@ -46,6 +46,9 @@ rm -rf $POWERLINE_FONTS_DIR
 
 if [ ! -f $ZSH_CUSTOM/themes/zeta.zsh-theme ]; then
     echo "Installing theme..."
-    # TODO: triggers env to reload in new theme, interrupting script
-    bash -c "$(curl -fsSL https://raw.githubusercontent.com/skylerlee/zeta-zsh-theme/master/scripts/install.sh)"
+    curl -fsSL https://raw.githubusercontent.com/skylerlee/zeta-zsh-theme/master/zeta.zsh-theme > "$ZSH_CUSTOM/themes/zeta.zsh-theme"
 fi;
+
+echo "Done. Starting new shell."
+
+env zsh -l # login shell
