@@ -2,16 +2,36 @@
 
 # NOTE: Must be run in the dotfiles directory
 
-DOTFILES_LOCATION="$HOME/dotfiles"
+DOTFILES_DIR="$HOME/dotfiles"
 
-export ZSH="$DOTFILES_LOCATION/oh-my-zsh"
+export ZSH="$DOTFILES_DIR/oh-my-zsh"
 export ZSH_CUSTOM="$ZSH/custom"
 
 echo "Installing oh-my-zsh..."
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
 
 echo "Upgrading oh-my-zsh..."
 upgrade_oh_my_zsh
+
+## ZSH plugins
+echo "Installing oh-my-zsh plugins..."
+cd $ZSH/custom/plugins
+
+# zsh-completions
+
+# zsh-syntax-highlighting
+# ref: https://github.com/zsh-users/zsh-syntax-highlighting
+# TODO:
+#   - change colors
+#   - change path underlining (obscures underscores in file names)
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
+
+cd $DOTFILES_DIR
+
+echo "Changing default shell to zsh..."
+if [ "$(basename $SHELL)" != "zsh" ]; then
+    chsh -s $(which zsh)
+fi;
 
 # ref: https://github.com/powerline/fonts
 echo "Installing powerline-fonts..."
@@ -22,16 +42,6 @@ cd $POWERLINE_FONTS_DIR
 cd ..
 rm -rf $POWERLINE_FONTS_DIR
 
-echo "Installing themes..."
+echo "Installing theme..."
+# TODO: triggers env to reload in new theme, interrupting script
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/skylerlee/zeta-zsh-theme/master/scripts/install.sh)"
-
-# ZSH plugins
-#zsh-completions
-#zsh-syntax-highlighting
-
-echo "Changing default shell to zsh..."
-if [ "$0" != "zsh" ]; then
-    chsh -s $(which zsh)
-fi;
-
-echo "Done."
