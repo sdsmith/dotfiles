@@ -48,8 +48,13 @@ if [ ! -f $ZSH/themes/zeta.zsh-theme ]; then
     echo "Installing theme..."
     # TODO: The Zeta theme installer modifies the symlink in home. Do a pull
     # request to add a --keep-zshrc arg. https://github.com/skylerlee/zeta-zsh-theme
-    curl -fsSL https://raw.githubusercontent.com/skylerlee/zeta-zsh-theme/master/zeta.zsh-theme > "$ZSH/themes/zeta.zsh-theme"
+    curl -fsSL https://raw.githubusercontent.com/skylerlee/zeta-zsh-theme/master/zeta.zsh-theme > "$ZSH/themes/zeta.zsh-theme"    
 fi;
+
+echo "Installing custom oh-my-zsh configs..."
+cd oh-my-zsh-custom
+./install.sh
+cd ..
 
 echo "Done. Starting new shell."
 
