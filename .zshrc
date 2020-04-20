@@ -72,6 +72,7 @@ ZSH_THEME="zeta"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
     git
+    ssh-agent
     zsh-completions
     zsh-syntax-highlighting
 )
