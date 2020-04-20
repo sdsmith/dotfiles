@@ -6,3 +6,4 @@
 /.vnc/config.d/*
 !/.vnc/config.d/Xvnc
 \#*#
+/oh-my-zsh
