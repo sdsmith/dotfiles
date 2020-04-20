@@ -102,6 +102,90 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+function is_running_cygwin()
+{
+    if uname -a | grep -qE "(CYGWIN|cygwin|Cygwin)" &> /dev/null ; then
+	return 0
+    else
+	return 1
+    fi
+}
+
+function is_running_windows_subsystem_linux()
+{
+    if grep -qE "(Microsoft|WSL)" /proc/version &> /dev/null ; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+alias enw="emacsclient -t"
+alias l="ls --color -F"
+
+ssh_remove_auth_key()
+{
+    if test -f $HOME/.ssh/authorized_keys; then
+        if grep -v "$1" $HOME/.ssh/authorized_keys > $HOME/.ssh/tmp; then
+            cat $HOME/.ssh/tmp > $HOME/.ssh/authorized_keys && rm $HOME/.ssh/tmp;
+        else
+            rm $HOME/.ssh/authorized_keys && rm $HOME/.ssh/tmp;
+        fi;
+    fi
+}
+
+function fix_terminal()
+{
+    stty sane
+    tput rs1
+}
+
+function mosh_server_killall()
+{
+    # Kills all mosh-servers except the last one created (so we don't kill our own server!)
+    # Assuming that the last server created is the one we are using.
+    kill $(ps --no-headers --sort=start_time -C mosh-server -o pid | head -n -1)
+}
+
+function remove_files_with_extension_recursive()
+{
+    local START_PATH=$1
+    local EXTENSION=$2
+
+    if [ $# -ne 2 ]; then
+        echo "Usage: ${FUNCNAME[0]} <path> <extension>"
+        return 1
+    fi
+
+    find ${START_PATH} -name "*.${EXTENSION}" -type f -delete
+}
+
+function enwgdb()
+{
+    # Start emacs gdb session.
+    emacs -nw --eval "(gdb \"gdb --annotate=3 $*\")";
+}
+
+function kbn()
+{
+    # Kill processes that match the given name.
+    # TODO: Why did I name it kbn??
+    ps ux | grep $1 | cut -d' ' -f2 | xargs kill -9
+}
+
+function get_nvidia_gpu_driver()
+{
+    # Find the driver that is associated with the NVIDIA VGA device (GPU) on
+    # the system.
+    find /sys | grep driver.*$(lspci | grep NV | grep VGA | cut -d ' ' -f1)
+}
+
+# Allow emacs GUI colours in terminal
+export TERM=xterm-256color
+
+export EDITOR="emacsclient -t"          # opens in term
+export VISUAL="emacsclient -c -a emacs" # opens in GUI mode
+
 # zsh-completions
 autoload -U compinit && compinit
 
