@@ -78,6 +78,13 @@ plugins=(
     zsh-syntax-highlighting
 )
 
+# oh-my-zsh ssh-agent plugin
+# ref: https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/ssh-agent
+# TODO: Get permissions issue when it runs find. why? It is running as me.
+#_SSH_PRIVATE_KEYS=find $HOME/.ssh -type f -name "*.pub" | grep -o "[^/]*$" | sed 's/\.[^.]*$//' | xargs
+#zstyle :omz:plugins:ssh-agent identities $_SSH_PRIVATE_KEYS
+#unset _SSH_PRIVATE_KEYS
+
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
