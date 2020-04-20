@@ -192,5 +192,9 @@ export VISUAL="emacsclient -c -a emacs" # opens in GUI mode
 autoload -U compinit && compinit
 
 # zsh-syntax-highlighting
-# NOTE: Must be last line in file
 source $DOTFILES_DIR/oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# Work config
+if [ -f "$HOME/.workdotfiles/.zshrc" ]; then
+    source "$HOME/.workdotfiles/.zshrc"
+fi
