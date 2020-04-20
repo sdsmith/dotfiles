@@ -77,6 +77,20 @@ function get_git_prompt {
     fi
 }
 
+#ZSH_PROMPT_BASE_COLOR
+ZSH_THEME_HG_PROMPT_PREFIX="$ZSH_THEME_GIT_PROMPT_PREFIX"
+ZSH_THEME_HG_PROMPT_SUFFIX="$ZSH_THEME_GIT_PROMPT_SUFFIX"
+#ZSH_THEME_REPO_NAME_COLOR
+ZSH_THEME_HG_PROMPT_SHA_BEFORE="$ZSH_THEME_GIT_PROMPT_SHA_BEFORE"
+ZSH_THEME_HG_PROMPT_SHA_AFTER="$ZSH_THEME_GIT_PROMPT_SHA_AFTER"
+
+function get_hg_prompt {
+    local hg_prompt="$(hg_prompt_info)"
+    if [[ ! -z "$hg_prompt" ]]; then
+        echo " <$hg_prompt>"
+    fi
+}
+
 function get_time_stamp {
     echo "%*"
 }
@@ -103,7 +117,7 @@ function print_prompt_head {
 %{$blue%}@\
 %{$cyan_bold%}$(get_box_name): \
 %{$yellow_bold%}$(get_current_dir)%{$reset_color%}\
-$(get_git_prompt) "
+$(get_git_prompt)$(get_hg_prompt) "
     local right_prompt="%{$blue%}($(get_time_stamp))%{$reset_color%} "
     print -rP "$left_prompt$(get_space $left_prompt $right_prompt)$right_prompt"
 }
@@ -121,4 +135,4 @@ add-zsh-hook precmd print_prompt_head
 setopt prompt_subst
 
 PROMPT='$(get_prompt_indicator)'
-RPROMPT='$(git_prompt_short_sha) '
+RPROMPT='$(git_prompt_short_sha)$(hg_prompt_short_sha) '

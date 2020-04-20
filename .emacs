@@ -525,6 +525,7 @@ This returns a list of strings"
              ("\\.gdb$"           . gdb-script-mode)
              ("\\.bashrc$"        . sh-mode)
              ("\\.bashrc_.+$"     . sh-mode)
+             ("\\.zsh-theme$"     . sh-mode)
              ) auto-mode-alist))
 
   (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
