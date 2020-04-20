@@ -1,8 +1,10 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
+DOTFILES_DIR="$HOME/.dotfiles"
+
 # Path to your oh-my-zsh installation.
-export ZSH="$HOME/dotfiles/oh-my-zsh"
+export ZSH="$DOTFILES_DIR/oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -191,4 +193,4 @@ autoload -U compinit && compinit
 
 # zsh-syntax-highlighting
 # NOTE: Must be last line in file
-source $HOME/dotfiles/oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $DOTFILES_DIR/oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

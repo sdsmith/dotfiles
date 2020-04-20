@@ -1,8 +1,8 @@
 #!/bin/sh
 
-# NOTE: Must be run in the dotfiles directory
+# NOTE: Must be run in the dotfiles directory!!
 
-DOTFILES_DIR="$HOME/dotfiles"
+DOTFILES_DIR="$(pwd)"
 
 export ZSH="$DOTFILES_DIR/oh-my-zsh"
 export ZSH_CUSTOM="$ZSH/custom"

@@ -4,15 +4,30 @@ CMD_READLINK="readlink"
 if uname -a | grep -qE "Darwin" &> /dev/null ; then
     CMD_READLINK="greadlink"
 fi
+
+function create_home_symlink() {
+    local FILE=$1
+    local ABS_PATH=$($CMD_READLINK -f $FILE)
+    local DEST="$HOME/$FILE"
     
-ln -s $($CMD_READLINK -f .bashrc)    $HOME/.bashrc
+    if [ -f "$DEST" ] && [ ! -h "$DEST" ]; then
+        echo "~/$FILE already exists and in not a symlink"
+        return 1
+    fi
 
-ln -s $($CMD_READLINK -f .emacs)     $HOME/.emacs
+    
+    
+    ln -sf "$ABS_PATH" "$DEST"
+}
+
+create_home_symlink .bashrc
+
+create_home_symlink .emacs
 mkdir -p $HOME/.emacs.d
-ln -s $($CMD_READLINK -f .emacs.d/custom.el) $HOME/.emacs.d/custom.el
+create_home_symlink .emacs.d/custom.el
 
-ln -s $($CMD_READLINK -f .gdbinit)   $HOME/.gdbinit
-ln -s $($CMD_READLINK -f .tmux.conf) $HOME/.tmux.conf
-ln -s $($CMD_READLINK -f .vimrc)     $HOME/.vimrc
-ln -s $($CMD_READLINK -f .vnc)       $HOME/.vnc
-ln -s $($CMD_READLINK -f .zshrc)     $HOME/.zshrc
+create_home_symlink .gdbinit
+create_home_symlink .tmux.conf
+create_home_symlink .vimrc
+create_home_symlink .vnc
+create_home_symlink .zshrc
