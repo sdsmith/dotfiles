@@ -18,6 +18,8 @@ echo "Installing oh-my-zsh plugins..."
 cd $ZSH/custom/plugins
 
 # zsh-completions
+# ref: git clone https://github.com/zsh-users/zsh-completions
+git clone https://github.com/zsh-users/zsh-completions
 
 # zsh-syntax-highlighting
 # ref: https://github.com/zsh-users/zsh-syntax-highlighting
@@ -42,6 +44,8 @@ cd $POWERLINE_FONTS_DIR
 cd ..
 rm -rf $POWERLINE_FONTS_DIR
 
-echo "Installing theme..."
-# TODO: triggers env to reload in new theme, interrupting script
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/skylerlee/zeta-zsh-theme/master/scripts/install.sh)"
+if [ ! -f $ZSH_CUSTOM/themes/zeta.zsh-theme ]; then
+    echo "Installing theme..."
+    # TODO: triggers env to reload in new theme, interrupting script
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/skylerlee/zeta-zsh-theme/master/scripts/install.sh)"
+fi;

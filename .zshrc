@@ -70,6 +70,7 @@ ZSH_THEME="zeta"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
     git
+    zsh-completions
     zsh-syntax-highlighting
 )
 
@@ -101,5 +102,9 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# Must be last line in file
+# zsh-completions
+autoload -U compinit && compinit
+
+# zsh-syntax-highlighting
+# NOTE: Must be last line in file
 source $HOME/dotfiles/oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
