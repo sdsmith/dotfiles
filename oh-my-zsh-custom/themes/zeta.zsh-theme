@@ -85,11 +85,20 @@ ZSH_THEME_HG_PROMPT_SHA_BEFORE="$ZSH_THEME_GIT_PROMPT_SHA_BEFORE"
 ZSH_THEME_HG_PROMPT_SHA_AFTER="$ZSH_THEME_GIT_PROMPT_SHA_AFTER"
 ZSH_THEME_HG_PROMPT_DIRTY="$ZSH_THEME_GIT_PROMPT_DIRTY"
 ZSH_THEME_HG_PROMPT_CLEAN="$ZSH_THEME_GIT_PROMPT_CLEAN"
+ZSH_THEME_HG_PROMPT_UNTRACKED="$ZSH_THEME_GIT_PROMPT_UNTRACKED"
+ZSH_THEME_HG_PROMPT_ADDED="$ZSH_THEME_GIT_PROMPT_ADDED"
+ZSH_THEME_HG_PROMPT_MODIFIED="$ZSH_THEME_GIT_PROMPT_MODIFIED"
+ZSH_THEME_HG_PROMPT_REMOVED="$ZSH_THEME_GIT_PROMPT_DELETED"
+#ZSH_THEME_HG_PROMPT_MISSING
 
 function get_hg_prompt {
     local hg_prompt="$(hg_prompt_info)"
     if [[ ! -z "$hg_prompt" ]]; then
-        echo " <$hg_prompt>"
+        local hg_status="$(hg_prompt_status)"
+        if [[ -n $hg_status ]]; then
+            hg_status="[$hg_status%{$reset_color%}]"
+        fi
+        echo " <$hg_prompt$hg_status>"
     fi
 }
 

@@ -73,3 +73,26 @@ function hgic() {
 function hgoc() {
     hg outgoing "$@" | grep "changeset" | wc -l
 }
+
+# NOTE: Order modelled after the oh-my-zsh/lib.git.zsh git_prompt_status order.
+function hg_prompt_status() {
+    local INDEX STATUS
+    INDEX=$(command hg status 2>/dev/null)
+    STATUS=""
+    if $(echo "$INDEX" | grep '^\? ' -m1 &>/dev/null); then
+        STATUS="$ZSH_THEME_HG_PROMPT_UNTRACKED$STATUS"
+    fi
+    if $(echo "$INDEX" | grep '^A ' -m1 &>/dev/null); then
+        STATUS="$ZSH_THEME_HG_PROMPT_ADDED$STATUS"
+    fi
+    if $(echo "$INDEX" | grep '^M ' -m1 &>/dev/null); then
+        STATUS="$ZSH_THEME_HG_PROMPT_MODIFIED$STATUS"
+    fi
+    if $(echo "$INDEX" | grep '^R ' -m1 &>/dev/null); then
+        STATUS="$ZSH_THEME_HG_PROMPT_REMOVED$STATUS"
+    fi
+    if $(echo "$INDEX" | grep '^! ' -m1 &>/dev/null); then
+        STATUS="$ZSH_THEME_HG_PROMPT_MISSING$STATUS"
+    fi
+    echo $STATUS
+}
