@@ -31,3 +31,7 @@ create_home_symlink .tmux.conf
 create_home_symlink .vimrc
 create_home_symlink .vnc
 create_home_symlink .zshrc
+
+cd utils
+make
+cd ..

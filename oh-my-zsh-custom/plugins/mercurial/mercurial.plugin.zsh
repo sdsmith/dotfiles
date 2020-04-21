@@ -19,7 +19,7 @@ alias hglr='hg pull --rebase'
 alias hgo='hg outgoing'
 
 function in_hg() {
-  if [[ -d .hg ]] || $(hg summary > /dev/null 2>&1); then
+  if [ $($DOTSFILES_UTILS/in_hg . 2>/dev/null) ]; then
     echo 1
   fi
 }

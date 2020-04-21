@@ -1,10 +1,11 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
-DOTFILES_DIR="$HOME/.dotfiles"
+export DOTFILES="$HOME/.dotfiles"
+export DOTFILES_UTILS="$DOTFILES/utils"
 
 # Path to your oh-my-zsh installation.
-export ZSH="$DOTFILES_DIR/oh-my-zsh"
+export ZSH="$DOTFILES/oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -201,7 +202,7 @@ export VISUAL="emacsclient -c -a emacs" # opens in GUI mode
 autoload -U compinit && compinit
 
 # zsh-syntax-highlighting
-source $DOTFILES_DIR/oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $DOTFILES/oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # Work config
 if [ -f "$HOME/.workdotfiles/.zshrc" ]; then

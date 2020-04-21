@@ -44,6 +44,11 @@ cd $POWERLINE_FONTS_DIR
 cd ..
 rm -rf $POWERLINE_FONTS_DIR
 
+echo "Creating utils..."
+cd utils
+make
+cd ..
+
 if [ ! -f $ZSH/themes/zeta.zsh-theme ]; then
     echo "Installing theme..."
     # TODO: The Zeta theme installer modifies the symlink in home. Do a pull
