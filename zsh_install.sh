@@ -7,6 +7,9 @@ DOTFILES_DIR="$(pwd)"
 export ZSH="$DOTFILES_DIR/oh-my-zsh"
 export ZSH_CUSTOM="$ZSH/custom"
 
+echo "Setting up dotfiles in $HOME..."
+./install.sh
+
 echo "Installing oh-my-zsh..."
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
 
@@ -53,7 +56,7 @@ if [ ! -f $ZSH/themes/zeta.zsh-theme ]; then
     echo "Installing theme..."
     # TODO: The Zeta theme installer modifies the symlink in home. Do a pull
     # request to add a --keep-zshrc arg. https://github.com/skylerlee/zeta-zsh-theme
-    curl -fsSL https://raw.githubusercontent.com/skylerlee/zeta-zsh-theme/master/zeta.zsh-theme > "$ZSH/themes/zeta.zsh-theme"    
+    curl -fsSL https://raw.githubusercontent.com/skylerlee/zeta-zsh-theme/master/zeta.zsh-theme > "$ZSH/themes/zeta.zsh-theme"
 fi;
 
 echo "Installing custom oh-my-zsh configs..."
