@@ -11,6 +11,7 @@
 #   error "Not supported on this compiler"
 #endif
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,6 +25,7 @@
 #   ifdef _PC_PATH_MAX
 #      define PATH_MAX _PC_PATH_MAX
 #   else
+//     Likely needs a runtime check with pathconf. Skip to be faster.
 #      define PATH_MAX 4096
 #   endif
 #endif
@@ -76,7 +78,12 @@ int main(int argc, char *argv[]) {
 
         // Remove the last directory entry
         *null_pos = '\0';
-        char *last_slash = strrchr(path, '/');
+        assert(null_pos != path && null_pos - 1 != path); // path should have
+                                                          // len > 0
+
+        char *last_slash = null_pos;
+        while (likely(last_slash != path && *last_slash != '/')) { --last_slash; }
+
         if (unlikely(!last_slash)) {
             // At root dir, skip checking it
             break;
