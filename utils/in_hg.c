@@ -33,16 +33,14 @@
 #define likely(x)   __builtin_expect(!!(x), 1)
 #define unlikely(x) __builtin_expect(!!(x), 0)
 
-#define STR(arg) #arg
-
-#ifndef EXE
-#   define EXE in_hg
+#define STR(s) #s
+#ifndef EXE_NAME
+#   define EXE_NAME STR(in_hg)
 #endif
-#define EXE_NAME STR(EXE)
 
 int main(int argc, char *argv[]) {
     if (unlikely(argc != 2)) {
-        printf("Usage: %s <path>\n", EXE_NAME);
+        printf("Usage: " EXE_NAME " <path>\n");
         return 1;
     }
 
