@@ -3,6 +3,14 @@
  * repository.
  */
 
+#if !defined(__linux__) && !defined(__APPLE__)
+#   error "Not supported on this OS"
+#endif
+
+#if !defined(__GNUC__) || !defined(__clang__)
+#   error "Not supported on this compiler"
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,20 +19,34 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define likely(x)      __builtin_expect(!!(x), 1)
-#define unlikely(x)    __builtin_expect(!!(x), 0)
+#include <linux/limits.h>
+#ifndef PATH_MAX
+#   ifdef _PC_PATH_MAX
+#      define PATH_MAX _PC_PATH_MAX
+#   else
+#      define PATH_MAX 4096
+#   endif
+#endif
 
-#define MAX_PATH_LEN 1024
+#define likely(x)   __builtin_expect(!!(x), 1)
+#define unlikely(x) __builtin_expect(!!(x), 0)
+
+#define STR(arg) #arg
+
+#ifndef EXE
+#   define EXE in_hg
+#endif
+#define EXE_NAME STR(EXE)
 
 int main(int argc, char *argv[]) {
     if (unlikely(argc != 2)) {
-        printf("Usage: in_hg <path>\n");
+        printf("Usage: %s <path>\n", EXE_NAME);
         return 1;
     }
 
     const char *loc = argv[1];
     const char hg_dir_postfix[] = "/.hg";
-    char path[MAX_PATH_LEN];
+    char path[PATH_MAX];
     if (unlikely(chdir(loc) < 0)) {
         perror("chdir");
         exit(1);
@@ -48,7 +70,7 @@ int main(int argc, char *argv[]) {
                 perror("stat");
                 exit(1);
             }
-        } else if (unlikely(S_ISDIR(s.st_mode))) {
+        } else if (likely(S_ISDIR(s.st_mode))) {
             exit(0); // Found it!
         }
 
