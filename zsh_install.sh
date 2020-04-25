@@ -49,7 +49,7 @@ rm -rf $POWERLINE_FONTS_DIR
 
 echo "Creating utils..."
 cd utils
-make
+make BUILD=release
 cd ..
 
 if [ ! -f $ZSH/themes/zeta.zsh-theme ]; then
