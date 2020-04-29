@@ -86,6 +86,37 @@
 ;; ref: https://emacs.stackexchange.com/questions/28736/emacs-pointcursor-movement-lag
 (setq auto-window-vscroll nil)
 
+;; Vertical indentation guidelines
+(require 'highlight-indent-guides)
+(setq highlight-indent-guides-method 'character)
+(setq highlight-indent-guides-character ?\|)
+(setq highlight-indent-guides-auto-enabled nil)
+(set-face-background 'highlight-indent-guides-odd-face "#474747")
+(set-face-background 'highlight-indent-guides-even-face "#161616")
+(set-face-foreground 'highlight-indent-guides-character-face "gray30")
+(add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+
+(require 'clang-format)
+(defun clang-format-save-hook-for-this-buffer ()
+  "Create a buffer local save hook."
+  (add-hook 'before-save-hook
+    (lambda ()
+      (progn
+        (when (locate-dominating-file "." ".clang-format")
+          (clang-format-buffer))
+        ;; Continue to save.
+        nil))
+    nil
+    ;; Buffer local hook.
+    t))
+(add-hook 'c-mode-hook (lambda () (clang-format-save-hook-for-this-buffer)))
+(add-hook 'c++-mode-hook (lambda () (clang-format-save-hook-for-this-buffer)))
+(add-hook 'glsl-mode-hook (lambda () (clang-format-save-hook-for-this-buffer)))
+
+;; Completion
+(require 'company)
+(add-hook 'prog-mode-hook 'company-mode)
+
 ;; Set M-x re-builder to use the elisp regexp syntax
 ;; ref: https://www.masteringemacs.org/article/re-builder-interactive-regexp-builder
 (require 're-builder)
