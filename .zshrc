@@ -1,6 +1,11 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
+# To enable shell profiling, load the zprof module.
+# Check results by running `zprof` when the module is enabled.
+# Cannot stop shell profiling while module is laoded.
+#zmodload zsh/zprof
+
 export DOTFILES="$HOME/.dotfiles"
 export DOTFILES_UTILS="$DOTFILES/utils"
 
