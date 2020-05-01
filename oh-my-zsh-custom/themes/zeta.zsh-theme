@@ -91,6 +91,7 @@ ZSH_THEME_HG_PROMPT_MODIFIED="$ZSH_THEME_GIT_PROMPT_MODIFIED"
 ZSH_THEME_HG_PROMPT_REMOVED="$ZSH_THEME_GIT_PROMPT_DELETED"
 #ZSH_THEME_HG_PROMPT_MISSING
 
+# TODO: fix this
 function get_hg_prompt {
     local hg_prompt="$(hg_prompt_info)"
     if [[ ! -z "$hg_prompt" ]]; then
@@ -128,7 +129,7 @@ function print_prompt_head {
 %{$blue%}@\
 %{$cyan_bold%}$(get_box_name): \
 %{$yellow_bold%}$(get_current_dir)%{$reset_color%}\
-$(get_git_prompt)$(get_hg_prompt) "
+$(get_git_prompt) "
     local right_prompt="%{$blue%}($(get_time_stamp))%{$reset_color%} "
     print -rP "$left_prompt$(get_space $left_prompt $right_prompt)$right_prompt"
 }
