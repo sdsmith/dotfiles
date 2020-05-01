@@ -109,9 +109,7 @@
     nil
     ;; Buffer local hook.
     t))
-(add-hook 'c-mode-hook (lambda () (clang-format-save-hook-for-this-buffer)))
-(add-hook 'c++-mode-hook (lambda () (clang-format-save-hook-for-this-buffer)))
-(add-hook 'glsl-mode-hook (lambda () (clang-format-save-hook-for-this-buffer)))
+(add-hook 'prog-mode-hook (lambda () (clang-format-save-hook-for-this-buffer)))
 
 ;; Completion
 (require 'company)
