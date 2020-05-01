@@ -111,9 +111,24 @@
     t))
 (add-hook 'prog-mode-hook (lambda () (clang-format-save-hook-for-this-buffer)))
 
-;; Completion
+;; Company - code completion
 (require 'company)
 (add-hook 'prog-mode-hook 'company-mode)
+
+;; Helm - general completion (commands, lists, etc.)
+;;
+;; Completion is based on the completion window, not the minibuffer (like emacs
+;; completion). Helm interactivity happens in the completion window, not the
+;; minibuffer (like emacs completion). Typing new characters filters conadidates
+;; in completion window, not minibuffer.
+;;
+;; Can navigate to desired value by typing or using `C-n`. Hitting `RET` selects
+;; currently highlighted item in compeltion window.
+(require 'helm-config)
+(global-set-key (kbd "M-x") #'helm-M-x)
+(global-set-key (kbd "C-x r b") #'helm-filtered-bookmarks)
+(global-set-key (kbd "C-x C-f") #'helm-find-files)
+(helm-mode 1)
 
 ;; Set M-x re-builder to use the elisp regexp syntax
 ;; ref: https://www.masteringemacs.org/article/re-builder-interactive-regexp-builder
