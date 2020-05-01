@@ -149,18 +149,18 @@
 ;; simpler column numbers
 (column-number-mode t)
 
-;; switch multiple buffer with typeahead using C-x b
-(require 'ido)
-(iswitchb-mode 1)
-(defun iswitchb-local-keys ()
-  (mapc (lambda (k)
-          (let* ((key (car k)) (fun (cdr k)))
-            (define-key iswitchb-mode-map (edmacro-parse-keys key) fun)))
-        '(("<right>" . iswitchb-next-match)
-          ("<left>"  . iswtichb-prev-match)
-          ("<up>"    . ignore)
-          ("<down>"  . ignore))))
-(add-hook 'iswitch-define-mode-map-hook 'iswitch-local-keys)
+;; ;; switch multiple buffer with typeahead using C-x b
+;; (require 'ido)
+;; (iswitchb-mode 1)
+;; (defun iswitchb-local-keys ()
+;;   (mapc (lambda (k)
+;;           (let* ((key (car k)) (fun (cdr k)))
+;;             (define-key iswitchb-mode-map (edmacro-parse-keys key) fun)))
+;;         '(("<right>" . iswitchb-next-match)
+;;           ("<left>"  . iswtichb-prev-match)
+;;           ("<up>"    . ignore)
+;;           ("<down>"  . ignore))))
+;; (add-hook 'iswitch-define-mode-map-hook 'iswitch-local-keys)
 
 ;; scoll one line at a time instead of jumping on cursor up/down
 ; (require 'smooth-scrolling)
