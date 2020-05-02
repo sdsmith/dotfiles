@@ -675,13 +675,6 @@ This returns a list of strings"
           ))
   )
 
-(defun add-highlight-indentation ()
-  (progn
-    (require 'highlight-indentation)
-    (set-face-background 'highlight-indentation-face "#323232");;"#383838");;"#424242")
-    ;; (set-face-background 'highlight-indentation-current-column-face "#")
-    ))
-
 (defun add-haskell-mode ()
   "Add haskell major mode."
   (progn
@@ -863,7 +856,6 @@ This returns a list of strings"
     (add-org-mode)
     ;; (add-git-gutter)
     ;; (remove-irony-from-php-mode)
-    (add-highlight-indentation)
     ;;(add-irony)
     ))
 
