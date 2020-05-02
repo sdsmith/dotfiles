@@ -653,7 +653,6 @@ This returns a list of strings"
     (add-hook 'python-mode-hook 'jedi:setup)
     (setq jedi:complete-on-dot t))) ; optional
 
-
 (defvar desktop-globals-to-save)
 (defvar desktop-dirname)
 (defun add-desktop ()
@@ -685,77 +684,6 @@ This returns a list of strings"
           (desktop-save desktop-dirname)))
     (add-hook 'auto-save-hook 'desktop-auto-save)))
 
-
-(defun add-cedet ()
-  ;; NOTE(sdsmith): http://alexott.net/en/writings/emacs-devenv/EmacsCedet.html#sec1
-
-  (load-file "~/.emacs.d/cedet-bzr/trunk/cedet-devel-load.el")
-
-  ;;; Enable CEDET features
-  ;; Enables global support for Semanticdb;
-  (add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
-  ;; Enables automatic bookmarking of tags that you edited, so you can return
-  ;; to them later with the semantic-mrub-switch-tags command;
-  (add-to-list 'semantic-default-submodes 'global-semantic-mru-bookmark-mode)
-  ;; Activates CEDET's context menu that is bound to right mouse button;
-  (add-to-list 'semantic-default-submodes 'global-cedet-m3-minor-mode)
-  ;; Activates highlighting of first line for current tag (function, class,
-  ;; etc.);
-  (add-to-list 'semantic-default-submodes 'global-semantic-highlight-func-mode)
-  ;; Activates mode when name of current tag will be shown in top line of buffer
-  (add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
-  ;; Activates use of separate styles for tags decoration (depending on tag's
-  ;; class). These styles are defined in the semantic-decoration-styles list;
-  (add-to-list 'semantic-default-submodes 'global-semantic-decoration-mode)
-  ;; Activates highlighting of local names that are the same as name of tag
-  ;; under cursor;
-  (add-to-list 'semantic-default-submodes
-               'global-semantic-idle-local-symbol-highlight-mode)
-  ;; Activates automatic parsing of source code in the idle time;
-  (add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode)
-  ;; Activates displaying of possible name completions in the idle time.
-  ;; Requires that global-semantic-idle-scheduler-mode was enabled;
-  (add-to-list 'semantic-default-submodes
-               'global-semantic-idle-completions-mode)
-  ;; Activates displaying of information about current tag in the idle time.
-  ;; Requires that global-semantic-idle-scheduler-mode was enabled.
-  (add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode)
-  ;; NOTE(sdsmith): Following sub-modes are usually useful when you develop
-  ;; and/or debug CEDET:
-  ;; Shows which elements weren't processed by current parser's rules;
-  (add-to-list 'semantic-default-submodes
-               'global-semantic-show-unmatched-syntax-mode)
-  ;; Shows current parser state in the modeline;
-  (add-to-list 'semantic-default-submodes
-               'global-semantic-show-parser-state-mode)
-  ;; Shows changes in the text that weren't processed by incremental parser yet.
-  (add-to-list 'semantic-default-submodes 'global-semantic-highlight-edits-mode)
-
-  ;;; System header includes
-  ;; NOTE(sdsmith): (semantic-add-system-include "<file path>" '<mode>) to
-  ;; include specific paths
-  (require 'semantic/bovine/gcc) ; GCC headers
-
-
-
-  ;; ;; Setup for java
-  ;; (require 'semantic/db-javap)
-  ;; (ede-java-root-project "CSC488_Compiler"
-  ;;                        :file "~/school/csc488/csc488-team08/RUNCOMPILER.sh"
-  ;;                        :srcroot '("src")
-  ;;                        :localclasspath '("lib/java-cup-11a-runtime.jar"
-  ;;                                          "lib/java-cup-v11a.jar"
-  ;;                                          "lib/JFlex.jar")
-  ;;                        :classpath '("/home/smiths/school/csc488/csc488-team08/lib/java-cup-11a-runtime.jar"
-  ;;                                     "/home/smiths/school/csc488/csc488-team08/lib/java-cup-v11a.jar"
-  ;;                                     "/home/smiths/school/csc488/csc488-team08/lib/JFlex.jar"))
-
-  ;; Activate CEDET
-  (semantic-mode 1) ; Activate this last
-  )
-
-
-
 (defun configure-additional-packages ()
   "Load configurations for custom packages."
   (progn
@@ -763,7 +691,6 @@ This returns a list of strings"
     ;; (add-jedi-python-auto-complete)
     ;;(add-cpp-auto-complete) ; TODO(sdsmith): undo later for cpp completion. Competes with php-mode
     ;;(add-desktop)
-    ;;(add-cedet)
     (add-org-mode)
     ;; (add-git-gutter)
     ;; (remove-irony-from-php-mode)
