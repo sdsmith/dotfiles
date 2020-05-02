@@ -301,35 +301,6 @@ This returns a list of strings"
                  (split-string-every (substring string chars)
                                      chars)))))
 
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;; TypeScript - Tide mode
-
-;; (defun setup-tide-mode ()
-;;   (interactive)
-;;   (tide-setup)
-;;   (flycheck-mode +1)
-;;   (setq flycheck-check-syntax-automatically '(save mode-enabled))
-;;   (eldoc-mode +1)
-;;   ;; company is an optional dependency. You have to
-;;   ;; install it separately via package-install
-;;   ;; `M-x package-install [ret] company`
-;;   (company-mode +1))
-
-;; ;; aligns annotation to the right hand side
-;; (setq company-tooltip-align-annotations t)
-
-;; ;; formats the buffer before saving
-;; (add-hook 'before-save-hook 'tide-format-before-save)
-
-;; (add-hook 'typescript-mode-hook #'setup-tide-mode)
-
-;; ;; format options
-;; (setq tide-format-options '(:insertSpaceAfterFunctionKeywordForAnonymousFunctions t :placeOpenBraceOnNewLineForFunctions nil))
-;; (add-hook 'js2-mode-hook #'setup-tide-mode)
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (defvar git-gutter+-mode-map)
 (defun add-git-gutter-plus ()
   ;; https://github.com/nonsequitur/git-gutter-plus
@@ -362,13 +333,6 @@ This returns a list of strings"
 (defun add-git-gutter ()
      (require 'git-gutter)
      (global-git-gutter-mode t))
-
-
-;; ;; https://github.com/jordonbiondo/column-enforce-mode/
-;; (add-to-list 'load-path  "~/.emacs.d/manual-packages/column-enforce-mode/")
-;; (require 'column-enforce-mode)
-;; ;;(add-hook 'prog-mode-hook 'column-enforce-mode)
-;; (setq column-enforce-column 80)
 
 ;;; Fix annoying things
 ;; Makes *scratch* empty.
