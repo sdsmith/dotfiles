@@ -654,56 +654,6 @@ This returns a list of strings"
     (setq jedi:complete-on-dot t))) ; optional
 
 
-;; (defun add-cpp-auto-complete ()
-;;   "Configure cpp auto completion using 'irony mode' and 'company mode'"
-;;   (when (and (package-installed-p 'company)
-;;              (package-installed-p 'company-irony))
-;;     (progn
-;;       ;; company package - http://company-mode.github.io/
-;;       ;; Run company in all buffers
-;;       (add-hook 'after-init-hook 'global-company-mode)
-
-;;       ;; irony-mode - https://github.com/Sarcasm/irony-mode
-;;       ;; C++ completion package setup
-;;       (add-hook 'c++-mode-hook 'irony-mode)
-;;       (add-hook 'c-mode-hook 'irony-mode)
-;;       (add-hook 'objc-mode-hook 'irony-mode)
-;;       ;; replace the `completion-at-point' and `complete-symbol' bindings in
-;;       ;; irony-mode's buffers by irony-mode's asynchronous function
-;;       (defun my-irony-mode-hook ()
-;;         (define-key irony-mode-map [remap completion-at-point]
-;;           'irony-completion-at-point-async)
-;;         (define-key irony-mode-map [remap complete-symbol]
-;;           'irony-completion-at-point-async))
-;;       (add-hook 'irony-mode-hook 'my-irony-mode-hook)
-;;       ;; Only needed on Windows
-;;       (when (eq system-type 'windows-nt)
-;;         (setq w32-pipe-read-delay 0))
-
-;;       ;; company-irony - https://github.com/Sarcasm/company-irony/
-;;       ;; Add company-irony to the company backends
-;;       (eval-after-load 'company
-;;         '(add-to-list 'company-backends 'company-irony)))))
-
-
-;; (defun remove-irony-from-php-mode ()
-;;   "Because php-mode is based on c-mode, irony will be active. We want to
-;; de-activate it in any buffer php-mode is active in."
-
-;;   (defun remove-irony-backend ()
-;;     (delete 'company-irony 'company-backends))
-
-;;   ;; NOTE(sdsmith): this depends on being added after hook that adds irony
-;;   ;; Should be fine because c-mode-hook should be called before php-mode-hook
-;;   ;; since php-mode depends on c-mode.
-;;   (add-hook 'php-mode-hook 'remove-irony-backend))
-
-(defun add-irony ()
-  (add-hook 'c++-mode-hook 'irony-mode)
-  (add-hook 'c-mode-hook 'irony-mode)
-  (add-hook 'objc-mode-hook 'irony-mode)
-  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
-
 (defvar desktop-globals-to-save)
 (defvar desktop-dirname)
 (defun add-desktop ()
