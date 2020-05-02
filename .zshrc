@@ -6,6 +6,8 @@
 # Cannot stop shell profiling while module is laoded.
 #zmodload zsh/zprof
 
+export TERM=xterm-256color
+
 export DOTFILES="$HOME/.dotfiles"
 export DOTFILES_UTILS="$DOTFILES/utils"
 
