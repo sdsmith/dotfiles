@@ -45,9 +45,9 @@
                       (not (gnutls-available-p))))
          (url (concat (if no-ssl "http" "https") "://melpa.org/packages/")))
     (add-to-list 'package-archives (cons "melpa" url) t))
-  (when (< emacs-major-version 24)
     ;; For important compatibility libraries like cl-lib
-    (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
+  (add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
+  (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
   (package-initialize)
   (unless package-archive-contents
     (package-refresh-contents))
