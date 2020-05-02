@@ -19,13 +19,6 @@
         ("http" . "fwdproxy:8080")
              ("https" . "fwdproxy:8080")))
 
-;; FB: Skip checking the package signatures.
-;;
-;; NOTE: setting the proxy settings causes package signature checks to
-;; fail. Skip those checks. TODO: for now.
-(setq package-check-signature nil)
-
-
 ;; Stop the beeping!!!
 (setq visible-bell t)
 
@@ -39,6 +32,12 @@
 ;; NOTE(sdsmith): ALWAYS DO THIS BEFORE ANY PACKAGE CUSTOMIZATION
 (defun setup-packages ()
   "Set the package archives to search for packages."
+  ;; FB: Skip checking the package signatures.
+  ;;
+  ;; NOTE: setting the proxy settings causes package signature checks to
+  ;; fail. Skip those checks. TODO: for now.
+  (setq package-check-signature nil)
+
   ;; Add package sources
   (require 'package)
   (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
@@ -277,11 +276,9 @@
 (add-hook 'js-mode-hook 'nvidia-c-setup)
 (add-hook 'c-mode-hook 'nvidia-c-setup)
 (add-hook 'c++-mode-hook 'nvidia-c-setup)
-(defun del-t-on-save ()
-  (add-hook 'before-save-hook #'delete-trailing-whitespace nil t))
-(add-hook 'js-mode-hook #'del-t-on-save)
-(add-hook 'c-mode-hook #'del-t-on-save)
-(add-hook 'c++-mode-hook #'del-t-on-save)
+
+;; Delete all trailing whitespace
+(add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
 
 (require 'highlight-doxygen)
 (add-hook 'c++-mode-hook 'highlight-doxygen-mode)
