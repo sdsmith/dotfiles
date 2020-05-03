@@ -53,6 +53,34 @@
   (package-install-selected-packages))
 (setup-packages)
 
+;;; Globals
+;; Set of regularly used modes
+(setq regular-modes
+      '(c++-mode
+        c-mode
+        csharp-mode
+        emacs-lisp-mode
+        python-mode
+        sql-mode
+        java-mode
+        php-mode
+        js-mode
+        488-lang-mode
+        asm-mode))
+
+(setq regular-mode-hooks
+      '(c++-mode-hook
+        c-mode-hook
+        csharp-mode-hook
+        emacs-lisp-mode-hook
+        python-mode-hook
+        sql-mode-hook
+        java-mode-hook
+        php-mode-hook
+        js-mode-hook
+        488-lang-mode-hook
+        asm-mode-hook))
+
 ;; Move backup files (*.~) to seperate directory
 (setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
   backup-by-copying t    ; Don't delink hardlinks
@@ -147,12 +175,55 @@
   (save-some-buffers)
   (kill-emacs))
 
-;; line numbers
-(require 'linum)
-(global-linum-mode 1)
+(defun setup-emacs-behaviour ()
+  ;; No more typing the whole yes or no. Just y or n will do.
+  (fset 'yes-or-no-p 'y-or-n-p)
 
-;; simpler column numbers
-(column-number-mode t)
+  ;; Set fill column
+  (dolist (hook regular-mode-hooks)
+    (add-hook hook (lambda () (set-fill-column 80))))
+  (add-hook 'fundamental-mode-hook (lambda () (set-fill-column 80)))
+
+  ;; Delete all trailing whitespace
+  (add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
+  )
+
+(defun setup-frame-style ()
+  ;; line numbers
+  (require 'linum)
+  (global-linum-mode 1)
+
+  ;; simpler column numbers
+  (column-number-mode t)
+
+  ;; Display the current function in the mode line
+  (dolist (hook regular-mode-hooks)
+    (add-hook hook (lambda () (which-function-mode))))
+  ;; TODO: Set the font face of face `which-func`
+  )
+
+(defun setup-default-buffers ()
+  ;; Makes *scratch* empty.
+  (setq initial-scratch-message "")
+
+  ;; Removes *Completions* from buffer after you've opened a file.
+  (add-hook 'minibuffer-exit-hook
+            '(lambda ()
+               (let ((buffer "*Completions*"))
+                 (and (get-buffer buffer)
+                      (kill-buffer buffer)))))
+
+  ;; ;; Removes *messages* from the buffer.
+  ;; (setq-default message-log-max nil)
+  ;; (kill-buffer "*Messages*")
+  ;; tree representation of changes to to walk the undo/redo graph. "C-x u" to open tree for current file.
+
+  ;; Don't show *Buffer list* when opening multiple files at the same time.
+  (setq inhibit-startup-buffer-menu t)
+
+  ;; Show only one active window when opening multiple files at the same time.
+  (add-hook 'window-setup-hook 'delete-other-windows)
+  )
 
 ;; go to last edit location
 (require 'goto-last-change)
@@ -254,44 +325,6 @@
   (add-perforce)
   (add-git))
 
-;;; Globals
-;; Set of regularly used modes
-(setq regular-modes
-      '(c++-mode
-        c-mode
-        csharp-mode
-        emacs-lisp-mode
-        python-mode
-        sql-mode
-        java-mode
-        php-mode
-        js-mode
-        488-lang-mode
-        asm-mode))
-
-(setq regular-mode-hooks
-      '(c++-mode-hook
-        c-mode-hook
-        csharp-mode-hook
-        emacs-lisp-mode-hook
-        python-mode-hook
-        sql-mode-hook
-        java-mode-hook
-        php-mode-hook
-        js-mode-hook
-        488-lang-mode-hook
-        asm-mode-hook))
-
-;; Set fill column
-(dolist (hook regular-mode-hooks)
-  (add-hook hook (lambda () (set-fill-column 80))))
-(add-hook 'fundamental-mode-hook (lambda () (set-fill-column 80)))
-
-;; Display the current function in the mode line
-(dolist (hook regular-mode-hooks)
-  (add-hook hook (lambda () (which-function-mode))))
-;; TODO: Set the font face of face `which-func`
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; NVIDIA Stuff
@@ -314,9 +347,6 @@
 (add-hook 'c-mode-hook 'nvidia-c-setup)
 (add-hook 'c++-mode-hook 'nvidia-c-setup)
 
-;; Delete all trailing whitespace
-(add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
-
 (require 'highlight-doxygen)
 (add-hook 'c++-mode-hook 'highlight-doxygen-mode)
 (add-hook 'c-mode-hook 'highlight-doxygen-mode)
@@ -338,35 +368,11 @@ This returns a list of strings"
                  (split-string-every (substring string chars)
                                      chars)))))
 
-;;; Fix annoying things
-;; Makes *scratch* empty.
-(setq initial-scratch-message "")
-
 ;; Removes *scratch* from buffer after the mode has been set.
 (defun remove-scratch-buffer ()
   (if (get-buffer "*scratch*")
       (kill-buffer "*scratch*")))
 ;; (add-hook 'after-change-major-mode-hook 'remove-scratch-buffer)
-
-;; ;; Removes *messages* from the buffer.
-;; (setq-default message-log-max nil)
-;; (kill-buffer "*Messages*")
-;; tree representation of changes to to walk the undo/redo graph. "C-x u" to open tree for current file.
-;; Removes *Completions* from buffer after you've opened a file.
-(add-hook 'minibuffer-exit-hook
-      '(lambda ()
-         (let ((buffer "*Completions*"))
-           (and (get-buffer buffer)
-                (kill-buffer buffer)))))
-
-;; Don't show *Buffer list* when opening multiple files at the same time.
-(setq inhibit-startup-buffer-menu t)
-
-;; Show only one active window when opening multiple files at the same time.
-(add-hook 'window-setup-hook 'delete-other-windows)
-
-;; No more typing the whole yes or no. Just y or n will do.
-(fset 'yes-or-no-p 'y-or-n-p)
 
 (defun configure-emacs ()
   "Configure various emacs settings."
@@ -824,7 +830,10 @@ This returns a list of strings"
 (defun main ()
   "Main .emacs function"
   (progn
-;    (set-package-archives)
+    ;; (set-package-archives)
+    (setup-emacs-behaviour)
+    (setup-frame-style)
+    (setup-default-buffers)
     (set-abbrev-table)
     (configure-emacs)
     (configure-syntax)
