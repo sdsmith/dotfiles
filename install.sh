@@ -24,7 +24,9 @@ create_home_symlink .bashrc
 
 create_home_symlink .emacs
 mkdir -p $HOME/.emacs.d
-create_home_symlink .emacs.d/custom.el
+for emacs_file in $(find ./.emacs.d -type f); do
+    create_home_symlink "$emacs_file"
+done
 
 create_home_symlink .gdbinit
 create_home_symlink .tmux.conf
