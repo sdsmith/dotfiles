@@ -29,30 +29,21 @@
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
 
+(defconst user-init-dir
+  (cond ((boundp 'user-emacs-directory)
+         user-emacs-directory)
+        ((boundp 'user-init-directory)
+         user-init-directory)
+        (t "~/.emacs.d/")))
+
+(defun load-user-file (file)
+  (interactive "f")
+  "Load a file in current user's configuration directory"
+  (load-file (expand-file-name file user-init-dir)))
+
 ;; NOTE(sdsmith): ALWAYS DO THIS BEFORE ANY PACKAGE CUSTOMIZATION
-(defun setup-packages ()
-  "Set the package archives to search for packages."
-  ;; FB: Skip checking the package signatures.
-  ;;
-  ;; NOTE: setting the proxy settings causes package signature checks to
-  ;; fail. Skip those checks. TODO: for now.
-  (setq package-check-signature nil)
-
-  ;; Add package sources
-  (require 'package)
-  (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
-                      (not (gnutls-available-p))))
-         (url (concat (if no-ssl "http" "https") "://melpa.org/packages/")))
-    (add-to-list 'package-archives (cons "melpa" url) t))
-    ;; For important compatibility libraries like cl-lib
-  (add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
-  (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
-  (package-initialize)
-  (unless package-archive-contents
-    (package-refresh-contents))
-  (package-install-selected-packages))
-(setup-packages)
-
+(load-user-file "package.el")
+                
 ;; Set of regularly used modes
 (setq regular-modes
       '(c++-mode
@@ -79,18 +70,6 @@
         js-mode-hook
         488-lang-mode-hook
         asm-mode-hook))
-
-(defconst user-init-dir
-  (cond ((boundp 'user-emacs-directory)
-         user-emacs-directory)
-        ((boundp 'user-init-directory)
-         user-init-directory)
-        (t "~/.emacs.d/")))
-
-(defun load-user-file (file)
-  (interactive "f")
-  "Load a file in current user's configuration directory"
-  (load-file (expand-file-name file user-init-dir)))
 
 (load-user-file "source-control.el")
 
