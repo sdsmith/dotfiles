@@ -114,24 +114,26 @@
     t))
 (add-hook 'prog-mode-hook (lambda () (clang-format-save-hook-for-this-buffer)))
 
-;; Company - code completion
-(require 'company)
-(add-hook 'prog-mode-hook 'company-mode)
+(defun setup-completion-engine ()
+  ;; Company - code completion
+  (require 'company)
+  (add-hook 'prog-mode-hook 'company-mode))
 
-;; Helm - general completion (commands, lists, etc.)
-;;
-;; Completion is based on the completion window, not the minibuffer (like emacs
-;; completion). Helm interactivity happens in the completion window, not the
-;; minibuffer (like emacs completion). Typing new characters filters conadidates
-;; in completion window, not minibuffer.
-;;
-;; Can navigate to desired value by typing or using `C-n`. Hitting `RET` selects
-;; currently highlighted item in compeltion window.
-(require 'helm-config)
-(global-set-key (kbd "M-x") #'helm-M-x)
-(global-set-key (kbd "C-x r b") #'helm-filtered-bookmarks)
-(global-set-key (kbd "C-x C-f") #'helm-find-files)
-(helm-mode 1)
+(defun setup-helm ()
+  ;; Helm - general completion (commands, lists, etc.)
+  ;;
+  ;; Completion is based on the completion window, not the minibuffer (like emacs
+  ;; completion). Helm interactivity happens in the completion window, not the
+  ;; minibuffer (like emacs completion). Typing new characters filters conadidates
+  ;; in completion window, not minibuffer.
+  ;;
+  ;; Can navigate to desired value by typing or using `C-n`. Hitting `RET` selects
+  ;; currently highlighted item in compeltion window.
+  (require 'helm-config)
+  (global-set-key (kbd "M-x") #'helm-M-x)
+  (global-set-key (kbd "C-x r b") #'helm-filtered-bookmarks)
+  (global-set-key (kbd "C-x C-f") #'helm-find-files)
+  (helm-mode 1))
 
 ;; Set M-x re-builder to use the elisp regexp syntax
 ;; ref: https://www.masteringemacs.org/article/re-builder-interactive-regexp-builder
@@ -188,14 +190,14 @@
 ;; (turn-on-xclip)
 
 (defvar git-gutter+-mode-map)
-(defun add-git ()  
+(defun add-git ()
   ;; ref: https://github.com/nonsequitur/git-gutter-plus
   (require 'git-gutter+)
-  
+
   ;; NOTE(stewarts): On tty mode with line numbers enabled, the git status
   ;; indicators will shift the line numbers right, truncating them. It is what
   ;; it is.
-  
+
   (global-git-gutter+-mode)
   (global-set-key (kbd "C-x g") 'git-gutter+-mode) ; toggle in current buffer
   (global-set-key (kbd "C-x G") 'global-git-gutter+-mode) ; Turn on/off globally
@@ -251,7 +253,7 @@
 (defun setup-source-control-integrations ()
   (add-perforce)
   (add-git))
-  
+
 ;;; Globals
 ;; Set of regularly used modes
 (setq regular-modes
@@ -827,6 +829,8 @@ This returns a list of strings"
     (configure-emacs)
     (configure-syntax)
     (configure-additional-packages)
+    (setup-completion-engine)
+    (setup-helm)
     (setup-source-control-integrations)
     ))
 (main)
