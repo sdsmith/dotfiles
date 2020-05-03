@@ -65,91 +65,22 @@
 ;; NOTE(sdsmith): ALWAYS DO THIS BEFORE ANY PACKAGE CUSTOMIZATION
 (load-user-file "package.el")
 
+(load-user-file "visuals.el")
 (load-user-file "emacs-behaviour.el")
 (load-user-file "clipboard-integration.el")
 (load-user-file "default-buffers.el")
 (load-user-file "frame.el")
 (load-user-file "navigation.el")
 (load-user-file "utils.el")
+(load-user-file "abbrevs.el")
 
 (load-user-file "programming-visual.el")
 (load-user-file "programming-systems.el")
-(load-user-file "org-mode.el")
 (load-user-file "source-control.el")
+(load-user-file "org-mode.el")
+
 ;;(load-user-file "instance-persistence.el")
-
 ;;(load-user-file "nvidia-mods.el")
-
-(defun configure-emacs ()
-  "Configure various emacs settings."
-  (progn
-    ;; Stop Emacs from losing undo information by setting very high limits
-    ;; for undo buffers
-    (setq undo-limit 20000000)
-    (setq undo-strong-limit 40000000)
-
-    ;; Set M-x shell settings
-    (add-hook 'shell-mode-hook 'my-shell-mode-hook)
-    (defun my-shell-mode-hook ()
-      (process-send-string (get-buffer-process (current-buffer))
-                           ;; Set pager to support TERM=dumb when running shell
-                           ;; This is necessary for running psql in the shell
-                           "export PAGER=/bin/cat\n"))
-
-    ;; Highlight current line
-    (global-hl-line-mode 1)
-    (set-face-background 'highlight
-                                        ; "#232323" ; dark gray
-                                        ; "#b22222" ; red pop
-                                        ; "#8b1a1a" ; deep red
-                         "#8b0000"
-                         )
-
-    (set-face-background 'isearch-fail "red")
-    (set-face-background 'region "blue")
-
-    ;; Switching windows easier navigation
-    ;; S-<left>, S-<right>, S-<up>, S-<down>
-    (windmove-default-keybindings)
-
-    ;; Show file path in status bar when using non-unqiue names
-    (require 'uniquify)
-    (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
-
-    ;; Show full file path as window title
-    (setq frame-title-format
-          (list (format "%s %%S: %%j " (system-name))
-                '(buffer-file-name "%f"
-                                   (dired-directory dired-directory "%b"))))
-
-    ;; Save session defined abbrevs by default
-    (setq save-abbrevs nil)
-
-    ;; Display current column number in buffer status bar
-    (setq column-number-mode t)
-
-    ;; Set indentation
-    ;; Use spaces, not tabs
-    (setq-default indent-tabs-mode nil)
-    (setq tab-width 4)
-    (setq c-basic-offset tab-width)
-    (setq cperl-indent-level tab-width)))
-
-(defun set-abbrev-table ()
-  "Define the abbrev table."
-  ;; Define default abbrevs
-  (define-abbrev-table 'global-abbrev-table
-    '(("0important" "IMPORTANT(stewarts):" nil)
-      ("0study" "STUDY(stewarts):" nil)
-      ("0note" "NOTE(stewarts):" nil)
-      ("0todo" "TODO(stewarts):" nil)
-      ("0readme" "README(stewarts):" nil)
-      ("0bug" "BUG(stewarts):" nil)
-      ("0debug" "DEBUG(stewarts):" nil)
-      ("0doc" "DOC(stewarts):" nil)
-      ("0war" "WAR():" nil)
-      )))
-
 
 (defun configure-syntax ()
   "Configure syntax and highlighting."
@@ -314,12 +245,6 @@
 (defun main ()
   "Main .emacs function"
   (progn
-    ;; (set-package-archives)
-    ;;(setup-emacs-behaviour)
-    ;;(setup-frame-style)
-    ;;(setup-default-buffers)
-    (set-abbrev-table)
-    (configure-emacs)
     (configure-syntax)
     ))
 (main)

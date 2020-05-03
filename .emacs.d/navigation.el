@@ -6,6 +6,10 @@
 ;; ref: https://emacs.stackexchange.com/questions/28736/emacs-pointcursor-movement-lag
 (setq auto-window-vscroll nil)
 
+;; Switching windows easier navigation
+;; S-<left>, S-<right>, S-<up>, S-<down>
+(windmove-default-keybindings)
+
 ;; Change window configuration (C-c Left|Right to navigate history)
 (when (fboundp 'winner-mode)
   (winner-mode 1))

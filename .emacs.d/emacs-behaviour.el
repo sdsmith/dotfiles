@@ -4,12 +4,13 @@
 ;; Stop the beeping!!!
 (setq visible-bell t)
 
-;; Set this right away so all prompts are readable before the full theme is
-;; setup.
-(set-face-attribute 'minibuffer-prompt nil :foreground "cyan")
-
 ;; No more typing the whole yes or no. Just y or n will do.
 (fset 'yes-or-no-p 'y-or-n-p)
+
+;; Stop Emacs from losing undo information by setting very high limits
+;; for undo buffers
+(setq undo-limit 20000000)
+(setq undo-strong-limit 40000000)
 
 ;; ;; https://stackoverflow.com/questions/10946219/emacs-compilation-mode-wont-see-bash-alias
 ;; (setq shell-file-name "bash")
@@ -36,6 +37,13 @@
   (add-hook hook (lambda () (set-fill-column 80))))
 (add-hook 'fundamental-mode-hook (lambda () (set-fill-column 80)))
 
+;; Set indentation
+;; Use spaces, not tabs
+(setq-default indent-tabs-mode nil)
+(setq tab-width 4)
+(setq c-basic-offset tab-width)
+(setq cperl-indent-level tab-width)
+
 ;; Delete all trailing whitespace
 (add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
 
@@ -43,3 +51,14 @@
 ;; ref: https://www.masteringemacs.org/article/re-builder-interactive-regexp-builder
 (require 're-builder)
 (setq reb-re-syntax 'string)
+
+;; Set M-x shell settings
+(defun my-shell-mode-hook ()
+  (process-send-string (get-buffer-process (current-buffer))
+                       ;; Set pager to support TERM=dumb when running shell
+                       ;; This is necessary for running psql in the shell
+                       "export PAGER=/bin/cat\n"))
+(add-hook 'shell-mode-hook 'my-shell-mode-hook)
+
+;; Save session defined abbrevs by default
+(setq save-abbrevs nil)
