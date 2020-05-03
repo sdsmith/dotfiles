@@ -90,13 +90,7 @@
   (progn
     ;; Default syntax style
     (setq c-default-style "linux")
-
-    (defun post-load-settings ()
-      (set-foreground-color "burlywood3")
-      (set-background-color "#161616")
-      (set-cursor-color "#40FF40")
-      (split-window-horizontally))
-    (add-hook 'window-setup-hook 'post-load-settings)))
+    ))
 
 (defun main ()
   "Main .emacs function"

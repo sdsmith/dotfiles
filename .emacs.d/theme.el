@@ -44,3 +44,7 @@
 ;;                     :foreground "MediumPurple1")
 ;; (set-face-attribute 'default nil
 ;;                     :foreground "burlywood3")
+
+(add-to-list 'default-frame-alist '(foreground-color . "burlywood3"))
+(add-to-list 'default-frame-alist '(background-color . "#161616"))
+(set-cursor-color "#40FF40")
