@@ -324,6 +324,7 @@ This returns a list of strings"
          (kbd "C-x g U") 'git-gutter+-unstage-whole-buffer)))
   
   ;; Fringe display for git-gutter+
+  ;; ref: https://github.com/nonsequitur/git-gutter-fringe-plus
   ;; Only works in GUI mode (ie. non-tty)
   (when (display-graphic-p)
     (require 'git-gutter-fringe+)))
