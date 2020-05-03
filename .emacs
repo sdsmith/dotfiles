@@ -78,27 +78,7 @@
 (load-user-file "source-control.el")
 ;;(load-user-file "instance-persistence.el")
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;; NVIDIA Stuff
-;;
-;; (defconst nvidia-c-style
-;;   ;; https://www.gnu.org/software/emacs/manual/html_node/ccmode/Adding-Styles.html#Adding-Styles
-;;   '(linux
-;;     (
-;;
-(defun nvidia-c-setup ()
-  ;; Indentation
-  (c-set-offset 'inline-open 0)
-  (c-set-offset 'arglist-close 0)
-  (c-set-offset 'case-label 4)
-
-  ;; ;; Add doxygen comments to comment-start-skip
-  ;; (setq comment-start-skip "\\(//+\\|//!\\|/\\*+\\)\\s *")
-  )
-(add-hook 'js-mode-hook 'nvidia-c-setup)
-(add-hook 'c-mode-hook 'nvidia-c-setup)
-(add-hook 'c++-mode-hook 'nvidia-c-setup)
+;;(load-user-file "nvidia-mods.el")
 
 (defun configure-emacs ()
   "Configure various emacs settings."
