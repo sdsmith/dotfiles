@@ -19,31 +19,6 @@
 ;;         ("http" . "fwdproxy:8080")
 ;;              ("https" . "fwdproxy:8080")))
 
-;; Stop the beeping!!!
-(setq visible-bell t)
-
-;; Set this right away so all prompts are readable
-(set-face-attribute 'minibuffer-prompt nil :foreground "cyan")
-
-;; Setup customize system
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-(load custom-file)
-
-(defconst user-init-dir
-  (cond ((boundp 'user-emacs-directory)
-         user-emacs-directory)
-        ((boundp 'user-init-directory)
-         user-init-directory)
-        (t "~/.emacs.d/")))
-
-(defun load-user-file (file)
-  (interactive "f")
-  "Load a file in current user's configuration directory"
-  (load-file (expand-file-name file user-init-dir)))
-
-;; NOTE(sdsmith): ALWAYS DO THIS BEFORE ANY PACKAGE CUSTOMIZATION
-(load-user-file "package.el")
-                
 ;; Set of regularly used modes
 (setq regular-modes
       '(c++-mode
@@ -71,43 +46,34 @@
         488-lang-mode-hook
         asm-mode-hook))
 
+;; Setup customize system
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(load custom-file)
+
+(defconst user-init-dir
+  (cond ((boundp 'user-emacs-directory)
+         user-emacs-directory)
+        ((boundp 'user-init-directory)
+         user-init-directory)
+        (t "~/.emacs.d/")))
+
+(defun load-user-file (file)
+  (interactive "f")
+  "Load a file in current user's configuration directory"
+  (load-file (expand-file-name file user-init-dir)))
+
+;; NOTE(sdsmith): ALWAYS DO THIS BEFORE ANY PACKAGE CUSTOMIZATION
+(load-user-file "package.el")
+
+(load-user-file "emacs-behaviour.el")
+(load-user-file "clipboard-integration.el")
+(load-user-file "default-buffers.el")
+(load-user-file "frame.el")
+(load-user-file "navigation.el")
+(load-user-file "utils.el")
+
+(load-user-file "org-mode.el")
 (load-user-file "source-control.el")
-
-;; Move backup files (*.~) to seperate directory
-(setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
-  backup-by-copying t    ; Don't delink hardlinks
-  version-control t      ; Use version numbers on backups
-  delete-old-versions t  ; Automatically delete excess backups
-  kept-new-versions 20   ; how many of the newest versions to keep
-  kept-old-versions 5    ; and how many of the old
-  )
-(setq autosave-file-name-transforms
-      `(("." . "~/.emacs.d/backup")))
-
-;; Change window configuration (C-c Left|Right to navigate history)
-(when (fboundp 'winner-mode)
-  (winner-mode 1))
-  ;; (global-set-key (kbd "M-<up>") 'enlarge-window)
-  ;; (global-set-key (kbd "M-<down>") 'shrink-window)
-  ;; (global-set-key (kbd "M-<left>") 'shrink-window-horizontally)
-  ;; (global-set-key (kbd "M-<right>") 'enlarge-window-horizontally))
-
-(setq inhibit-startup-message t)
-(savehist-mode 1)
-
-;; ;; https://stackoverflow.com/questions/10946219/emacs-compilation-mode-wont-see-bash-alias
-;; (setq shell-file-name "bash")
-;; (setq shell-command-switch "-ic")
-;; https://emacs.stackexchange.com/questions/3447/cannot-set-terminal-process-group-error-when-running-bash-script
-(setenv "BASH_ENV" "~/.bashrc")
-
-;; line-move-partial is the scrolling lag scurge of the universe. This causes
-;; line-move to skip calling line-move-partial. When compiling MODS in a
-;; compilation buffer line-move-partial was responsible for _90%_ of the
-;; execution time. And it was laggy. Multiple seconds responce laggy. Kill the
-;; demon.
-;; ref: https://emacs.stackexchange.com/questions/28736/emacs-pointcursor-movement-lag
-(setq auto-window-vscroll nil)
 
 ;; Vertical indentation guidelines
 (require 'highlight-indent-guides)
@@ -160,98 +126,6 @@
 (require 're-builder)
 (setq reb-re-syntax 'string)
 
-;; Stopping the emacs server
-(defun server-shutdown ()
-  "Save buffers, quit, and shutdown (kill) server"
-  (interactive)
-  (save-some-buffers)
-  (kill-emacs))
-
-(defun setup-emacs-behaviour ()
-  ;; No more typing the whole yes or no. Just y or n will do.
-  (fset 'yes-or-no-p 'y-or-n-p)
-
-  ;; Set fill column
-  (dolist (hook regular-mode-hooks)
-    (add-hook hook (lambda () (set-fill-column 80))))
-  (add-hook 'fundamental-mode-hook (lambda () (set-fill-column 80)))
-
-  ;; Delete all trailing whitespace
-  (add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
-  )
-
-(defun setup-frame-style ()
-  ;; line numbers
-  (require 'linum)
-  (global-linum-mode 1)
-
-  ;; simpler column numbers
-  (column-number-mode t)
-
-  ;; Display the current function in the mode line
-  (dolist (hook regular-mode-hooks)
-    (add-hook hook (lambda () (which-function-mode))))
-  ;; TODO: Set the font face of face `which-func`
-  )
-
-(defun setup-default-buffers ()
-  ;; Makes *scratch* empty.
-  (setq initial-scratch-message "")
-
-  ;; Removes *Completions* from buffer after you've opened a file.
-  (add-hook 'minibuffer-exit-hook
-            '(lambda ()
-               (let ((buffer "*Completions*"))
-                 (and (get-buffer buffer)
-                      (kill-buffer buffer)))))
-
-  ;; ;; Removes *messages* from the buffer.
-  ;; (setq-default message-log-max nil)
-  ;; (kill-buffer "*Messages*")
-  ;; tree representation of changes to to walk the undo/redo graph. "C-x u" to open tree for current file.
-
-  ;; Don't show *Buffer list* when opening multiple files at the same time.
-  (setq inhibit-startup-buffer-menu t)
-
-  ;; Show only one active window when opening multiple files at the same time.
-  (add-hook 'window-setup-hook 'delete-other-windows)
-  )
-
-;; go to last edit location
-(require 'goto-last-change)
-(global-set-key "\C-q" 'goto-last-change)
-
-;; tree representation of changes to walk the undo/redo graph. "C-x u" to open tree for current file.
-(require 'undo-tree)
-(global-undo-tree-mode)
-
-;;; MacOS clipboard integration
-;; ref: http://iancmacdonald.com/macos/emacs/tmux/2017/01/15/macOS-tmux-emacs-copy-past.html
-;; NOTE: requires reattach-to-user-namespace
-;; (https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard)
-(defun copy-from-osx ()
-  "Use OSX clipboard to paste."
-  (shell-command-to-string "reattach-to-user-namespace pbpaste"))
-
-(defun paste-to-osx (text &optional push)
-  "Add kill rinf entries (TEXT) to OSX clipboard. PUSH."
-  (let ((process-connection-type nil))
-    (let ((proc (start-process "pbcopy" "*Messages*" "reattach-to-user-namespace" "pbcopy")))
-      (process-send-string proc text)
-      (process-send-eof proc))))
-
-(if (eq system-type 'darwin)
-    (progn
-      (setq interprogram-cut-function 'paste-to-osx)
-      (setq interprogram-paste-function 'copy-from-osx)))
-
-;;; Alternative MacOS clipboard integration
-;; Copying/Cutting in console emacs will add it to your mac clipboard
-;; Need to also "sudo ym install xclip" along with installing xcip.el
-;; Need to also enable X11 Forwarding & trusted X11 Forwarding (ssh -X -Y)
-;; (require 'xclip)
-;; (turn-on-xclip)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; NVIDIA Stuff
@@ -280,26 +154,6 @@
 (add-hook 'js-mode-hook 'highlight-doxygen-mode)
 (set-face-attribute 'highlight-doxygen-comment nil :foreground "grey60" :background "grey20")
 (set-face-attribute 'highlight-doxygen-variable nil :foreground "grey80")
-
-;; TODO: make interactive
-(defun split-string-every (string chars)
-  "Split STRING into substrings of length CHARS characters.
-
-This returns a list of strings"
-  (cond ((string-empty-p string)
-         nil)
-        ((< (length string)
-            chars)
-         (list string))
-        (t (cons (substring string 0 chars)
-                 (split-string-every (substring string chars)
-                                     chars)))))
-
-;; Removes *scratch* from buffer after the mode has been set.
-(defun remove-scratch-buffer ()
-  (if (get-buffer "*scratch*")
-      (kill-buffer "*scratch*")))
-;; (add-hook 'after-change-major-mode-hook 'remove-scratch-buffer)
 
 (defun configure-emacs ()
   "Configure various emacs settings."
@@ -532,47 +386,6 @@ This returns a list of strings"
       (split-window-horizontally))
     (add-hook 'window-setup-hook 'post-load-settings)))
 
-(defvar org-todo-keywords)
-(defun add-org-mode ()
-  ;; Org mode TODO docs
-  ;; http://orgmode.org/manual/Workflow-states.html#Workflow-states
-  ;; http://orgmode.org/manual/Fast-access-to-TODO-states.html#Fast-access-to-TODO-states
-  ;;(setq org-agenda-include-diary t)
-  ;;(setq org-agenda-files "~/.emacs.d/org_mode_agenda_files.txt") ;; TODO: setup
-
-  ;; put time stamp when tasks are completed
-  ;; ref: https://orgmode.org/guide/Closing-items.html#Closing-items
-  (setq org-log-done 'time)
-
-  (setq org-todo-keywords
-        '((sequence "TODO(t)" "STARTED(s!)" "BLOCKED(b@)" "BUG(g)" "|")
-          (sequence "|" "POSTPONED(p@)" "CANCELED(c@)" "FIXED(f!)" "DONE(d!)")))
-  (global-set-key "\C-cl" 'org-store-link)
-  (global-set-key "\C-ca" 'org-agenda)
-  (global-set-key "\C-cc" 'org-capture)
-  (global-set-key "\C-cb" 'org-iswitchb)
-  (org-agenda-list)
-
-  ;; TODO: Create a template for new TODO items
-  ;; - track status changes by default
-
-  ;; TODO: not working???
-  (setq org-emphasis-alist
-        '(
-          ;; Defaults
-          ("!" (:foreground "red"))
-          ("/" italic)
-          ("_" underline)
-          ("~" org-code verbatim)
-          ("=" org-verbatim verbatim)
-          ("+" (:strike-through t))
-
-          ;; Custom
-          ("-" (:strike-through t))
-          ("`" org-code verbatim)
-          ))
-  )
-
 (defun add-haskell-mode ()
   "Add haskell major mode."
   (progn
@@ -628,7 +441,7 @@ This returns a list of strings"
     ;; (add-jedi-python-auto-complete)
     ;;(add-cpp-auto-complete) ; TODO(sdsmith): undo later for cpp completion. Competes with php-mode
     ;;(add-desktop)
-    (add-org-mode)
+    ;;(add-org-mode)
     ;; (add-git-gutter)
     ;; (remove-irony-from-php-mode)
     ;;(add-irony)
@@ -758,9 +571,9 @@ This returns a list of strings"
   "Main .emacs function"
   (progn
     ;; (set-package-archives)
-    (setup-emacs-behaviour)
-    (setup-frame-style)
-    (setup-default-buffers)
+    ;;(setup-emacs-behaviour)
+    ;;(setup-frame-style)
+    ;;(setup-default-buffers)
     (set-abbrev-table)
     (configure-emacs)
     (configure-syntax)
