@@ -21,3 +21,18 @@
 ;; tree representation of changes to walk the undo/redo graph. "C-x u" to open tree for current file.
 (require 'undo-tree)
 (global-undo-tree-mode)
+
+;; Helm - general completion (commands, lists, etc.)
+;;
+;; Completion is based on the completion window, not the minibuffer (like emacs
+;; completion). Helm interactivity happens in the completion window, not the
+;; minibuffer (like emacs completion). Typing new characters filters conadidates
+;; in completion window, not minibuffer.
+;;
+;; Can navigate to desired value by typing or using `C-n`. Hitting `RET` selects
+;; currently highlighted item in compeltion window.
+(require 'helm-config)
+(global-set-key (kbd "M-x") #'helm-M-x)
+(global-set-key (kbd "C-x r b") #'helm-filtered-bookmarks)
+(global-set-key (kbd "C-x C-f") #'helm-find-files)
+(helm-mode 1)

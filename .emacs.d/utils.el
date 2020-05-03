@@ -18,3 +18,9 @@ This returns a list of strings"
         (t (cons (substring string 0 chars)
                  (split-string-every (substring string chars)
                                      chars)))))
+
+;; (defun my-comint-clear-buffer ()
+;;   (interactive)
+;;   (let ((comint-buffer-maximum-size 0))
+;;     (comint-truncate-buffer)))
+;; (define-key comint-mode-map "\C-c\M-o" #'my-comint-clear-buffer)

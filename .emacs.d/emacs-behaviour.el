@@ -38,3 +38,8 @@
 
 ;; Delete all trailing whitespace
 (add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
+
+;; Set M-x re-builder to use the elisp regexp syntax
+;; ref: https://www.masteringemacs.org/article/re-builder-interactive-regexp-builder
+(require 're-builder)
+(setq reb-re-syntax 'string)
