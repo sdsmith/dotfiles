@@ -9,3 +9,9 @@
     ("0doc" "DOC(stewarts):" nil)
     ("0war" "WAR():" nil)
     ))
+
+;; Enabling abbrevs for code highlighting
+(add-hook 'prog-mode-hook (lambda () (abbrev-mode 1)))
+
+;; (dolist (hook prog-mode-hooks)
+;;   (add-hook hook (lambda () (abbrev-mode 1))))

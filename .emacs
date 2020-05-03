@@ -74,6 +74,7 @@
 (load-user-file "utils.el")
 (load-user-file "abbrevs.el")
 
+(load-user-file "file-mode-map.el")
 (load-user-file "programming-visual.el")
 (load-user-file "programming-systems.el")
 (load-user-file "source-control.el")
@@ -85,105 +86,6 @@
 (defun configure-syntax ()
   "Configure syntax and highlighting."
   (progn
-    ;; Additional Highlighting
-    (make-face 'font-lock-comment-user-face)
-    (make-face 'font-lock-comment-todo-face)
-    (make-face 'font-lock-comment-note-face)
-    (make-face 'font-lock-comment-important-face)
-    (make-face 'font-lock-comment-study-face)
-    (make-face 'font-lock-comment-readme-face)
-    (make-face 'font-lock-comment-bug-face)
-    (make-face 'font-lock-comment-debug-face)
-    (make-face 'font-lock-comment-doc-face)
-    (make-face 'font-lock-comment-war-face)
-    (make-face 'font-lock-comment-bug-ref-face)
-
-    ;; TODO(stewarts): add doxygen comment highlighting
-    (mapc (lambda (mode)
-            (font-lock-add-keywords
-             mode
-             '(
-               ("\\<\\(TODO(\\w+?):\\)" 1 'font-lock-comment-todo-face t)
-               ("\\<\\(NOTE(\\w+?):\\)" 1 'font-lock-comment-note-face t)
-               ("\\<\\(IMPORTANT(\\w+?):\\)" 1 'font-lock-comment-important-face t)
-               ("\\<\\(STUDY(\\w+?):\\)" 1 'font-lock-comment-study-face t)
-               ("\\<\\(README(\\w+?):\\)" 1 'font-lock-comment-readme-face t)
-               ("\\<\\(BUG(\\w+?):\\)" 1 'font-lock-comment-bug-face t)
-               ("\\<\\(DEBUG(\\w+?):\\)" 1 'font-lock-comment-debug-face t)
-               ("\\<\\(DOC(\\w+?):\\)" 1 'font-lock-comment-doc-face t)
-               ("\\<\\(WAR(\\w+?):\\)" 1 'font-lock-comment-war-face t)
-               ("\\(TODO\\|NOTE\\|IMPORTANT\\|STUDY\\|README\\|BUG\\|DOC\\)(\\(\\w+?\\)):"
-                2 'font-lock-comment-user-face t)
-               ("WAR(\\(\\w+?\\)):" 1 'font-lock-comment-bug-ref-face t)
-               )))
-          regular-modes)
-
-    (modify-face 'font-lock-comment-user-face "thistle4" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-comment-todo-face "Red3" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-comment-note-face "DarkOliveGreen" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-comment-important-face "gold" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-comment-study-face "gold" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-comment-readme-face "DodgerBlue" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-comment-bug-face "chartreuse" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-comment-debug-face "chartreuse" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-comment-doc-face "DeepPink2" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-comment-war-face "Red3" nil nil t nil nil nil nil)
-    (modify-face 'font-lock-comment-bug-ref-face "chartreuse" nil nil t nil nil nil nil)
-
-    ;; Enabling abbrevs for code highlighting
-    (dolist (hook regular-mode-hooks)
-      (add-hook hook (lambda () (abbrev-mode 1))))
-
-    ;; Add keywords to cpp
-    (font-lock-add-keywords 'c++-mode
-                            '(("constexpr" . font-lock-keyword-face))
-                            '(("nullptr"   . font-lock-keyword-face)))
-
-    ;; Load major modes
-    (autoload 'glsl-mode "glsl-mode" nil t) ; OpenGL Shader Language
-    (add-to-list 'load-path  "~/.emacs.d/488-source-lang/")
-    ;; TODO(sdsmith): include all references to this lib here?
-    (when (require '488-lang-mode nil 'noerror)) ; CSC488 Source Language (Winter 2016)
-    (require 'json-mode)
-    (require 'glsl-mode)
-    (require 'asm-mode)
-
-    ;; Associate file extentions and their appropriate modes
-    (setq auto-mode-alist
-          (append
-           '(("\\.cpp$"           . c++-mode)
-             ("\\.h$"             . c++-mode)
-             ("\\.c$"             . c++-mode)
-             ("\\.txt$"           . indented-text-mode)
-             ("\\.emacs$"         . emacs-lisp-mode)
-             ("\\.vert$'"         . glsl-mode)
-             ("\\.frag$'"         . glsl-mode)
-             ("\\.cmake$"         . cmake-mode)
-             ("CMakeLists\\.txt$" . cmake-mode)
-             ("\\.el$"            . emacs-lisp-mode)
-             ("\\.org$"           . org-mode)
-             ("\\.org.gpg$"       . org-mode)
-             ("\\.ref$"           . org-mode)
-             ("\\.ref.gpg$"       . org-mode)
-             ("\\.notes$"         . org-mode)
-             ("\\.js$"            . js-mode)
-             ("\\.json$"          . json-mode)
-             ("makedefs\\.inc$"   . makefile-gmake-mode)
-             ("makesrc\\.inc$"    . makefile-gmake-mode)
-             ("Makefile\\.*$"     . makefile-gmake-mode)
-             ("make.+\\.inc$"     . makefile-gmake-mode)
-             ("\\.spc$"           . js-mode)
-             ("\\.nvasm$"         . asm-mode)
-             ("\\.gdb$"           . gdb-script-mode)
-             ("\\.bashrc$"        . sh-mode)
-             ("\\.bashrc_.+$"     . sh-mode)
-             ("\\.zsh-theme$"     . sh-mode)
-             ) auto-mode-alist))
-
-  (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
-  (setq auto-mode-alist
-     (append '(("\\.cs$" . csharp-mode)) auto-mode-alist))
-
     ;; Default syntax style
     (setq c-default-style "linux")
 
