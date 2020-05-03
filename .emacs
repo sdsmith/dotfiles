@@ -65,6 +65,7 @@
 ;; NOTE(sdsmith): ALWAYS DO THIS BEFORE ANY PACKAGE CUSTOMIZATION
 (load-user-file "package.el")
 
+(load-user-file "theme.el")
 (load-user-file "visuals.el")
 (load-user-file "emacs-behaviour.el")
 (load-user-file "clipboard-integration.el")
@@ -80,7 +81,6 @@
 (load-user-file "programming-systems.el")
 (load-user-file "source-control.el")
 (load-user-file "org-mode.el")
-(load-user-file "theme.el")
 
 ;;(load-user-file "instance-persistence.el")
 ;;(load-user-file "nvidia-mods.el")
