@@ -13,11 +13,11 @@
 ;; - describe-face: Describes font face. Defaults to face at point.
 ;; - ibuffer: nice table of open buffers
 
-;; FB: setup proxy to talk to internet
-(setq url-proxy-services
-      '(("no_proxy" . "^\\(localhost\\|10.*\\)")
-        ("http" . "fwdproxy:8080")
-             ("https" . "fwdproxy:8080")))
+;; ;; FB: setup proxy to talk to internet
+;; (setq url-proxy-services
+;;       '(("no_proxy" . "^\\(localhost\\|10.*\\)")
+;;         ("http" . "fwdproxy:8080")
+;;              ("https" . "fwdproxy:8080")))
 
 ;; Stop the beeping!!!
 (setq visible-bell t)
@@ -81,7 +81,11 @@
 ;; https://emacs.stackexchange.com/questions/3447/cannot-set-terminal-process-group-error-when-running-bash-script
 (setenv "BASH_ENV" "~/.bashrc")
 
-;; line-move-partial is the scrolling lag scurge of the universe. This causes line-move to skip calling line-move-partial. When compiling MODS in a compilation buffer line-move-partial was responsible for _90%_ of the execution time. And it was laggy. Multiple seconds responce laggy. Kill the demon.
+;; line-move-partial is the scrolling lag scurge of the universe. This causes
+;; line-move to skip calling line-move-partial. When compiling MODS in a
+;; compilation buffer line-move-partial was responsible for _90%_ of the
+;; execution time. And it was laggy. Multiple seconds responce laggy. Kill the
+;; demon.
 ;; ref: https://emacs.stackexchange.com/questions/28736/emacs-pointcursor-movement-lag
 (setq auto-window-vscroll nil)
 
@@ -147,22 +151,6 @@
 
 ;; simpler column numbers
 (column-number-mode t)
-
-;; ;; switch multiple buffer with typeahead using C-x b
-;; (require 'ido)
-;; (iswitchb-mode 1)
-;; (defun iswitchb-local-keys ()
-;;   (mapc (lambda (k)
-;;           (let* ((key (car k)) (fun (cdr k)))
-;;             (define-key iswitchb-mode-map (edmacro-parse-keys key) fun)))
-;;         '(("<right>" . iswitchb-next-match)
-;;           ("<left>"  . iswtichb-prev-match)
-;;           ("<up>"    . ignore)
-;;           ("<down>"  . ignore))))
-;; (add-hook 'iswitch-define-mode-map-hook 'iswitch-local-keys)
-
-;; scoll one line at a time instead of jumping on cursor up/down
-; (require 'smooth-scrolling)
 
 ;; go to last edit location
 (require 'goto-last-change)
@@ -303,7 +291,12 @@ This returns a list of strings"
 
 (defvar git-gutter+-mode-map)
 (defun add-git-gutter-plus ()
-  ;; https://github.com/nonsequitur/git-gutter-plus
+  ;; ref: https://github.com/nonsequitur/git-gutter-plus
+
+  ;; NOTE(stewarts): On tty mode with line numbers enabled, the git status
+  ;; indicators will shift the line numbers right, truncating them. It is what
+  ;; it is.
+  
   (global-git-gutter+-mode)
   (global-set-key (kbd "C-x g") 'git-gutter+-mode) ; toggle in current buffer
   (global-set-key (kbd "C-x G") 'global-git-gutter+-mode) ; Turn on/off globally
@@ -317,18 +310,24 @@ This returns a list of strings"
          (kbd "C-x p") 'git-gutter+-previous-hunk)
 
      ;;; Act on hunks
-       (define-key git-gutter+-mode-map (kbd "C-x v =") 'git-gutter+-show-hunk)
-       (define-key git-gutter+-mode-map (kbd "C-x r") 'git-gutter+-revert-hunks)
+       (define-key git-gutter+-mode-map (kbd "C-x g v") 'git-gutter+-show-hunk)
+       (define-key git-gutter+-mode-map (kbd "C-x g r") 'git-gutter+-revert-hunks)
        ;; Stage hunk at point.
        ;; If region is active, stage all hunk lines within the region.
-       (define-key git-gutter+-mode-map (kbd "C-x t") 'git-gutter+-stage-hunks)
-       (define-key git-gutter+-mode-map (kbd "C-x c") 'git-gutter+-commit)
+       (define-key git-gutter+-mode-map (kbd "C-x g t") 'git-gutter+-stage-hunks)
+       (define-key git-gutter+-mode-map (kbd "C-x g c") 'git-gutter+-commit)
        (define-key git-gutter+-mode-map
-         (kbd "C-x C") 'git-gutter+-stage-and-commit)
+         (kbd "C-x g C") 'git-gutter+-stage-and-commit)
        (define-key git-gutter+-mode-map
-         (kbd "C-x C-y") 'git-gutter+-stage-and-commit-whole-buffer)
+         (kbd "C-x g C-y") 'git-gutter+-stage-and-commit-whole-buffer)
        (define-key git-gutter+-mode-map
-         (kbd "C-x U") 'git-gutter+-unstage-whole-buffer))))
+         (kbd "C-x g U") 'git-gutter+-unstage-whole-buffer)))
+  
+  ;; Fringe display for git-gutter+
+  ;; Only works in GUI mode (ie. non-tty)
+  (when (display-graphic-p)
+    (require 'git-gutter-fringe+)))
+
 
 (defun add-git-gutter ()
      (require 'git-gutter)
@@ -697,7 +696,6 @@ This returns a list of strings"
     ;;(add-irony)
     ))
 
-
 (defvar my-php-symbol-hash)
 (defun company-my-php-backend (command &optional arg &rest ignored)
   (case command
@@ -826,6 +824,7 @@ This returns a list of strings"
     (configure-emacs)
     (configure-syntax)
     (configure-additional-packages)
+    (add-git-gutter-plus)
     ))
 (main)
 
