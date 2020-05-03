@@ -1,3 +1,6 @@
+;; Default syntax style
+(setq c-default-style "linux")
+
 ;; Vertical indentation guidelines
 (require 'highlight-indent-guides)
 (setq highlight-indent-guides-method 'character)

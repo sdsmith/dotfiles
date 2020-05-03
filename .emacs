@@ -84,17 +84,3 @@
 
 ;;(load-user-file "instance-persistence.el")
 ;;(load-user-file "nvidia-mods.el")
-
-(defun configure-syntax ()
-  "Configure syntax and highlighting."
-  (progn
-    ;; Default syntax style
-    (setq c-default-style "linux")
-    ))
-
-(defun main ()
-  "Main .emacs function"
-  (progn
-    (configure-syntax)
-    ))
-(main)
