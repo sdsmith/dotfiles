@@ -75,6 +75,7 @@
 (load-user-file "abbrevs.el")
 
 (load-user-file "file-mode-map.el")
+(load-user-file "programming-faces.el")                
 (load-user-file "programming-visual.el")
 (load-user-file "programming-systems.el")
 (load-user-file "source-control.el")
