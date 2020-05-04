@@ -8,10 +8,6 @@
             '(buffer-file-name "%f"
                                (dired-directory dired-directory "%b"))))
 
-;; line numbers
-(require 'linum)
-(global-linum-mode 1)
-
 ;; Display current column number in buffer status bar
 (setq column-number-mode t)
 

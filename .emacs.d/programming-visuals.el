@@ -1,6 +1,10 @@
 ;; Default syntax style
 (setq c-default-style "linux")
 
+;; Line numbers
+(require 'linum)
+(add-hook 'prog-mode-hook (lambda () (linum-mode 1)))
+
 ;; Vertical indentation guidelines
 (require 'highlight-indent-guides)
 (setq highlight-indent-guides-method 'character)
