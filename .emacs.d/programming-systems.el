@@ -62,3 +62,18 @@
 	    t))
 (add-hook 'prog-mode-hook (lambda () (clang-format-save-hook-for-this-buffer)))
 
+(require 'projectile)
+(projectile-mode +1)
+(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+(setq projectile-enable-caching t) ;; Cache project index
+
+(require 'helm-projectile)
+(helm-projectile-on)
+
+;; TODO(stewarts): not sure how to activate this...
+(require 'helm-company)
+(eval-after-load 'company
+  '(progn
+     (define-key company-mode-map (kbd "C-:") 'helm-company)
+     (define-key company-active-map (kbd "C-:") 'helm-company)))
