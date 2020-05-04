@@ -1,5 +1,7 @@
 shopt -s expand_aliases
 
+export PATH=/usr/local/homebrew/bin:${PATH}
+
 function is_running_cygwin()
 {
     if uname -a | grep -qE "(CYGWIN|cygwin|Cygwin)" &> /dev/null ; then

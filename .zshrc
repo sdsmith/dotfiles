@@ -6,10 +6,13 @@
 # Cannot stop shell profiling while module is laoded.
 #zmodload zsh/zprof
 
+
 export TERM=xterm-256color
 
 export DOTFILES="$HOME/.dotfiles"
 export DOTFILES_UTILS="$DOTFILES/utils"
+
+export PATH=$HOME/.homebrew/bin:$DOTFILES/zsh/:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="$DOTFILES/oh-my-zsh"
@@ -212,7 +215,20 @@ autoload -U compinit && compinit
 # zsh-syntax-highlighting
 source $DOTFILES/oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
+alias tml='tmux ls'
+alias tmk='tmux kill-session -t $*'
+
+## tmux control mode (best used with iterm2)
+# create
+alias tmc='tmux -CC'
+# resume (and detatch from any other clients connected to session)
+alias tmresume='tmux -CC a -d'
+# resume/new named session
+alias tma='tmux -CC new-session -AD -s $*'
+
 # Work config
 if [ -f "$HOME/.workdotfiles/.zshrc" ]; then
     source "$HOME/.workdotfiles/.zshrc"
 fi
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
