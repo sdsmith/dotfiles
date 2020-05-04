@@ -31,6 +31,8 @@
   "Load a file in current user's configuration directory"
   (load-file (expand-file-name file user-init-dir)))
 
+(load-user-file "utils.el")
+
 ;; NOTE(sdsmith): ALWAYS DO THIS BEFORE ANY PACKAGE CUSTOMIZATION
 (load-user-file "package.el")
 
@@ -40,7 +42,6 @@
 (load-user-file "default-buffers.el")
 (load-user-file "frame.el")
 (load-user-file "navigation.el")
-(load-user-file "utils.el")
 (load-user-file "abbrevs.el")
 
 (load-user-file "file-mode-map.el")

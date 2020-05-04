@@ -24,3 +24,19 @@ This returns a list of strings"
 ;;   (let ((comint-buffer-maximum-size 0))
 ;;     (comint-truncate-buffer)))
 ;; (define-key comint-mode-map "\C-c\M-o" #'my-comint-clear-buffer)
+
+(defun my/return-t (orig-fun &rest args)
+  "Return true"
+  t)
+
+(defun disable-y-or-n-p (orig-fun &rest args)
+  "Disable yes or no prompt a sinlge time for the associated function.
+
+Usage: (advise-add 'foo :around #'disable-y-or-n-p)
+"
+  (advice-add 'yes-or-no-p :around #'my/return-t)
+  (advice-add 'y-or-n-p :around #'my/return-t)
+  (let ((res (apply orig-fun args)))
+    (advice-remove 'yes-or-no-p #'my/return-t)
+    (advice-remove 'y-or-n-p #'my/return-t)
+    res))

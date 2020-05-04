@@ -18,10 +18,6 @@
 (unless package-archive-contents
   (package-refresh-contents))
 
-;; Skip yes/no prompt, assume yes
-(defadvise package-install-selected-packages (around auto-confirm compile activate)
-  (cl-letf (((symbol-function 'yes-or-no-p) (lambda (&rest args) t))
-            ((symbol-function 'y-or-n-p) (lambda (&rest args) t)))
-    ad-do-it)
+(advice-add 'package-install-selected-packages :around #'disable-y-or-n-p)
+
 (package-install-selected-packages)
-(ad-unadvise 'package-install-selected-packages)
