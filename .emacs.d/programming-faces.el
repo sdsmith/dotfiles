@@ -11,24 +11,24 @@
 (make-face 'font-lock-comment-war-face)
 (make-face 'font-lock-comment-bug-ref-face)
 
-(mapc (lambda (mode)
-        (font-lock-add-keywords
-         mode
-         '(
-           ("\\<\\(TODO(\\w+?):\\)" 1 'font-lock-comment-todo-face t)
-           ("\\<\\(NOTE(\\w+?):\\)" 1 'font-lock-comment-note-face t)
-           ("\\<\\(IMPORTANT(\\w+?):\\)" 1 'font-lock-comment-important-face t)
-           ("\\<\\(STUDY(\\w+?):\\)" 1 'font-lock-comment-study-face t)
-           ("\\<\\(README(\\w+?):\\)" 1 'font-lock-comment-readme-face t)
-           ("\\<\\(BUG(\\w+?):\\)" 1 'font-lock-comment-bug-face t)
-           ("\\<\\(DEBUG(\\w+?):\\)" 1 'font-lock-comment-debug-face t)
-           ("\\<\\(DOC(\\w+?):\\)" 1 'font-lock-comment-doc-face t)
-           ("\\<\\(WAR(\\w+?):\\)" 1 'font-lock-comment-war-face t)
-           ("\\(TODO\\|NOTE\\|IMPORTANT\\|STUDY\\|README\\|BUG\\|DOC\\)(\\(\\w+?\\)):"
-            2 'font-lock-comment-user-face t)
-           ("WAR(\\(\\w+?\\)):" 1 'font-lock-comment-bug-ref-face t)
-           )))
-      regular-modes)
+(defun add-custom-keywords ()
+  (font-lock-add-keywords
+   nil
+   '(
+     ("\\<\\(TODO(\\w+?):\\)" 1 'font-lock-comment-todo-face t)
+     ("\\<\\(NOTE(\\w+?):\\)" 1 'font-lock-comment-note-face t)
+     ("\\<\\(IMPORTANT(\\w+?):\\)" 1 'font-lock-comment-important-face t)
+     ("\\<\\(STUDY(\\w+?):\\)" 1 'font-lock-comment-study-face t)
+     ("\\<\\(README(\\w+?):\\)" 1 'font-lock-comment-readme-face t)
+     ("\\<\\(BUG(\\w+?):\\)" 1 'font-lock-comment-bug-face t)
+     ("\\<\\(DEBUG(\\w+?):\\)" 1 'font-lock-comment-debug-face t)
+     ("\\<\\(DOC(\\w+?):\\)" 1 'font-lock-comment-doc-face t)
+     ("\\<\\(WAR(\\w+?):\\)" 1 'font-lock-comment-war-face t)
+     ("\\(TODO\\|NOTE\\|IMPORTANT\\|STUDY\\|README\\|BUG\\|DOC\\)(\\(\\w+?\\)):"
+      2 'font-lock-comment-user-face t)
+     ("WAR(\\(\\w+?\\)):" 1 'font-lock-comment-bug-ref-face t)
+     )))
+(add-hook 'prog-mode-hook #'add-custom-keywords)
 
 (modify-face 'font-lock-comment-user-face "thistle4" nil nil t nil nil nil nil)
 (modify-face 'font-lock-comment-todo-face "Red3" nil nil t nil nil nil nil)

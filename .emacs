@@ -19,33 +19,6 @@
 ;;         ("http" . "fwdproxy:8080")
 ;;              ("https" . "fwdproxy:8080")))
 
-;; Set of regularly used modes
-(setq regular-modes
-      '(c++-mode
-        c-mode
-        csharp-mode
-        emacs-lisp-mode
-        python-mode
-        sql-mode
-        java-mode
-        php-mode
-        js-mode
-        488-lang-mode
-        asm-mode))
-
-(setq regular-mode-hooks
-      '(c++-mode-hook
-        c-mode-hook
-        csharp-mode-hook
-        emacs-lisp-mode-hook
-        python-mode-hook
-        sql-mode-hook
-        java-mode-hook
-        php-mode-hook
-        js-mode-hook
-        488-lang-mode-hook
-        asm-mode-hook))
-
 ;; Setup customize system
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)

@@ -19,7 +19,6 @@
 (column-number-mode t)
 
 ;; Display the current function in the mode line
-(dolist (hook regular-mode-hooks)
-  (add-hook hook (lambda () (which-function-mode))))
+(add-hook 'prog-mode-hook 'which-function-mode)
 ;; TODO: Set the font face of face `which-func`
 

@@ -33,8 +33,7 @@
 (savehist-mode 1)
 
 ;; Set fill column
-(dolist (hook regular-mode-hooks)
-  (add-hook hook (lambda () (set-fill-column 80))))
+(add-hook 'prog-mode-hook (lambda () (set-fill-column 80)))
 (add-hook 'fundamental-mode-hook (lambda () (set-fill-column 80)))
 
 ;; Set indentation
