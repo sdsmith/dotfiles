@@ -1,12 +1,8 @@
 ;;; .emacs Configuration file
 ;;
 ;; TODO(sdsmith):
-;; - project management, including TODO file(s) and comment management
-;; - insert biolerplate into files
-;; - emacs deamon (server-start)
-;;   - run emacs --daemon from .profile
-;;   - use emacs client to open a file
-;; TODO(stewarts): don't use setq! https://emacs.stackexchange.com/questions/17386/display-all-setq-possibilities
+;; - insert biolerplate into new files
+;; - don't use setq! https://emacs.stackexchange.com/questions/17386/display-all-setq-possibilities
 
 ;; Tips
 ;;
