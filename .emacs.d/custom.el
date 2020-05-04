@@ -9,7 +9,7 @@
  '(org-agenda-files nil)
  '(package-selected-packages
    (quote
-    (git-gutter-fringe+ highlight-indent-guides undo-tree goto-last-change smooth-scrolling cmake-mode highlight-doxygen xterm-color json-mode irony highlight-indentation p4 cuda-mode matlab-mode glsl-mode php-mode js2-mode git-gutter git-gutter+ rtags)))
+    (clang-format helm company git-gutter-fringe+ highlight-indent-guides undo-tree goto-last-change cmake-mode highlight-doxygen json-mode p4 cuda-mode matlab-mode glsl-mode php-mode git-gutter+)))
  '(reb-re-syntax (quote string)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

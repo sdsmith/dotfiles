@@ -34,7 +34,8 @@
 ;; in completion window, not minibuffer.
 ;;
 ;; Can navigate to desired value by typing or using `C-n`. Hitting `RET` selects
-;; currently highlighted item in compeltion window.
+;; currently highlighted item in completion window.
+(require 'helm)
 (require 'helm-config)
 (global-set-key (kbd "M-x") #'helm-M-x)
 (global-set-key (kbd "C-x r b") #'helm-filtered-bookmarks)
