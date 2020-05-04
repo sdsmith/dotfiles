@@ -27,6 +27,11 @@ mkdir -p $HOME/.emacs.d
 for emacs_file in $(find ./.emacs.d -type f); do
     create_home_symlink "$emacs_file"
 done
+# Byte compile emacs files
+# TODO(stewarts): Doesn't handle require statements outside of the
+# main .emacs file well...
+# emacs -Q --batch --eval '(byte-compile-file "~/.emacs" 0)'
+# emacs -Q --batch --eval '(byte-recompile-directory "~/.emacs.d" 0)'
 
 create_home_symlink .gdbinit
 create_home_symlink .tmux.conf
