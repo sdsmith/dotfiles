@@ -34,7 +34,6 @@
 ;; NOTE(sdsmith): ALWAYS DO THIS BEFORE ANY PACKAGE CUSTOMIZATION
 (load-user-file "package.el")
 
-(load-user-file "theme.el")
 (load-user-file "visuals.el")
 (load-user-file "emacs-behaviour.el")
 (load-user-file "clipboard-integration.el")
