@@ -139,6 +139,7 @@ function is_running_windows_subsystem_linux()
     fi
 }
 
+alias emacsserver="emacs --daemon"
 alias enw="emacsclient -t"
 alias l="ls --color -F"
 
