@@ -9,14 +9,12 @@ function create_home_symlink() {
     local FILE=$1
     local ABS_PATH=$($CMD_READLINK -f $FILE)
     local DEST="$HOME/$FILE"
-    
+
     if [ -f "$DEST" ] && [ ! -h "$DEST" ]; then
-        echo "~/$FILE already exists and in not a symlink"
+        echo "~/$FILE already exists and is not a symlink"
         return 1
     fi
 
-    
-    
     ln -sf "$ABS_PATH" "$DEST"
 }
 
@@ -33,8 +31,13 @@ done
 # emacs -Q --batch --eval '(byte-compile-file "~/.emacs" 0)'
 # emacs -Q --batch --eval '(byte-recompile-directory "~/.emacs.d" 0)'
 
-create_home_symlink .gdbinit
+# Setup tmux with Tmux Package Manager (TPM)
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 create_home_symlink .tmux.conf
+tmux source ~/.tmux.conf
+$HOME/.tmux/plugins/tpm/bin/install_plugins
+
+create_home_symlink .gdbinit
 create_home_symlink .vimrc
 create_home_symlink .vnc
 create_home_symlink .zshrc
