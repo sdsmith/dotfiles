@@ -34,8 +34,7 @@ done
 # Setup tmux with Tmux Package Manager (TPM)
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 create_home_symlink .tmux.conf
-tmux source ~/.tmux.conf
-$HOME/.tmux/plugins/tpm/bin/install_plugins
+tmux new-session -d -s "_tmux_install" "$HOME/.tmux/plugins/tpm/bin/install_plugins"
 
 create_home_symlink .gdbinit
 create_home_symlink .vimrc
