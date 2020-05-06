@@ -1,0 +1,30 @@
+#!/bin/zsh
+
+if [ $# -ne 2 ]; then
+    echo "Usage: $(basename $0) <exe_name> <cpu_threshold>"
+    exit 1
+fi
+
+EXE_NAME="$1"
+CPU_PERCENT_THRESH="$2"
+
+ALL_PROC_INFO=$(ps -o pid,%cpu,command)
+GREP_PROC_INFO=$(echo $ALL_PROC_INFO | awk '{$1=$2=""; print $0}' | grep -n "^[[:space:]]*$EXE_NAME ")
+
+# Check if program running
+if [ $(echo $GREP_PROC_INFO | wc -l) -eq 0 ]; then
+    exit 0
+fi
+
+for LINE in $GREP_PROC_INFO ;
+do
+    LINE_NO=$(echo $LINE | awk '{print $1}' | sed 's/.$//')
+    PROC_INFO=$(echo $ALL_PROC_INFO | sed "${LINE_NO}q;d")
+    CPU_USAGE=$(echo $PROC_INFO | awk '{print $2}') 
+    PID=$(echo $PROC_INFO | awk '{print $1}')
+
+    if [ 1 -eq "$(echo "${CPU_USAGE} >= ${CPU_PERCENT_THRESH}" | bc)" ]; then
+        echo "$EXE_NAME (PID ${PID}): CPU usage ${CPU_USAGE} >= ${CPU_PERCENT_THRESH}"
+    fi
+done
+
