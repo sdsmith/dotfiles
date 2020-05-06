@@ -41,6 +41,16 @@ create_home_symlink .vimrc
 create_home_symlink .vnc
 create_home_symlink .zshrc
 
+# FZF
+if ! command -v fzf >/dev/null; then
+    echo "WARNING: Please install fzf! https://github.com/junegunn/fzf"
+fi
+
+# PT
+if ! command -v pt >/dev/null; then
+    echo "WARNING: Please install pt! https://github.com/monochromegane/the_platinum_searcher"
+fi
+
 cd utils
 make
 cd ..
