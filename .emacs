@@ -45,11 +45,12 @@
 (load-user-file "abbrevs.el")
 
 (load-user-file "file-mode-map.el")
-(load-user-file "programming-faces.el")                
+(load-user-file "programming-faces.el")
 (load-user-file "programming-visuals.el")
 (load-user-file "programming-systems.el")
 (load-user-file "source-control.el")
 (load-user-file "org-mode.el")
+(load-user-file "shorten-major-mode-names.el")
 
 ;;(load-user-file "instance-persistence.el")
 ;;(load-user-file "nvidia-mods.el")

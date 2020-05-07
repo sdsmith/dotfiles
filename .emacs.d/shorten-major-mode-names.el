@@ -1,0 +1,27 @@
+;; Replace strings in major mode names
+;; Reduces bottom frame bar overrun
+(require 'cyphejor)
+(setq cyphejor-rules
+      '(:upcase
+        ("bookmark"    "→")
+        ("buffer"      "β")
+        ("diff"        "Δ")
+        ("dired"       "δ")
+        ("emacs"       "ε")
+        ("inferior"    "i" :prefix)
+        ("interaction" "i" :prefix)
+        ("interactive" "i" :prefix)
+        ("lisp"        "λ" :postfix)
+        ("menu"        "▤" :postfix)
+        ("mode"        "")
+        ("package"     "↓")
+        ("python"      "π")
+        ("shell"       "sh" :postfix)
+        ("text"        "ξ")
+        ("wdired"      "↯δ")
+        ("Helm"        "𐃃")
+        ("company"     "🏢")
+        ("Undo"        "⎌")
+        ("undo"        "⎌")
+        ))
+(cyphejor-mode 1)
