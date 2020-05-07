@@ -83,13 +83,13 @@
 	<key>NSWindow Frame NSNavPanelAutosaveName</key>
 	<string>560 456 799 448 0 0 1920 1057 </string>
 	<key>NSWindow Frame ProfilesPanel</key>
-	<string>584 571 735 382 0 0 1920 1057 </string>
+	<string>191 573 735 382 0 0 1920 1057 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
-	<string>755 301 570 452 0 0 1920 1057 </string>
+	<string>2009 210 585 452 1920 -722 1080 1897 </string>
 	<key>NSWindow Frame iTerm Window 1</key>
 	<string>1252 45 585 452 0 0 1920 1057 </string>
 	<key>NSWindow Frame iTerm Window 2</key>
-	<string>842 0 836 1027 0 0 1920 1057 </string>
+	<string>2138 40 585 452 1920 -722 1080 1897 </string>
 	<key>NSWindow Frame iTerm Window 3</key>
 	<string>4 0 836 1013 0 0 1680 1027 </string>
 	<key>NSWindow Frame iTerm Window 4</key>
@@ -2482,14 +2482,14 @@
 		<key>screenFrame</key>
 		<string>{{0, 0}, {1920, 1080}}</string>
 		<key>topLeft</key>
-		<string>{873, 876}</string>
+		<string>{672, 841}</string>
 	</dict>
 	<key>NoSyncInstallationId</key>
 	<string>065C8CD0-6676-40A8-BE5E-DCF65B6618D0</string>
 	<key>NoSyncLastTipTime</key>
-	<real>610349844.28898597</real>
+	<real>610483914.75002694</real>
 	<key>NoSyncLaunchExperienceControllerRunCount</key>
-	<integer>29</integer>
+	<integer>31</integer>
 	<key>NoSyncNeverRemindPrefsChangesLostForFile</key>
 	<true/>
 	<key>NoSyncNeverRemindPrefsChangesLostForFile_selection</key>
@@ -3326,6 +3326,7 @@
 		<string>0011</string>
 		<string>0023</string>
 		<string>0035</string>
+		<string>0047</string>
 		<string>0031</string>
 		<string>0043</string>
 		<string>0008</string>
@@ -3342,7 +3343,7 @@
 		<string>0040</string>
 		<string>0009</string>
 		<string>0005</string>
-		<string>0047</string>
+		<string>0048</string>
 	</array>
 	<key>OpenBookmark</key>
 	<false/>
@@ -3387,6 +3388,10 @@
 	<false/>
 	<key>QuitWhenAllWindowsClosed</key>
 	<true/>
+	<key>RightCommand</key>
+	<integer>3</integer>
+	<key>RightOption</key>
+	<integer>8</integer>
 	<key>SUEnableAutomaticChecks</key>
 	<true/>
 	<key>SUFeedAlternateAppNameKey</key>
@@ -3396,8 +3401,10 @@
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2020-05-05T05:36:19Z</date>
+	<date>2020-05-07T18:29:22Z</date>
 	<key>SUSendProfileInfo</key>
+	<false/>
+	<key>Secure Input</key>
 	<false/>
 	<key>SoundForEsc</key>
 	<false/>
