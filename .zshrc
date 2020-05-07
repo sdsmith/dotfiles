@@ -215,16 +215,17 @@ autoload -U compinit && compinit
 # zsh-syntax-highlighting
 source $DOTFILES/oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-alias tml='tmux ls'
+alias tml='tmux list-session'
 alias tmk='tmux kill-session -t $*'
+alias tma='tmux attach -t $*'
 
 ## tmux control mode (best used with iterm2)
 # create
 alias tmc='tmux -CC'
 # resume (and detatch from any other clients connected to session)
-alias tmresume='tmux -CC a -d'
+alias tmcresume='tmux -CC a -d'
 # resume/new named session
-alias tma='tmux -CC new-session -AD -s $*'
+alias tmca='tmux -CC new-session -AD -s $*'
 
 # Work config
 if [ -f "$HOME/.workdotfiles/.zshrc" ]; then

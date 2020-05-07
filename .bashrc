@@ -79,16 +79,17 @@ export LS_COLORS=$LS_COLORS:'di=0;94:'
 #     . ~/.bash_completion
 # fi
 
-alias tml='tmux ls'
+alias tml='tmux list-session'
 alias tmk='tmux kill-session -t $*'
+alias tma='tmux attach -t $*'
 
 ## tmux control mode (best used with iterm2)
 # create
 alias tmc='tmux -CC'
 # resume (and detatch from any other clients connected to session)
-alias tmresume='tmux -CC a -d'
+alias tmcresume='tmux -CC a -d'
 # resume/new named session
-alias tma='tmux -CC new-session -AD -s $*'
+alias tmca='tmux -CC new-session -AD -s $*'
 
 function p4c()
 {
