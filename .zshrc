@@ -203,6 +203,13 @@ function get_nvidia_gpu_driver()
     find /sys | grep driver.*$(lspci | grep NV | grep VGA | cut -d ' ' -f1)
 }
 
+function color_palette()
+{
+    for i in {0..255}; do
+        printf "\x1b[38;5;${i}mcolour${i}\x1b[0m\n"
+    done
+}
+
 # Allow emacs GUI colours in terminal
 export TERM=xterm-256color
 
@@ -215,6 +222,7 @@ autoload -U compinit && compinit
 # zsh-syntax-highlighting
 source $DOTFILES/oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
+alias tmux_reload_config='tmux source-file ~/.tmux.conf'
 alias tml='tmux list-session'
 alias tmk='tmux kill-session -t $*'
 alias tma='tmux attach -t $*'
