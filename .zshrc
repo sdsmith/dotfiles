@@ -210,6 +210,15 @@ function color_palette()
     done
 }
 
+function kill_proc_on_port()
+{
+    if [ $# -ne 1 ]; then
+        echo "Usage: kill_proc_on_port <port>"
+    fi
+
+    kill -9 $(lsof -n -i | grep 20132 | awk '{print $2}' | kill -9)
+}
+
 # Allow emacs GUI colours in terminal
 export TERM=xterm-256color
 
