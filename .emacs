@@ -1,19 +1,22 @@
-;;; .emacs Configuration file
+;;; .emacs Configuration file -*- no-byte-compile -*-
+;;
+;; NOTE: Don't byte compile this file since "load-prefer-newer" won't be set
+;; until this file is loaded.
 ;;
 ;; TODO(sdsmith):
 ;; - insert biolerplate into new files
 ;; - don't use setq! https://emacs.stackexchange.com/questions/17386/display-all-setq-possibilities
 
 ;; Tips
-;;
 ;; - describe-face: Describes font face. Defaults to face at point.
 ;; - ibuffer: nice table of open buffers
 
-;; ;; FB: setup proxy to talk to internet
-;; (setq url-proxy-services
-;;       '(("no_proxy" . "^\\(localhost\\|10.*\\)")
-;;         ("http" . "fwdproxy:8080")
-;;              ("https" . "fwdproxy:8080")))
+;; Load the newest file, not just the byte compiled file
+(setq load-prefer-newer t)
+
+;; There will be a package-initialize call Emacs! Stop adding the call to my
+;; file!
+(setq package--init-file-ensured t)
 
 ;; Setup customize system
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
@@ -35,6 +38,11 @@
 
 ;; NOTE(sdsmith): ALWAYS DO THIS BEFORE ANY PACKAGE CUSTOMIZATION
 (load-user-file "package.el")
+
+;; Automatically byte compile any elisp files
+(require 'auto-compile)
+(auto-compile-on-load-mode)
+(auto-compile-on-save-mode)
 
 (load-user-file "visuals.el")
 (load-user-file "emacs-behaviour.el")
