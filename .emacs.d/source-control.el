@@ -1,5 +1,9 @@
 ;;; Source control integration
 
+;; VC is a built-in package that attempts to support all version control
+;; systems.
+(require 'vc)
+
 (defvar git-gutter+-mode-map)
 (defun add-git ()
   ;; ref: https://github.com/nonsequitur/git-gutter-plus
