@@ -41,6 +41,11 @@ create_home_symlink .vimrc
 create_home_symlink .vnc
 create_home_symlink .zshrc
 
+# xclip
+if ! command -v xclip >/dev/null; then
+    echo "WARNING: Please install xclip! Needed by tmux"
+fi
+
 # FZF
 if ! command -v fzf >/dev/null; then
     echo "WARNING: Please install fzf! https://github.com/junegunn/fzf"
