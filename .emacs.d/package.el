@@ -1,11 +1,12 @@
 ;; FB: Skip checking the package signatures.
 ;;
-;; NOTE: setting the proxy settings causes package signature checks to
-;; fail. Skip those checks. TODO: for now.
-(setq package-check-signature nil)
 
 ;; Add package sources
 (require 'package)
+
+;; NOTE: setting the proxy settings causes package signature checks to
+;; fail. Skip those checks. TODO: for now.
+(setq package-check-signature nil)
 
 (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
                     (not (gnutls-available-p))))
