@@ -4,6 +4,9 @@
 ;; systems.
 (require 'vc)
 
+;; Merge tool: smerge
+(setq smerge-command-pefix (kbd "C-c v"))
+
 (defvar git-gutter+-mode-map)
 (defun add-git ()
   ;; ref: https://github.com/nonsequitur/git-gutter-plus
