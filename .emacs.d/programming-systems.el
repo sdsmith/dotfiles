@@ -52,12 +52,13 @@
   "Create a buffer local save hook."
   (add-hook 'before-save-hook
 	    (lambda ()
-	      (progn
-		(when (locate-dominating-file "." ".clang-format")
-		  (clang-format-buffer))
-		;; Continue to save.
-		nil))
-	    nil
+              (when (locate-dominating-file "." ".clang-format")
+                (if (and buffer-file-name (string= (file-name-extension buffer-file-name) "thrift"))
+                    nil
+                  (clang-format-buffer))))
+
+            ;; Continue to save
+            nil
 	    ;; Buffer local hook.
 	    t))
 (add-hook 'prog-mode-hook (lambda () (clang-format-save-hook-for-this-buffer)))
