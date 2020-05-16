@@ -40,6 +40,7 @@ create_home_symlink .gdbinit
 create_home_symlink .vimrc
 create_home_symlink .vnc
 create_home_symlink .zshrc
+create_home_symlink .gitconfig 
 
 # xclip
 if ! command -v xclip >/dev/null; then
