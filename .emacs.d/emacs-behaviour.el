@@ -61,3 +61,6 @@
 
 ;; Save session defined abbrevs by default
 (setq save-abbrevs nil)
+
+;; Set ispell's dictionary location
+(setq ispell-personal-dictionary "~/.emacs.d/aspell.en.pws")
