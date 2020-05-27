@@ -35,6 +35,9 @@
 ;;
 ;; Can navigate to desired value by typing or using `C-n`. Hitting `RET` selects
 ;; currently highlighted item in completion window.
+;;
+;; Tips:
+;; - during helm finer window, C-j to expand current candidate
 (require 'helm)
 (require 'helm-config)
 (global-set-key (kbd "M-x") #'helm-M-x)
