@@ -8,6 +8,10 @@
 ;; fail. Skip those checks. TODO: for now.
 (setq package-check-signature nil)
 
+;; WAR(https://debbugs.gnu.org/cgi/bugreport.cgi?bug=34341): Fixed in emacs 26.3+
+(when (version< emacs-version "26.3")
+  (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3"))
+
 (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
                     (not (gnutls-available-p))))
        (url (concat (if no-ssl "http" "https") "://melpa.org/packages/")))
