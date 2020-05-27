@@ -34,12 +34,17 @@ done
 # Setup tmux with Tmux Package Manager (TPM)
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 create_home_symlink .tmux.conf
+mkdir -p $HOME/.tmux.d
+for tmux_file in $(find ./.tmux.d -type f); do
+    create_home_symlink "$tmux_file"
+done
 tmux new-session -d -s "_tmux_install" "$HOME/.tmux/plugins/tpm/bin/install_plugins"
 
 create_home_symlink .gdbinit
 create_home_symlink .vimrc
 create_home_symlink .vnc
 create_home_symlink .zshrc
+create_home_symlink .ptconfig.toml
 
 # xclip
 if ! command -v xclip >/dev/null; then
