@@ -1,1 +1,21 @@
-ignore = ["$\#.*"]
+# Platinum Searcher configuration file
+# ref: https://github.com/monochromegane/the_platinum_searcher
+
+# Parse pattern as regex
+e = true
+
+# Case insensitive matching unless pattern contains uppercase letters
+smart-case = true
+
+# Search hideen files and directories
+hidden = true
+
+# Print color code in the results
+color = true
+
+# Ignore files matching pattern
+ignore = ["[#]*#", # Emacs autosave files
+          "*~",    # Emacs backup files
+          ".git",
+          ".hg",
+         ]
