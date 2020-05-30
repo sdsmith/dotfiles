@@ -158,7 +158,7 @@ function is_running_windows_subsystem_linux()
 }
 
 alias emacsserver="emacs --daemon"
-alias enw="emacsclient -t"
+alias enw="emacsclient -a='' -t"
 alias l="ls --color -F"
 
 ssh_remove_auth_key()
