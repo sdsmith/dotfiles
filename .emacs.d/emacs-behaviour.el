@@ -18,16 +18,22 @@
 ;; https://emacs.stackexchange.com/questions/3447/cannot-set-terminal-process-group-error-when-running-bash-script
 (setenv "BASH_ENV" "~/.bashrc")
 
-;; Move backup files (*.~) to seperate directory
-(setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
+;; Move backup files (.*~) to seperate directory
+(setq backup-directory-alist '((".*" . "~/.emacs.d/backups/"))
   backup-by-copying t    ; Don't delink hardlinks
   version-control t      ; Use version numbers on backups
   delete-old-versions t  ; Automatically delete excess backups
   kept-new-versions 20   ; how many of the newest versions to keep
   kept-old-versions 5    ; and how many of the old
   )
-(setq autosave-file-name-transforms
-      `(("." . "~/.emacs.d/backup")))
+(when (not (file-directory-p "~/.emacs.d/backups"))
+  (make-directory "~/.emacs.d/backups"))
+
+;; Move autosave files (#.*#) to seperate directory
+(setq auto-save-file-name-transforms
+      `((".*" "~/.emacs.d/autosaves" t)))
+(when (not (file-directory-p "~/.emacs.d/autosaves"))
+  (make-directory "~/.emacs.d/autosaves"))
 
 (setq inhibit-startup-message t)
 (savehist-mode 1)

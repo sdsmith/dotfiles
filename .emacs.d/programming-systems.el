@@ -79,3 +79,22 @@
   '(progn
      (define-key company-mode-map (kbd "C-:") 'helm-company)
      (define-key company-active-map (kbd "C-:") 'helm-company)))
+
+;; cquery
+;; ref: https://github.com/cquery-project/cquery/wiki/Emacs#configure
+;;
+;; Tips:
+;;   M-.  Synonymous with 'jump to definition'
+(setq lsp-keymap-prefix "C-c i") ; Must be before require
+(require 'lsp)
+(define-key lsp-mode-map (kbd "C-c i") lsp-command-map)
+(setq lsp-enable-snipper nil) ; disable yasnippet integration
+
+(require 'cquery)
+(setq cquery-executable "/usr/local/bin/cquery")
+(defun cquery//enable()
+  (condition-case nil
+      (lsp)
+    (user-error nil)))
+(add-hook 'c-mode-hook #'cquery//enable)
+(add-hook 'c++-mode-hook #'cquery//enable)
