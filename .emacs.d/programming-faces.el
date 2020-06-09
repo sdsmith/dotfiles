@@ -45,4 +45,5 @@
 ;; Add keywords to cpp
 (font-lock-add-keywords 'c++-mode
                         '(("constexpr" . font-lock-keyword-face))
-                        '(("nullptr"   . font-lock-keyword-face)))
+                        '(("nullptr"   . font-lock-keyword-face))
+                        '(("co_await"  . font-lock-keyword-face))))
