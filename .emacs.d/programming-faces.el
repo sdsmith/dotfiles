@@ -10,6 +10,7 @@
 (make-face 'font-lock-comment-doc-face)
 (make-face 'font-lock-comment-war-face)
 (make-face 'font-lock-comment-bug-ref-face)
+(make-face 'font-lock-comment-todo-keyword-face)
 
 (defun add-custom-keywords ()
   (font-lock-add-keywords
@@ -27,6 +28,7 @@
      ("\\(TODO\\|NOTE\\|IMPORTANT\\|STUDY\\|README\\|BUG\\|DOC\\)(\\(\\w+?\\)):"
       2 'font-lock-comment-user-face t)
      ("WAR(\\(\\w+?\\)):" 1 'font-lock-comment-bug-ref-face t)
+     ("\\(@\\w+:\\)" 1 'font-lock-comment-todo-keyword-face t)
      )))
 (add-hook 'prog-mode-hook #'add-custom-keywords)
 
@@ -41,6 +43,7 @@
 (modify-face 'font-lock-comment-doc-face "DeepPink2" nil nil t nil nil nil nil)
 (modify-face 'font-lock-comment-war-face "Red3" nil nil t nil nil nil nil)
 (modify-face 'font-lock-comment-bug-ref-face "chartreuse" nil nil t nil nil nil nil)
+(modify-face 'font-lock-comment-todo-keyword-face "khaki" nil nil t nil nil nil nil)
 
 ;; Add keywords to cpp
 (font-lock-add-keywords 'c++-mode
