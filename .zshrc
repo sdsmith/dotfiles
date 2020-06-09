@@ -157,6 +157,32 @@ function is_running_windows_subsystem_linux()
     fi
 }
 
+function is_windows_subsystem_linux_v1() {
+    # ref: https://askubuntu.com/questions/1177729/wsl-am-i-running-version-1-or-version-2
+    local KERNEL_VER=$(uname -r)
+    local MAJOR_VER=$(echo $KERNEL_VER | cut -d. -f1)
+    local MINOR_VER=$(echo $KERNEL_VER | cut -d. -f2)
+
+    if (( $MAJOR_VER <= 4 )) && (( $MINOR_VER < 19 )) ; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+if is_running_windows_subsystem_linux ; then
+    # Forward graphical applications to Windows xserver
+    # ref: https://wiki.ubuntu.com/WSL
+
+    if is_windows_subsystem_linux_v1 ; then        
+        export DISPLAY=:0
+    else
+        # WSL2
+        export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0
+    fi
+    export LIBGL_ALWAYS_INDIRECT=1
+fi
+
 alias emacsserver="emacs --daemon"
 alias enw="emacsclient -a='' -t"
 alias l="ls --color -F"
