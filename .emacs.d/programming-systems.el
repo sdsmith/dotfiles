@@ -61,7 +61,7 @@
             nil
 	    ;; Buffer local hook.
 	    t))
-(add-hook 'prog-mode-hook (lambda () (clang-format-save-hook-for-this-buffer)))
+(add-hook 'prog-mode-hook 'clang-format-save-hook-for-this-buffer)
 
 (require 'projectile)
 (projectile-mode +1)
