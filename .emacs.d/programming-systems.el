@@ -53,7 +53,9 @@
   (add-hook 'before-save-hook
 	    (lambda ()
               (when (locate-dominating-file "." ".clang-format")
-                (if (and buffer-file-name (string= (file-name-extension buffer-file-name) "thrift"))
+                (if (and buffer-file-name
+                         (or (string= (file-name-extension buffer-file-name) "thrift")
+                             (string= (file-name-extension buffer-file-name) "py")))
                     nil
                   (clang-format-buffer))))
 
@@ -88,7 +90,7 @@
 ;;   M-.  Synonymous with 'jump to definition'
 (setq lsp-keymap-prefix "C-c i") ; Must be before require
 (require 'lsp)
-(define-key lsp-mode-map (kbd "C-c i") lsp-command-map)
+; (define-key lsp-mode-map (kbd "C-c i") lsp-command-map)
 (setq lsp-enable-snipper nil) ; disable yasnippet integration
 
 (require 'cquery)
