@@ -71,6 +71,7 @@
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 (setq projectile-enable-caching t) ;; Cache project index
 (setq projectile-mode-line-prefix " ρ")
+(append '(".cquery_cached_index") projectile-globally-ignored-directories)
 
 (require 'helm-projectile)
 (helm-projectile-on)

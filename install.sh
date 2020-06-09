@@ -44,8 +44,22 @@ create_home_symlink .gdbinit
 create_home_symlink .vimrc
 create_home_symlink .vnc
 create_home_symlink .zshrc
-create_home_symlink .gitconfig
 create_home_symlink .ptconfig.toml
+
+function create_home_symlink_global_gitignore() {
+    local ABS_PATH=$($CMD_READLINK -f .gitignore_global)
+    local DEST="$HOME/.gitignore"
+
+    if [ -f "$DEST" ] && [ ! -h "$DEST" ]; then
+        echo "~/.gitignore already exists and is not a symlink"
+        return 1
+    fi
+
+    ln -sf "$ABS_PATH" "$DEST"
+}
+
+create_home_symlink .gitconfig
+create_home_symlink_global_gitignore
 
 # xclip
 if ! command -v xclip >/dev/null; then
