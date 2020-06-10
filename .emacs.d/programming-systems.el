@@ -53,17 +53,13 @@
   (add-hook 'before-save-hook
 	    (lambda ()
               (when (locate-dominating-file "." ".clang-format")
-                (if (and buffer-file-name
-                         (or (string= (file-name-extension buffer-file-name) "thrift")
-                             (string= (file-name-extension buffer-file-name) "py")))
-                    nil
-                  (clang-format-buffer))))
-
+                  (clang-format-buffer)))
             ;; Continue to save
             nil
 	    ;; Buffer local hook.
 	    t))
-(add-hook 'prog-mode-hook 'clang-format-save-hook-for-this-buffer)
+(dolist (hook '(c++-mode-hook c-mode-hook))
+  (add-hook hook 'clang-format-save-hook-for-this-buffer))
 
 (require 'projectile)
 (projectile-mode +1)
