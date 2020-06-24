@@ -1,3 +1,4 @@
+
 ;; Company - code completion
 (require 'company)
 (add-hook 'prog-mode-hook 'company-mode)
@@ -86,14 +87,44 @@
 ;;   M-.  Synonymous with 'jump to definition'
 (setq lsp-keymap-prefix "C-c i") ; Must be before require
 (require 'lsp)
-; (define-key lsp-mode-map (kbd "C-c i") lsp-command-map)
-(setq lsp-enable-snipper nil) ; disable yasnippet integration
+(setq
+ lsp-enable-snippet nil ; disable yasnippet integration
+ ;; Disable declaration preview overlay on top right of frame
+ lsp-ui-sideline-show-code-actions nil
+ lsp-ui-sideline-show-hover nil)
 
-(require 'cquery)
-(setq cquery-executable "/usr/local/bin/cquery")
-(defun cquery//enable()
-  (condition-case nil
-      (lsp)
-    (user-error nil)))
-(add-hook 'c-mode-hook #'cquery//enable)
-(add-hook 'c++-mode-hook #'cquery//enable)
+(defun setup-cquery ()
+  (require 'cquery)
+  (setq
+   cquery-extra-init-params '(:completion (:detailedLabel t))
+   cquery-sem-highlight-method 'font-lock
+   company-transformers nil
+   company-lsp-async t
+   company-lsp-cache-candidates nil
+   xref-prompt-for-identifier '(not
+                                xref-find-definitions
+                                xref-find-definitions-other-window
+                                xref-find-definitions-other-frame
+                                xref-find-references))
+  (defun cquery//enable()
+    (condition-case nil
+        (lsp)
+      (user-error nil)))
+  (add-hook 'c-mode-common-hook #'cquery//enable))
+
+;; Setup lsp server
+(if (file-exists-p (expand-user-work-file "lsp-server-setup.el"))
+    (load-user-work-file "lsp-server-setup.el")
+  (setup-cquery))
+
+(require 'company-lsp)
+(add-to-list 'company-backends 'company-lsp)
+
+;; TODO(sdsmith): lsp-ui
+;; (require 'lsp-ui)
+;; (setq lsp-ui-sideline-show-code-actions nil)
+;; (setq lsp-ui-sideline-show-hover nil)
+;; (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+
+(require 'helm-xref)
+(setq xref-show-xrefs-function 'helm-xref-show-xrefs)

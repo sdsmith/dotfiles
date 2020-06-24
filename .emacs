@@ -27,12 +27,27 @@
          user-emacs-directory)
         ((boundp 'user-init-directory)
          user-init-directory)
-        (t "~/.emacs.d/")))
+        (t "~/.emacs.d/"))
+  "Emacs init directory for current user")
+
+(defconst user-workfiles-init-dir "~/.workdotfiles/.emacs.d/"
+  "Emacs work files init directory for current user")
+
+(defun expand-user-file (file)
+  (expand-file-name file user-init-dir))
 
 (defun load-user-file (file)
   (interactive "f")
   "Load a file in current user's configuration directory"
-  (load-file (expand-file-name file user-init-dir)))
+  (load-file (expand-user-file file)))
+
+(defun expand-user-work-file (file)
+  (expand-file-name file user-workfiles-init-dir))
+
+(defun load-user-work-file (file)
+  (interactive "f")
+  "Load a file in the current user's work files configuration directory"
+  (load-file (expand-user-work-file file)))
 
 (load-user-file "utils.el")
 
