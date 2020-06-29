@@ -10,6 +10,11 @@ export ZSH_CUSTOM="$ZSH/custom"
 echo "Setting up dotfiles in $HOME..."
 ./install.sh
 
+if ! command -v zsh >/dev/null; then
+    echo "ERROR: Please install zsh!"
+    exit 1
+fi
+
 echo "Installing oh-my-zsh..."
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
 
