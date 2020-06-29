@@ -68,7 +68,8 @@ fi
 
 # FZF
 if ! command -v fzf >/dev/null; then
-    echo "WARNING: Please install fzf! https://github.com/junegunn/fzf"
+    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+    ~/.fzf/install
 fi
 
 # PT
