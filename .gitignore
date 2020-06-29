@@ -7,5 +7,7 @@
 !/.vnc/config.d/Xvnc
 \#*#
 /oh-my-zsh
+/zsh-completions
+/zsh-syntax-highlighting
 /utils/in_hg
 /utils/benchmark
