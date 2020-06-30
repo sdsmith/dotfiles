@@ -68,6 +68,9 @@ fi
 
 # FZF
 if ! command -v fzf >/dev/null; then
+    # NOTE(sdsmith): Ideally we could depend on the package manager for the
+    # system. However, the ubuntu packages (an potentially all linux packages?)
+    # don't install key binding integration... which is the best part!
     git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
     ~/.fzf/install
 fi
