@@ -6,6 +6,8 @@
 # Cannot stop shell profiling while module is laoded.
 #zmodload zsh/zprof
 
+# Set default file permissions
+umask 022
 
 export TERM=xterm-256color
 
@@ -96,6 +98,14 @@ setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording en
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
+
+# # oh-my-zsh ssh-agent plugin
+# # ref: https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/ssh-agent
+# # TODO(sdsmith): This gets the right keys, but says the file doesn't exist even though it does??
+# _SSH_PRIVATE_KEYS=$(find ~/.ssh -regex '.*id_[^\.]*$' -type f -printf "%f\n" | tr "\n" " ")
+# zstyle :omz:plugins:ssh-agent identities $_SSH_PRIVATE_KEYS
+# unset _SSH_PRIVATE_KEYS
+
 plugins=(
     git
     mercurial
@@ -103,13 +113,6 @@ plugins=(
     zsh-completions
     zsh-syntax-highlighting
 )
-
-# oh-my-zsh ssh-agent plugin
-# ref: https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/ssh-agent
-# TODO: Get permissions issue when it runs find. why? It is running as me.
-#_SSH_PRIVATE_KEYS=find $HOME/.ssh -type f -name "*.pub" | grep -o "[^/]*$" | sed 's/\.[^.]*$//' | xargs
-#zstyle :omz:plugins:ssh-agent identities $_SSH_PRIVATE_KEYS
-#unset _SSH_PRIVATE_KEYS
 
 source $ZSH/oh-my-zsh.sh
 
