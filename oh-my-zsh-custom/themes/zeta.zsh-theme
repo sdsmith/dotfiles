@@ -147,4 +147,5 @@ add-zsh-hook precmd print_prompt_head
 setopt prompt_subst
 
 PROMPT='$(get_prompt_indicator)'
-RPROMPT='$(git_prompt_short_sha)$(hg_prompt_short_sha) '
+#RPROMPT='$(git_prompt_short_sha)$(hg_prompt_short_sha) '
+RPROMPT=''
