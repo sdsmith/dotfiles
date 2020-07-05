@@ -14,3 +14,5 @@
 
         diffw = diff --color-words
         diffc = diff --color-words=.
+
+        amend = commit --amend
