@@ -207,6 +207,11 @@ function fix_terminal()
     tput rs1
 }
 
+function cron_log()
+{
+    grep CRON /var/log/syslog
+}
+
 function mosh_server_killall()
 {
     # Kills all mosh-servers except the last one created (so we don't kill our own server!)
