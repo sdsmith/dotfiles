@@ -1,4 +1,4 @@
-;; Show file path in status bar when using non-unqiue names
+;; Show file path in status bar when using non-unique names
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
 
@@ -18,3 +18,10 @@
 (add-hook 'prog-mode-hook 'which-function-mode)
 ;; TODO: Set the font face of face `which-func`
 
+;; Disable all superfluous UI elements
+(dolist (mode '(scroll-bar-mode
+		tool-bar-mode
+		menu-bar-mode
+		horizontal-scroll-bar-mode))
+  (when (fboundp mode)
+    (funcall mode -1)))

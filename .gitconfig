@@ -2,6 +2,9 @@
 	email = stewart.dryden.smith@gmail.com
 	name = Stewart Smith
 
+[core]
+        excludesfile = ~/.gitignore
+
 [alias]
         sl1 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
         sl2 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
@@ -11,3 +14,5 @@
 
         diffw = diff --color-words
         diffc = diff --color-words=.
+
+        amend = commit --amend

@@ -1,3 +1,4 @@
+
 ;; Company - code completion
 (require 'company)
 (add-hook 'prog-mode-hook 'company-mode)
@@ -53,15 +54,13 @@
   (add-hook 'before-save-hook
 	    (lambda ()
               (when (locate-dominating-file "." ".clang-format")
-                (if (and buffer-file-name (string= (file-name-extension buffer-file-name) "thrift"))
-                    nil
-                  (clang-format-buffer))))
-
+                  (clang-format-buffer)))
             ;; Continue to save
             nil
 	    ;; Buffer local hook.
 	    t))
-(add-hook 'prog-mode-hook (lambda () (clang-format-save-hook-for-this-buffer)))
+(dolist (hook '(c++-mode-hook c-mode-hook))
+  (add-hook hook 'clang-format-save-hook-for-this-buffer))
 
 (require 'projectile)
 (projectile-mode +1)
@@ -69,6 +68,7 @@
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 (setq projectile-enable-caching t) ;; Cache project index
 (setq projectile-mode-line-prefix " ρ")
+(append '(".cquery_cached_index") projectile-globally-ignored-directories)
 
 (require 'helm-projectile)
 (helm-projectile-on)
@@ -87,14 +87,44 @@
 ;;   M-.  Synonymous with 'jump to definition'
 (setq lsp-keymap-prefix "C-c i") ; Must be before require
 (require 'lsp)
-(define-key lsp-mode-map (kbd "C-c i") lsp-command-map)
-(setq lsp-enable-snipper nil) ; disable yasnippet integration
+(setq
+ lsp-enable-snippet nil ; disable yasnippet integration
+ ;; Disable declaration preview overlay on top right of frame
+ lsp-ui-sideline-show-code-actions nil
+ lsp-ui-sideline-show-hover nil)
 
-(require 'cquery)
-(setq cquery-executable "/usr/local/bin/cquery")
-(defun cquery//enable()
-  (condition-case nil
-      (lsp)
-    (user-error nil)))
-(add-hook 'c-mode-hook #'cquery//enable)
-(add-hook 'c++-mode-hook #'cquery//enable)
+(defun setup-cquery ()
+  (require 'cquery)
+  (setq
+   cquery-extra-init-params '(:completion (:detailedLabel t))
+   cquery-sem-highlight-method 'font-lock
+   company-transformers nil
+   company-lsp-async t
+   company-lsp-cache-candidates nil
+   xref-prompt-for-identifier '(not
+                                xref-find-definitions
+                                xref-find-definitions-other-window
+                                xref-find-definitions-other-frame
+                                xref-find-references))
+  (defun cquery//enable()
+    (condition-case nil
+        (lsp)
+      (user-error nil)))
+  (add-hook 'c-mode-common-hook #'cquery//enable))
+
+;; Setup lsp server
+(if (file-exists-p (expand-user-work-file "lsp-server-setup.el"))
+    (load-user-work-file "lsp-server-setup.el")
+  (setup-cquery))
+
+(require 'company-lsp)
+(add-to-list 'company-backends 'company-lsp)
+
+;; TODO(sdsmith): lsp-ui
+;; (require 'lsp-ui)
+;; (setq lsp-ui-sideline-show-code-actions nil)
+;; (setq lsp-ui-sideline-show-hover nil)
+;; (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+
+(require 'helm-xref)
+(setq xref-show-xrefs-function 'helm-xref-show-xrefs)

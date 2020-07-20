@@ -1,4 +1,4 @@
-personal_ws-1.1 en 33 
+personal_ws-1.1 en 35 
 bool
 Spotify
 Sweetysun
@@ -6,6 +6,7 @@ AVX
 struct
 MacBook
 ISA
+ISAs
 nonterminals
 Erlang
 Parsers
@@ -16,14 +17,12 @@ TODO
 Fortran
 runnable
 macOS
-MacOS
 CPUs
 subreddit
 codebase
 AmazonBasics
 SIIG
 kvm
-KVM
 COVID
 xkcd
 AST
@@ -32,3 +31,6 @@ LALR
 lexing
 behaviour
 tokenized
+OOO
+combinational
+SSD

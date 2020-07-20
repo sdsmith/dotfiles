@@ -18,7 +18,7 @@
          ("\\.vert$'"         . glsl-mode)
          ("\\.frag$'"         . glsl-mode)
          ("\\.cmake$"         . cmake-mode)
-         ("CMakeLists\\.txt$" . cmake-mode)
+         ("^CMakeLists.txt"   . cmake-mode)
          ("\\.el$"            . emacs-lisp-mode)
          ("\\.org$"           . org-mode)
          ("\\.org.gpg$"       . org-mode)

@@ -6,13 +6,15 @@
 # Cannot stop shell profiling while module is laoded.
 #zmodload zsh/zprof
 
+# Set default file permissions
+umask 022
 
 export TERM=xterm-256color
 
 export DOTFILES="$HOME/.dotfiles"
 export DOTFILES_UTILS="$DOTFILES/utils"
 
-export PATH=$HOME/.homebrew/bin:$DOTFILES/zsh/:$PATH
+export PATH=$HOME/.local/bin:$HOME/.homebrew/bin:$DOTFILES/zsh/:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="$DOTFILES/oh-my-zsh"
@@ -96,6 +98,14 @@ setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording en
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
+
+# # oh-my-zsh ssh-agent plugin
+# # ref: https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/ssh-agent
+# # TODO(sdsmith): This gets the right keys, but says the file doesn't exist even though it does??
+# _SSH_PRIVATE_KEYS=$(find ~/.ssh -regex '.*id_[^\.]*$' -type f -printf "%f\n" | tr "\n" " ")
+# zstyle :omz:plugins:ssh-agent identities $_SSH_PRIVATE_KEYS
+# unset _SSH_PRIVATE_KEYS
+
 plugins=(
     git
     mercurial
@@ -103,13 +113,6 @@ plugins=(
     zsh-completions
     zsh-syntax-highlighting
 )
-
-# oh-my-zsh ssh-agent plugin
-# ref: https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/ssh-agent
-# TODO: Get permissions issue when it runs find. why? It is running as me.
-#_SSH_PRIVATE_KEYS=find $HOME/.ssh -type f -name "*.pub" | grep -o "[^/]*$" | sed 's/\.[^.]*$//' | xargs
-#zstyle :omz:plugins:ssh-agent identities $_SSH_PRIVATE_KEYS
-#unset _SSH_PRIVATE_KEYS
 
 source $ZSH/oh-my-zsh.sh
 
@@ -157,6 +160,32 @@ function is_running_windows_subsystem_linux()
     fi
 }
 
+function is_windows_subsystem_linux_v1() {
+    # ref: https://askubuntu.com/questions/1177729/wsl-am-i-running-version-1-or-version-2
+    local KERNEL_VER=$(uname -r)
+    local MAJOR_VER=$(echo $KERNEL_VER | cut -d. -f1)
+    local MINOR_VER=$(echo $KERNEL_VER | cut -d. -f2)
+
+    if (( $MAJOR_VER <= 4 )) && (( $MINOR_VER < 19 )) ; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+if is_running_windows_subsystem_linux ; then
+    # Forward graphical applications to Windows xserver
+    # ref: https://wiki.ubuntu.com/WSL
+
+    if is_windows_subsystem_linux_v1 ; then        
+        export DISPLAY=:0
+    else
+        # WSL2
+        export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0
+    fi
+    export LIBGL_ALWAYS_INDIRECT=1
+fi
+
 alias emacsserver="emacs --daemon"
 alias enw="emacsclient -a='' -t"
 alias l="ls --color -F"
@@ -176,6 +205,11 @@ function fix_terminal()
 {
     stty sane
     tput rs1
+}
+
+function cron_log()
+{
+    grep CRON /var/log/syslog
 }
 
 function mosh_server_killall()
