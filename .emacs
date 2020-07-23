@@ -77,3 +77,7 @@
 
 ;;(load-user-file "instance-persistence.el")
 ;;(load-user-file "nvidia-mods.el")
+
+(server-start)
+(start-process-shell-command
+ "scp" "*scp*" "scp -p ~/.emacs.d/server/server devf:~/.emacs.d/remoteserver/server")

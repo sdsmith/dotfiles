@@ -128,3 +128,18 @@
 
 (require 'helm-xref)
 (setq xref-show-xrefs-function 'helm-xref-show-xrefs)
+
+;;; TRAMP
+;; run emacs server over TCP for "remote" access
+(setq server-port "1492")
+(setq server-use-tcp t)
+;; fast auto complete in minibuffer
+(setq tramp-completion-reread-directory-timeout nil)
+;; ignore login prompts w/ proper ssh-config
+(setq tramp-default-method "sshx")
+;; tramp clobbers ssh ControlPath setting by default to avoid password prompt
+(setq tramp-use-ssh-controlmaster-options nil)
+(require 'tramp)
+(setq tramp-message-show-message nil)
+;; Let tramp search $PATH as given to the $USER on the remote machine
+(add-to-list 'tramp-remote-path 'tramp-own-remote-path)

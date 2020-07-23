@@ -70,6 +70,7 @@
 
 (defun setup-source-control ()
   (add-perforce)
-  (add-git))
+  ;;(add-git)
+  )
 
 (setup-source-control)

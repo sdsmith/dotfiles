@@ -11,6 +11,7 @@
 (make-face 'font-lock-comment-war-face)
 (make-face 'font-lock-comment-bug-ref-face)
 (make-face 'font-lock-comment-todo-keyword-face)
+;; (make-face 'font-lock-note-word-def-face)
 
 (defun add-custom-keywords ()
   (font-lock-add-keywords
@@ -27,8 +28,10 @@
      ("\\<\\(WAR(\\w+?):\\)" 1 'font-lock-comment-war-face t)
      ("\\(TODO\\|NOTE\\|IMPORTANT\\|STUDY\\|README\\|BUG\\|DOC\\)(\\(\\w+?\\)):"
       2 'font-lock-comment-user-face t)
-     ("WAR(\\(\\w+?\\)):" 1 'font-lock-comment-bug-ref-face t)
+     ("WAR(\\(\\w+?\\)):" 1 'font-lock-comment-bug-ref-face t) ; TODO(stewarts): this is a redefinition of the one above...
      ("\\(@\\w+:\\)" 1 'font-lock-comment-todo-keyword-face t)
+     ;; ("\\<\\(DOC(\\w+?):\\)" 1 'font-lock-comment-doc-face t)
+     ;; ("\\<\\((\\w+?):\\)" 1 'font-lock-note-word-def-face t)
      )))
 (add-hook 'prog-mode-hook #'add-custom-keywords)
 
