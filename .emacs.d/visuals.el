@@ -1,5 +1,5 @@
 ;; Set color scheme
-(add-to-list 'default-frame-alist '(font . "Liberation Mono-9.5"))
+(add-to-list 'default-frame-alist '(font . "Liberation Mono-12"))
 (set-face-attribute 'font-lock-builtin-face nil :foreground "#DAB98F")
 (set-face-attribute 'font-lock-comment-face nil :foreground "gray60")
 (set-face-attribute 'font-lock-constant-face nil :foreground "DarkKhaki")
