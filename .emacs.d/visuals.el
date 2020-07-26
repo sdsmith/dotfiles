@@ -1,6 +1,6 @@
 ;; Set color scheme
-(add-to-list 'default-frame-alist '(font . "Liberation Mono-9.5"))
-(set-face-attribute 'font-lock-builtin-face nil :foreground "burlywood3")
+(add-to-list 'default-frame-alist '(font . "Liberation Mono-12"))
+(set-face-attribute 'font-lock-builtin-face nil :foreground "#DAB98F")
 (set-face-attribute 'font-lock-comment-face nil :foreground "gray60") ; #999999
 (set-face-attribute 'font-lock-constant-face nil :foreground "DarkKhaki") ; #bdb76b
 (set-face-attribute 'font-lock-doc-face nil :foreground "burlywood3") ; #cdaa7d
