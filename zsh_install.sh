@@ -58,11 +58,17 @@ make BUILD=release
 cd ..
 
 if [ ! -f $ZSH/themes/zeta.zsh-theme ]; then
-    echo "Installing theme..."
+    echo "Installing zeta theme..."
     # TODO: The Zeta theme installer modifies the symlink in home. Do a pull
     # request to add a --keep-zshrc arg. https://github.com/skylerlee/zeta-zsh-theme
     curl -fsSL https://raw.githubusercontent.com/skylerlee/zeta-zsh-theme/master/zeta.zsh-theme > "$ZSH/themes/zeta.zsh-theme"
 fi;
+
+if [ ! -f $ZSH_CUSTOM/themes/powerlevel10k ]; then
+    echo "Installing powerline10k theme..."
+    # Powerline 10k
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM}/themes/powerlevel10k
+fi
 
 echo "Installing custom oh-my-zsh configs..."
 cd oh-my-zsh-custom

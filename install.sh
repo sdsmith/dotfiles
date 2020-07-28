@@ -6,9 +6,10 @@ if uname -a | grep -qE "Darwin" &> /dev/null ; then
 fi
 
 function create_home_symlink() {
+    local HOME_FILE=$(basename $1)
     local FILE=$1
     local ABS_PATH=$($CMD_READLINK -f $FILE)
-    local DEST="$HOME/$FILE"
+    local DEST="$HOME/$HOME_FILE"
 
     if [ -f "$DEST" ] && [ ! -h "$DEST" ]; then
         echo "~/$FILE already exists and is not a symlink"
