@@ -44,6 +44,7 @@ create_home_symlink .gdbinit
 create_home_symlink .vimrc
 create_home_symlink .vnc
 create_home_symlink .zshrc
+create_home_symlink zsh/.p10k.zsh
 create_home_symlink .ptconfig.toml
 
 function create_home_symlink_global_gitignore() {
