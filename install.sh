@@ -5,7 +5,8 @@ if uname -a | grep -qE "Darwin" &> /dev/null ; then
     CMD_READLINK="greadlink"
 fi
 
-function create_home_symlink() {
+function create_root_home_symlink() {
+    # Create a symlink in HOME that ignores the given file's path structure.
     local HOME_FILE=$(basename $1)
     local FILE=$1
     local ABS_PATH=$($CMD_READLINK -f $FILE)
@@ -18,6 +19,21 @@ function create_home_symlink() {
 
     ln -sf "$ABS_PATH" "$DEST"
 }
+
+function create_home_symlink() {
+    # Create a symlink starting fome HOME that mimics the given file's path structure.
+    local FILE=$1
+    local ABS_PATH=$($CMD_READLINK -f $FILE)
+    local DEST="$HOME/$FILE"
+
+    if [ -f "$DEST" ] && [ ! -h "$DEST" ]; then
+        echo "~/$FILE already exists and is not a symlink"
+        return 1
+    fi
+
+    ln -sf "$ABS_PATH" "$DEST"
+}
+
 
 create_home_symlink .bashrc
 
@@ -45,7 +61,7 @@ create_home_symlink .gdbinit
 create_home_symlink .vimrc
 create_home_symlink .vnc
 create_home_symlink .zshrc
-create_home_symlink zsh/.p10k.zsh
+create_root_home_symlink zsh/.p10k.zsh
 create_home_symlink .ptconfig.toml
 
 function create_home_symlink_global_gitignore() {
