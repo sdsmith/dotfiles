@@ -70,3 +70,9 @@
 
 ;; Set ispell's dictionary location
 (setq ispell-personal-dictionary "~/.emacs.d/aspell.en.pws")
+
+;; Swap the command and option keys on OSX
+(when (eq system-type 'darwin)
+  (setq mac-option-modifer 'alt)
+  (setq mac-command-modifier 'meta)
+  )
