@@ -50,7 +50,7 @@
 (setq cperl-indent-level tab-width)
 
 ;; Delete all trailing whitespace
-(add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;; Set M-x re-builder to use the elisp regexp syntax
 ;; ref: https://www.masteringemacs.org/article/re-builder-interactive-regexp-builder
