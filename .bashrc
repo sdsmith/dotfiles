@@ -20,6 +20,15 @@ function is_running_windows_subsystem_linux()
     fi
 }
 
+function is_running_macos()
+{
+    if "`uname -s`" == "Darwin"; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 ## Increase bash history limit
 #export HISTSIZE=-1
 #export HISTFILESIZE=-1
@@ -150,6 +159,8 @@ function get_nvidia_gpu_driver()
 }
 
 ### Additional config files
+source "${HOME}/.dotfiles/bash/dates.sh"
+
 if [ -f "${HOME}/.workdotfiles/.bashrc_work" ]; then
     source "${HOME}/.workdotfiles/.bashrc_work"
 fi
