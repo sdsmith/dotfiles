@@ -23,6 +23,8 @@ export DOTFILES_UTILS="$DOTFILES/utils"
 
 export PATH=$HOME/.local/bin:$HOME/.homebrew/bin:$DOTFILES/zsh/:$PATH
 
+export EMAIL_PERSONAL="stewart.dryden.smith@gmail.com"
+
 # Path to your oh-my-zsh installation.
 export ZSH="$DOTFILES/oh-my-zsh"
 
@@ -192,11 +194,36 @@ if is_running_windows_subsystem_linux ; then
         export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0
     fi
     export LIBGL_ALWAYS_INDIRECT=1
+
+    # WSL aliases
 fi
+
+function o()
+{
+    local FILEPATH=$1
+    # Opens a file
+    if is_running_windows_subsystem_linux ; then
+        explorer.exe `wslpath -aw ${FILEPATH}`
+    else
+        echo "Unsupported terminal/OS combo"
+        exit 1
+    fi
+}
 
 alias emacsserver="emacs --daemon"
 alias enw="emacsclient -a='' -t"
 alias l="ls --color -F"
+
+function ssh_gen_key()
+{
+    ssh-keygen -t rsa -b 4096 -C $EMAIL_PERSONAL
+}
+
+function ssh_add_key()
+{
+    eval $(ssh-agent -s)
+    ssh-add $*
+}
 
 ssh_remove_auth_key()
 {
