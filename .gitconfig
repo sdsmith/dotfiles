@@ -16,3 +16,5 @@
         diffc = diff --color-words=.
 
         amend = commit --amend
+
+        exec = '!exec '
