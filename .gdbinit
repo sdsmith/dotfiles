@@ -102,19 +102,19 @@ end
 python
 import sys, os
 
-home_path = os.getenv('HOME')
+dotfiles_path = os.getenv("DOTFILES")
+if dotfiles_path:
+  sys.path.insert(0, f'{dotfiles_path}/gdb/printers/stlprettyprinter/python')
+  from libstdcxx.v6.printers import register_libstdcxx_printers
+  #sys.path.insert(0, '/home/scratch.stewarts_sw/gdb/printers')
+  #from stlprettyprinter.python.libstdcxx.v6.printers import register_libstdcxx_printers
+  register_libstdcxx_printers(None)
 
-sys.path.insert(0, home_path + '/dotfiles/gdb/printers/stlprettyprinter/python')
-from libstdcxx.v6.printers import register_libstdcxx_printers
-#sys.path.insert(0, '/home/scratch.stewarts_sw/gdb/printers')
-#from stlprettyprinter.python.libstdcxx.v6.printers import register_libstdcxx_printers
-register_libstdcxx_printers(None)
-
-# TODO: add type_safe::strong_typedef pretty printers
-# - not tirggering. Try: http://forums.codeblocks.org/index.php?topic=22216.0
-import gdb.printing
-sys.path.insert(0, home_path + '/dotfiles/gdb/printers/type_safe')
-from type_safe_pretty_printer import build_pretty_printer as build_type_safe_printer
-gdb.printing.register_pretty_printer(gdb.current_objfile(), build_type_safe_printer())
+  # TODO: add type_safe::strong_typedef pretty printers
+  # - not tirggering. Try: http://forums.codeblocks.org/index.php?topic=22216.0
+  import gdb.printing
+  sys.path.insert(0, f'{dotfiles_path}/gdb/printers/type_safe')
+  from type_safe_pretty_printer import build_pretty_printer as build_type_safe_printer
+  gdb.printing.register_pretty_printer(gdb.current_objfile(), build_type_safe_printer())
 
 end
