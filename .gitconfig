@@ -18,3 +18,9 @@
         amend = commit --amend
 
         exec = '!exec '
+
+        diff-staged = diff --cached
+        diffw-staged = diffw --cached
+        diffc-staged = diffc --cached
+
+        unstage = reset
