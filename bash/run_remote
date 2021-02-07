@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+
+if [ $# -lt 2 ];
+then
+        echo "Usage: `basename $0` <remote> <script> [script_args...]"
+        exit 1
+fi
+
+REMOTE=$1
+SCRIPT=$2
+
+shift
+shift
+ssh -t $REMOTE 'bash -s' -- < $SCRIPT $*
