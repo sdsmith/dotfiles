@@ -24,5 +24,8 @@
 ;; Copying/Cutting in console emacs will add it to the clipboard
 ;; Need to also "sudo ym install xclip" along with installing xclip.el
 ;; Need to also enable X11 Forwarding & trusted X11 Forwarding (ssh -X -Y)
-(require 'xclip)
-(xclip-mode 1)
+;;
+;; IMPORTANT(sdsmith): X11 server advertises itself, but I'm not sure if it
+;; broadcasts locally or opens the port to the world.
+;; (require 'xclip)
+;; (xclip-mode 1)
