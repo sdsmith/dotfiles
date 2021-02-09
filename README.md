@@ -1,6 +1,8 @@
-# Usage
+# Installation
 
 ```sh
+git clone <repo_link> ~/.dotfiles
+
 # For full suite (zsh based)
 ./zsh_install
 
