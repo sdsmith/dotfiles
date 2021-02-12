@@ -1,0 +1,1 @@
+curl --slient "https://api.github.com/repos/monochromegane/the_platinum_searcher/releases/latest" | grep -Po '"tag_name": "\K.*?(?=")'
