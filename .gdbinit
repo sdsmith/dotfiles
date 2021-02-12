@@ -30,9 +30,17 @@
 #   https://sourceware.org/gdb/current/onlinedocs/gdb/Hooks.html#Hooks
 #
 
+set pagination on
+
 # Log gdb output (gdb.txt in working dir)
-set trace-commands on
 set logging on
+
+# Log commands
+#
+# NOTE(sdsmith): this will produce a _ton_ of output if running as part of
+# editor integration that polls. Every command you enter will also be echoed
+# back to you prefixed witha a "+". Be aware...
+#set trace-commands on
 
 # Save command history
 set history save on
