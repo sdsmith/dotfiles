@@ -24,3 +24,4 @@
         diffc-staged = diffc --cached
 
         unstage = reset
+        undo-commit = reset --soft HEAD~1
