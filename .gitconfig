@@ -25,3 +25,4 @@
 
         unstage = reset
         undo-commit = reset --soft HEAD~1
+        pull-rebase = pull --rebase
