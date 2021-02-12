@@ -334,7 +334,12 @@ if [ -f "$HOME/.workdotfiles/.zshrc" ]; then
     source "$HOME/.workdotfiles/.zshrc"
 fi
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# FZF
+# NOTE(sdsmith): The ~/.fzf.zsh is used for installing manually. The
+# /usr/share sources are for integration with the ubuntu package.
+#[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+source /usr/share/doc/fzf/examples/key-bindings.zsh
+source /usr/share/doc/fzf/examples/completion.zsh
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
