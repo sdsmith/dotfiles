@@ -86,18 +86,39 @@ fi
 
 # FZF
 if ! command -v fzf >/dev/null; then
-    # NOTE(sdsmith): Ideally we could depend on the package manager for the
-    # system. However, the ubuntu packages (an potentially all linux packages?)
-    # don't install key binding integration... which is the best part!
-    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-    ~/.fzf/install
+    # TODO(sdsmith): This doesn't seem to install the executable. I'm not sure why.
+    # Fall back on the package manager. Use `apt-cache show fzf` to see how to enable
+    # key bindings and auto-completion.
+    echo "WARNING: Please install fzf!"
+
+    # git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+    # pushd .
+    # cd ~/.fzf
+    # ./install --key-bindings --completion --no-update-rc
+    # popd
+
 fi
 
 # PT
 if ! command -v pt >/dev/null; then
-    echo "WARNING: Please install pt! https://github.com/monochromegane/the_platinum_searcher"
+    echo "Installing pt..."
+    # Support both mac and linux (ref: https://unix.stackexchange.com/questions/30091/fix-or-alternative-for-mktemp-in-os-x)
+    tmp_dir=$(mktemp -d 2>/dev/null || mktemp -d -t 'tmp_dir')
+    curl -s "https://api.github.com/repos/monochromegane/the_platinum_searcher/releases/latest" | grep browser_download_url | grep linux_amd64 | cut -d '"' -f 4 | wget -qi - -P $tmp_dir
+    tar -xf "$tmp_dir/pt_linux_amd64.tar.gz" -C $tmp_dir
+    mkdir -p "$HOME/.local/bin"
+    mv "$tmp_dir/pt_linux_amd64/pt" "$HOME/.local/bin"
+    rm -r $tmp_dir
 fi
 
+# Install fonts
+echo "Installing fonts..."
+fonts_dir="$HOME/.local/share/fonts"
+mkdir -p $fonts_dir
+tar -xf fonts/liberation-mono.tar.gz -C $fonts_dir
+tar -xf fonts/meslolgs.tar.gz -C $fonts_dir
+
+# Make utilities
 cd utils
 make
 cd ..
