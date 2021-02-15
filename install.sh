@@ -63,6 +63,7 @@ create_home_symlink .vnc
 create_home_symlink .zshrc
 create_root_home_symlink zsh/.p10k.zsh
 create_home_symlink .ptconfig.toml
+create_home_symlink .inputrc
 
 function create_home_symlink_global_gitignore() {
     local ABS_PATH=$($CMD_READLINK -f .gitignore_global)

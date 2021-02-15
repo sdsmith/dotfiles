@@ -1,8 +1,9 @@
 ;;; Out of the box emacs behaviour changes that are not dependent on any
 ;;; additional packages.
 
-;; Stop the beeping!!!
-(setq visible-bell t)
+;; Stop the beeping!!! and flashing!!!
+;; ref: https://www.gnu.org/software/emacs/manual/html_node/elisp/Beeping.html
+(fset 'ring-bell-function 'ignore)
 
 ;; No more typing the whole yes or no. Just y or n will do.
 (fset 'yes-or-no-p 'y-or-n-p)
