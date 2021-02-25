@@ -26,3 +26,7 @@
         unstage = reset
         undo-commit = reset --soft HEAD~1
         pull-rebase = pull --rebase
+
+        root = rev-parse --show-toplevel
+
+        rm-all-changes = !git checkout -f && git clean -fd
