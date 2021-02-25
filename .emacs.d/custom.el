@@ -8,9 +8,8 @@
  ;; If there is more than one, they won't work right.
  '(org-agenda-files nil)
  '(package-selected-packages
-   (quote
-    (company-lsp vimrc-mode helm-xref cquery lsp-mode toml-mode xclip auto-compile cyphejor pt helm-company helm-projectile clang-format helm company git-gutter-fringe+ highlight-indent-guides undo-tree goto-last-change cmake-mode highlight-doxygen json-mode p4 cuda-mode matlab-mode glsl-mode php-mode git-gutter+)))
- '(reb-re-syntax (quote string)))
+   '(vimrc-mode helm-xref cquery lsp-mode toml-mode xclip auto-compile cyphejor pt helm-company helm-projectile clang-format helm company git-gutter-fringe+ highlight-indent-guides undo-tree goto-last-change cmake-mode highlight-doxygen json-mode p4 cuda-mode matlab-mode glsl-mode php-mode git-gutter+))
+ '(reb-re-syntax 'string))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
