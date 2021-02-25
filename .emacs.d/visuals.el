@@ -1,5 +1,16 @@
+;; Font size
+(defun new-frame-setup (frame)
+  (if (display-graphic-p frame)
+      ;; graphical display
+      (set-face-attribute 'default nil :family "Liberation Mono" :height 100 :weight 'normal :width 'normal)
+    ;; terminal display
+    (set-face-attribute 'default nil :family "Liberation Mono" :height 120 :weight 'normal :width 'normal)))
+;; Run for existing frames
+(mapc 'new-frame-setup (frame-list))
+;; Run when a new frame is created
+(add-hook 'after-make-frame-functions 'new-frame-setup)
+
 ;; Set color scheme
-(add-to-list 'default-frame-alist '(font . "Liberation Mono-12"))
 (set-face-attribute 'font-lock-builtin-face nil :foreground "#DAB98F")
 (set-face-attribute 'font-lock-comment-face nil :foreground "gray60") ; #999999
 (set-face-attribute 'font-lock-constant-face nil :foreground "DarkKhaki") ; #bdb76b
