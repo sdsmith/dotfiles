@@ -128,3 +128,5 @@
 
 (require 'helm-xref)
 (setq xref-show-xrefs-function 'helm-xref-show-xrefs)
+
+(setq cmake-tab-width 4)
