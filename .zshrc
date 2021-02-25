@@ -155,9 +155,9 @@ source $ZSH/oh-my-zsh.sh
 function is_platform_cygwin()
 {
     if uname -a | grep -qE "(CYGWIN|cygwin|Cygwin)" &> /dev/null ; then
-	return 0
+        return 0
     else
-	return 1
+        return 1
     fi
 }
 
@@ -238,7 +238,7 @@ function o()
         explorer.exe `wslpath -aw ${FILEPATH}`
     else
         echo "Unsupported terminal/OS combo"
-        exit 1
+        return 1
     fi
 }
 
@@ -370,12 +370,12 @@ fi
 if is_platform_cygwin; then
     # Check that packages exist
     # TODO(sdsmith): this should go into install.sh
-    if [[ (! `cygwin_pkg_installed fzf-zsh`) || (! `cygwin_pkg_installed fzf-zsh-completion`) ]]; then
+    if [[ `cygwin_pkg_installed fzf-zsh` && `cygwin_pkg_installed fzf-zsh-completion` ]]; then
         echo "ERROR: install the cygwin packages: fzf-zsh fzf-zsh-completion"
-        exit 1
-    fi
-    source /etc/profile.d/fzf.zsh
-    source /etc/profile.d/fzf-completion.zsh
+    else
+        source /etc/profile.d/fzf.zsh
+        source /etc/profile.d/fzf-completion.zsh
+	fi
 elif is_os_ubuntu; then
     # NOTE(sdsmith): The ~/.fzf.zsh is used for installing manually. The
     # /usr/share sources are for integration with the ubuntu package.
