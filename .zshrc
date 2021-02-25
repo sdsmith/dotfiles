@@ -164,12 +164,16 @@ function is_platform_cygwin()
 function get_linux_distro()
 {
     # Most major distros are moving toward using /etc/os-release
-    return `awk -F= '/^NAME/{print $2}' /etc/os-release`
+    echo `awk -F= '/^NAME/{print $2}' /etc/os-release`
 }
 
 function is_os_ubuntu()
 {
-    return [[ `get_linux_distro` == "Ubuntu" ]]
+    if [[ `get_linux_distro` == "Ubuntu" ]]; then
+        return 1
+    else
+        return 0
+    fi
 }
 
 function cygwin_pkg_installed()
@@ -182,7 +186,11 @@ function cygwin_pkg_installed()
     # https://www.gnu.org/software/bash/manual/html_node/ANSI_002dC-Quoting.html
 
     local pkg_name=$1
-    return [[ ! -z `cygcheck -c -d ${pkg_name} | cut -d$'\n' -f 3` ]]
+    if [[ ! -z `cygcheck -c -d ${pkg_name} | cut -d$'\n' -f 3` ]]; then
+        return 0
+    else
+        return 1
+    fi
 }
 
 function is_platform_wsl()
@@ -362,7 +370,7 @@ fi
 if is_platform_cygwin; then
     # Check that packages exist
     # TODO(sdsmith): this should go into install.sh
-    if [[ ! cygwin_pkg_installed fzf-zsh ]] || [[ ! cygwin_pkg_installed fzf-zsh-completion ]]; then
+    if [[ (! `cygwin_pkg_installed fzf-zsh`) || (! `cygwin_pkg_installed fzf-zsh-completion`) ]]; then
         echo "ERROR: install the cygwin packages: fzf-zsh fzf-zsh-completion"
         exit 1
     fi
