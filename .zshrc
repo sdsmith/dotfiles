@@ -152,7 +152,7 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-function is_running_cygwin()
+function is_platform_cygwin()
 {
     if uname -a | grep -qE "(CYGWIN|cygwin|Cygwin)" &> /dev/null ; then
 	return 0
@@ -161,7 +161,31 @@ function is_running_cygwin()
     fi
 }
 
-function is_running_windows_subsystem_linux()
+function get_linux_distro()
+{
+    # Most major distros are moving toward using /etc/os-release
+    return `awk -F= '/^NAME/{print $2}' /etc/os-release`
+}
+
+function is_os_ubuntu()
+{
+    return [[ `get_linux_distro` == "Ubuntu" ]]
+}
+
+function cygwin_pkg_installed()
+{
+    if [ $# -ne 1 ]; then
+        echo "Usage: cygwin_pkg_installed <pkg_name>"
+    fi
+
+    # bash ANSI C quoting:
+    # https://www.gnu.org/software/bash/manual/html_node/ANSI_002dC-Quoting.html
+
+    local pkg_name=$1
+    return [[ ! -z `cygcheck -c -d ${pkg_name} | cut -d$'\n' -f 3` ]]
+}
+
+function is_platform_wsl()
 {
     if grep -qE "(Microsoft|WSL)" /proc/version &> /dev/null ; then
         return 0
@@ -170,7 +194,7 @@ function is_running_windows_subsystem_linux()
     fi
 }
 
-function is_windows_subsystem_linux_v1() {
+function is_platform_wsl_v1() {
     # ref: https://askubuntu.com/questions/1177729/wsl-am-i-running-version-1-or-version-2
     local KERNEL_VER=$(uname -r)
     local MAJOR_VER=$(echo $KERNEL_VER | cut -d. -f1)
@@ -183,11 +207,11 @@ function is_windows_subsystem_linux_v1() {
     fi
 }
 
-if is_running_windows_subsystem_linux ; then
+if is_platform_wsl ; then
     # Forward graphical applications to Windows xserver
     # ref: https://wiki.ubuntu.com/WSL
 
-    if is_windows_subsystem_linux_v1 ; then        
+    if is_platform_wsl_v1 ; then
         export DISPLAY=:0
     else
         # WSL2
@@ -202,7 +226,7 @@ function o()
 {
     local FILEPATH=$1
     # Opens a file
-    if is_running_windows_subsystem_linux ; then
+    if is_platform_wsl ; then
         explorer.exe `wslpath -aw ${FILEPATH}`
     else
         echo "Unsupported terminal/OS combo"
@@ -300,8 +324,8 @@ function kill_proc_on_port()
         echo "Usage: kill_proc_on_port <port>"
     fi
 
-    PORT=$1
-    kill -9 $(lsof -n -i | grep $1 | awk '{print $2}')
+    local port=$1
+    kill -9 $(lsof -n -i | grep ${port} | awk '{print $2}')
 }
 
 # Allow emacs GUI colours in terminal
@@ -335,11 +359,24 @@ if [ -f "$HOME/.workdotfiles/.zshrc" ]; then
 fi
 
 # FZF
-# NOTE(sdsmith): The ~/.fzf.zsh is used for installing manually. The
-# /usr/share sources are for integration with the ubuntu package.
-#[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-source /usr/share/doc/fzf/examples/key-bindings.zsh
-source /usr/share/doc/fzf/examples/completion.zsh
+if is_platform_cygwin; then
+    # Check that packages exist
+    # TODO(sdsmith): this should go into install.sh
+    if [[ ! cygwin_pkg_installed fzf-zsh ]] || [[ ! cygwin_pkg_installed fzf-zsh-completion ]]; then
+        echo "ERROR: install the cygwin packages: fzf-zsh fzf-zsh-completion"
+        exit 1
+    fi
+    source /etc/profile.d/fzf.zsh
+    source /etc/profile.d/fzf-completion.zsh
+elif is_os_ubuntu; then
+    # NOTE(sdsmith): The ~/.fzf.zsh is used for installing manually. The
+    # /usr/share sources are for integration with the ubuntu package.
+    #[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+    source /usr/share/doc/fzf/examples/key-bindings.zsh
+    source /usr/share/doc/fzf/examples/completion.zsh
+else
+    echo "WARNING: unknown platform/os, unable to setup fzf"
+fi
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
