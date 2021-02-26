@@ -152,23 +152,30 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-function _get_env_windows_vs_dev_env()
+function _get_env_vsdevenv()
 {
-    # Get the environment variables set by the visual studio dev cmd setup.
-    # NOTE: includes all env vars from the env.
+    # Print the given environment variable from the visual studio development environment.
+    #
+    # If no vars are provided, prints all the vars with names.
+    # If multiple vars are provided, each is seperated by newline.
+    local envvars=$*
 
-    local envars=$*
-
-    pushd .
+    pushd . > /dev/null 2>&1
     cd "/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/Tools"
-    cmd /c "VsDevCmd.bat && c:/cygwin64/bin/bash -c 'printenv $envars'"
-    popd
+    cmd /c "VsDevCmd.bat > nul 2>&1 && c:/cygwin64/bin/bash -c 'printenv $envvars'"
+    popd > /dev/null 2>&1
 }
 
-function windows_vs_dev_env()
+function vsdevenv()
 {
     # Sets up the Visual Studio developer environment on Windows.
-    export PATH="$(_get_env_windows_vs_dev_env PATH)"
+    local envvars=$(_get_env_vsdevenv PATH VSCMD_ARG_TGT_ARCH VCToolsVersion)
+    export PATH="$(echo "$envvars" | cut -d$'\n' -f 1)"
+
+    # Export these for the p10k vsdevenv prompt
+    export VSCMD_ARG_TGT_ARCH="$(echo \"$envvars\" | cut -d$'\n' -f 2)"
+    export VCToolsVersion="$(echo "$envvars" | cut -d$'\n' -f 3)"
+
 }
 
 function is_platform_cygwin()
