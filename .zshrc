@@ -152,6 +152,25 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+function _get_env_windows_vs_dev_env()
+{
+    # Get the environment variables set by the visual studio dev cmd setup.
+    # NOTE: includes all env vars from the env.
+
+    local envars=$*
+
+    pushd .
+    cd "/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/Tools"
+    cmd /c "VsDevCmd.bat && c:/cygwin64/bin/bash -c 'printenv $envars'"
+    popd
+}
+
+function windows_vs_dev_env()
+{
+    # Sets up the Visual Studio developer environment on Windows.
+    export PATH="$(_get_env_windows_vs_dev_env PATH)"
+}
+
 function is_platform_cygwin()
 {
     if uname -a | grep -qE "(CYGWIN|cygwin|Cygwin)" &> /dev/null ; then
