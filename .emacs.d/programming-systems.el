@@ -117,9 +117,6 @@
     (load-user-work-file "lsp-server-setup.el")
   (setup-cquery))
 
-(require 'company-lsp)
-(add-to-list 'company-backends 'company-lsp)
-
 ;; TODO(sdsmith): lsp-ui
 ;; (require 'lsp-ui)
 ;; (setq lsp-ui-sideline-show-code-actions nil)
