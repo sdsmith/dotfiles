@@ -52,6 +52,7 @@
     direnv                  # direnv status (https://direnv.net/)
     asdf                    # asdf version manager (https://github.com/asdf-vm/asdf)
     virtualenv              # python virtual environment (https://docs.python.org/3/library/venv.html)
+    vsdevenv                # Visual Studio developer environment (https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/how-to-set-environment-variables-for-the-visual-studio-command-line)
     anaconda                # conda environment (https://conda.io/)
     pyenv                   # python environment (https://github.com/pyenv/pyenv)
     goenv                   # go environment (https://github.com/syndbg/goenv)
@@ -1536,6 +1537,20 @@
   # User-defined prompt segments can be customized the same way as built-in segments.
   # typeset -g POWERLEVEL9K_EXAMPLE_FOREGROUND=208
   # typeset -g POWERLEVEL9K_EXAMPLE_VISUAL_IDENTIFIER_EXPANSION='⭐'
+
+  ######################[ vsdevenv: Visual Studio developer environment ]#######################
+  function prompt_vsdevenv() {
+    # Show the Visual Studio dev environment target arch + tool version
+
+    # Check if Visual Studio env loaded
+    if [[ -v VSCMD_ARG_TGT_ARCH ]]; then
+        p10k segment -f 6 -b 5 -i '﬏' -t "${VSCMD_ARG_TGT_ARCH} ${VCToolsVersion}"
+    fi
+  }
+
+  function instant_prompt_vsdevenv() {
+    prompt_vsdevenv
+  }
 
   # Transient prompt works similarly to the builtin transient_rprompt option. It trims down prompt
   # when accepting a command line. Supported values:

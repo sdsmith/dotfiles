@@ -74,6 +74,7 @@
 (load-user-file "source-control.el")
 (load-user-file "org-mode.el")
 (load-user-file "shorten-major-mode-names.el")
+(load-user-file "shell-integration.el")
 
 ;;(load-user-file "instance-persistence.el")
 ;;(load-user-file "nvidia-mods.el")
