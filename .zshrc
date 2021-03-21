@@ -169,10 +169,19 @@ function get_linux_distro()
 
 function is_os_ubuntu()
 {
-    if [[ `get_linux_distro` == "Ubuntu" ]]; then
-        return 1
-    else
+    if [[ "`get_linux_distro`" == "Ubuntu" ]]; then
         return 0
+    else
+        return 1
+    fi
+}
+
+function is_os_raspbian()
+{
+    if [[ "`get_linux_distro | cut -c2- | cut -f1 -d' '`" == "Raspbian" ]]; then
+        return 0
+    else
+        return 1
     fi
 }
 
@@ -375,13 +384,16 @@ if is_platform_cygwin; then
     else
         source /etc/profile.d/fzf.zsh
         source /etc/profile.d/fzf-completion.zsh
-	fi
+    fi
 elif is_os_ubuntu; then
     # NOTE(sdsmith): The ~/.fzf.zsh is used for installing manually. The
     # /usr/share sources are for integration with the ubuntu package.
     #[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
     source /usr/share/doc/fzf/examples/key-bindings.zsh
     source /usr/share/doc/fzf/examples/completion.zsh
+elif is_os_raspbian; then
+    source /usr/share/doc/fzf/examples/key-bindings.zsh
+    source /usr/share/zsh/vendor-completions/_fzf
 else
     echo "WARNING: unknown platform/os, unable to setup fzf"
 fi
