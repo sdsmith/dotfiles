@@ -162,20 +162,24 @@ function _get_env_vsdevenv()
 
     pushd . > /dev/null 2>&1
     cd "/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/Tools"
-    cmd /c "VsDevCmd.bat > nul 2>&1 && c:/cygwin64/bin/bash -c 'printenv $envvars'"
+    cmd /c "VsDevCmd.bat -no_logo -arch=amd64 -host_arch=amd64 > nul 2>&1 && c:/cygwin64/bin/bash -c 'printenv $envvars'"
     popd > /dev/null 2>&1
 }
 
 function vsdevenv()
 {
     # Sets up the Visual Studio developer environment on Windows.
-    local envvars=$(_get_env_vsdevenv PATH VSCMD_ARG_TGT_ARCH VCToolsVersion)
-    export PATH="$(echo "$envvars" | cut -d$'\n' -f 1)"
 
-    # Export these for the p10k vsdevenv prompt
-    export VSCMD_ARG_TGT_ARCH="$(echo \"$envvars\" | cut -d$'\n' -f 2)"
-    export VCToolsVersion="$(echo "$envvars" | cut -d$'\n' -f 3)"
-
+    local envvars=$(_get_env_vsdevenv)
+    while IFS= read -r line; do
+        local name=${line%%=*}
+        local value=${line#*=}
+        # Only set valid linux env var names
+        if [[ "$name" =~ '^[^!()]+$' ]]; then
+            # If the variable is not readonly, set it
+            $(unset "$name" 2>/dev/null) && export "$name"="$value"
+        fi
+    done <<< "$envvars"
 }
 
 function is_platform_cygwin()
