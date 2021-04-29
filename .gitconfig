@@ -31,3 +31,5 @@
         root = rev-parse --show-toplevel
 
         rm-all-changes = !git checkout -f && git clean -fd
+[init]
+	defaultBranch = master
