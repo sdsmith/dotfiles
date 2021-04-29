@@ -53,6 +53,8 @@
 
 ;; NOTE(sdsmith): ALWAYS DO THIS BEFORE ANY PACKAGE CUSTOMIZATION
 (load-user-file "package.el")
+(eval-when-compile
+  (require 'use-package))
 
 ;; Automatically byte compile any elisp files
 (require 'auto-compile)
