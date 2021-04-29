@@ -16,6 +16,7 @@
 /.emacs.d/elpa/*
 /.emacs.d/history
 /.emacs.d/projectile*
+/.emacs.d/recentf
 /.emacs.d/server/*
 /.emacs.d/transient/*
 /.emacs.d/eshell/*
