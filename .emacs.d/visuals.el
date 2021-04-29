@@ -2,7 +2,8 @@
 (defun new-frame-setup (frame)
   (if (display-graphic-p frame)
       ;; graphical display
-      (set-face-attribute 'default nil :family "Liberation Mono" :height 100 :weight 'normal :width 'normal)
+      (set-face-attribute 'default nil :family "Liberation Mono" :height 90 :weight 'normal :width 'normal)
+;;      (set-face-attribute 'default nil :family "Liberation Mono" :height 120 :weight 'normal :width 'normal)
     ;; terminal display
     (set-face-attribute 'default nil :family "Liberation Mono" :height 120 :weight 'normal :width 'normal)))
 ;; Run for existing frames
@@ -36,7 +37,8 @@
                      ;; "#232323" ; dark gray
                      ;; "#b22222" ; red pop
                      ;; "#8b1a1a" ; deep red
-                     "#8b0000")
+                     ;; "#8b0000" ; red
+                     "#3b3b3b")
 
 (set-face-background 'isearch-fail "red") ; #ff0000
 (set-face-background 'region "blue") ; #0000ff
