@@ -3,6 +3,11 @@
 (require 'company)
 (add-hook 'prog-mode-hook 'company-mode)
 
+(use-package company-glsl
+             :config
+             (when (executable-find "glslangValidator")
+               (add-to-list 'company-backends 'company-glsl)))
+
 (defvar my-php-symbol-hash)
 (defun company-my-php-backend (command &optional arg &rest ignored)
   (case command
