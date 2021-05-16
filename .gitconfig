@@ -35,4 +35,4 @@
         track = add --intent-to-add
 
 [init]
-	defaultBranch = master
+	defaultBranch = main
