@@ -31,5 +31,8 @@
         root = rev-parse --show-toplevel
 
         rm-all-changes = !git checkout -f && git clean -fd
+
+        track = add --intent-to-add
+
 [init]
-	defaultBranch = master
+	defaultBranch = main
