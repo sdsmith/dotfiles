@@ -378,7 +378,7 @@ function kill_proc_on_port()
 # Allow emacs GUI colours in terminal
 export TERM=xterm-256color
 
-export EDITOR="emacsclient -t"          # opens in term
+export EDITOR="emacsclient -a='' -t"          # opens in term
 export VISUAL="emacsclient -c -a emacs" # opens in GUI mode
 
 # zsh-completions
