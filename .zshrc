@@ -194,12 +194,12 @@ function is_platform_cygwin()
 function get_linux_distro()
 {
     # Most major distros are moving toward using /etc/os-release
-    echo `awk -F= '/^NAME/{print $2}' /etc/os-release`
+    zsh -c 'source /etc/os-release; echo "$NAME"'
 }
 
 function is_os_ubuntu()
 {
-    if [[ "`get_linux_distro`" == "Ubuntu" ]]; then
+    if [[ $(get_linux_distro) = "Ubuntu" ]]; then
         return 0
     else
         return 1
@@ -406,7 +406,7 @@ if [ -f "$HOME/.workdotfiles/.zshrc" ]; then
 fi
 
 # FZF
-if is_platform_cygwin; then
+function _fzf_setup_cygwin() {
     # Check that packages exist
     # TODO(sdsmith): this should go into install.sh
     if [[ `cygwin_pkg_installed fzf-zsh` && `cygwin_pkg_installed fzf-zsh-completion` ]]; then
@@ -415,15 +415,27 @@ if is_platform_cygwin; then
         source /etc/profile.d/fzf.zsh
         source /etc/profile.d/fzf-completion.zsh
     fi
-elif is_os_ubuntu; then
+}
+
+function _fzf_setup_ubuntu() {
     # NOTE(sdsmith): The ~/.fzf.zsh is used for installing manually. The
     # /usr/share sources are for integration with the ubuntu package.
     #[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
     source /usr/share/doc/fzf/examples/key-bindings.zsh
     source /usr/share/doc/fzf/examples/completion.zsh
-elif is_os_raspbian; then
+}
+
+function _fzf_setup_raspbian() {
     source /usr/share/doc/fzf/examples/key-bindings.zsh
     source /usr/share/zsh/vendor-completions/_fzf
+}
+
+if is_platform_cygwin; then
+    _fzf_setup_cygwin
+elif is_os_ubuntu; then
+    _fzf_setup_ubuntu
+elif is_os_raspbian; then
+    _fzf_setup_raspian
 else
     echo "WARNING: unknown platform/os, unable to setup fzf"
 fi
