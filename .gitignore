@@ -20,3 +20,4 @@
 /.emacs.d/server/*
 /.emacs.d/transient/*
 /.emacs.d/eshell/*
+.\#*
