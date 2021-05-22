@@ -285,6 +285,11 @@ alias emacsserver="emacs --daemon"
 alias enw="emacsclient -a='' -t"
 alias l="ls --color -F"
 
+alias yr="yarn run $*"
+alias ya="yarn add $*"
+alias yad="yarn add --dev $*"
+alias yrm="yarn remove $*"
+
 function ssh_gen_key()
 {
     ssh-keygen -t rsa -b 4096 -C $EMAIL_PERSONAL
