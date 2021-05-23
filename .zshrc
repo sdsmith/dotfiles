@@ -380,6 +380,14 @@ function kill_proc_on_port()
     kill -9 $(lsof -n -i | grep ${port} | awk '{print $2}')
 }
 
+function replace_text_recursive() {
+    if [ $# -ne 3 ]; then
+        echo "Usage: replace_text_recursive <old-word> <new-word> <path>"
+    fi
+
+    grep -rli "$old_word" "$path" | xargs -i@ sed -i "s/$old_word/$new_word/g" @
+}
+
 # Allow emacs GUI colours in terminal
 export TERM=xterm-256color
 
