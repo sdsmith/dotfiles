@@ -231,6 +231,7 @@ function cygwin_pkg_installed()
 {
     if [ $# -ne 1 ]; then
         echo "Usage: cygwin_pkg_installed <pkg_name>"
+        return 1
     fi
 
     # bash ANSI C quoting:
@@ -386,6 +387,7 @@ function kill_proc_on_port()
 {
     if [ $# -ne 1 ]; then
         echo "Usage: kill_proc_on_port <port>"
+        return 1
     fi
 
     local port=$1
@@ -395,6 +397,7 @@ function kill_proc_on_port()
 function replace_text_recursive() {
     if [ $# -ne 3 ]; then
         echo "Usage: replace_text_recursive <old-word> <new-word> <path>"
+        return 1
     fi
 
     grep -rli "$old_word" "$path" | xargs -i@ sed -i "s/$old_word/$new_word/g" @
