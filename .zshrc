@@ -152,6 +152,18 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+function which_py()
+{
+    # Get the python install location
+    if [ $# -ne 1 ]; then
+        echo "Usage: which_py <python_exe>"
+        return 1
+    fi
+
+    py=$1
+    $py -c "import os, sys; print(os.path.dirname(sys.executable))"
+}
+
 function _get_env_vsdevenv()
 {
     # Print the given environment variable from the visual studio development environment.
