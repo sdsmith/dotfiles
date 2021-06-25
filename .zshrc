@@ -152,6 +152,18 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+function which_py()
+{
+    # Get the python install location
+    if [ $# -ne 1 ]; then
+        echo "Usage: which_py <python_exe>"
+        return 1
+    fi
+
+    py=$1
+    $py -c "import os, sys; print(os.path.dirname(sys.executable))"
+}
+
 function _get_env_vsdevenv()
 {
     # Print the given environment variable from the visual studio development environment.
@@ -219,6 +231,7 @@ function cygwin_pkg_installed()
 {
     if [ $# -ne 1 ]; then
         echo "Usage: cygwin_pkg_installed <pkg_name>"
+        return 1
     fi
 
     # bash ANSI C quoting:
@@ -284,6 +297,11 @@ function o()
 alias emacsserver="emacs --daemon"
 alias enw="emacsclient -a='' -t"
 alias l="ls --color -F"
+
+alias yr="yarn run $*"
+alias ya="yarn add $*"
+alias yad="yarn add --dev $*"
+alias yrm="yarn remove $*"
 
 function ssh_gen_key()
 {
@@ -369,10 +387,20 @@ function kill_proc_on_port()
 {
     if [ $# -ne 1 ]; then
         echo "Usage: kill_proc_on_port <port>"
+        return 1
     fi
 
     local port=$1
     kill -9 $(lsof -n -i | grep ${port} | awk '{print $2}')
+}
+
+function replace_text_recursive() {
+    if [ $# -ne 3 ]; then
+        echo "Usage: replace_text_recursive <old-word> <new-word> <path>"
+        return 1
+    fi
+
+    grep -rli "$old_word" "$path" | xargs -i@ sed -i "s/$old_word/$new_word/g" @
 }
 
 # Allow emacs GUI colours in terminal

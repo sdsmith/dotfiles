@@ -34,5 +34,9 @@
 
         track = add --intent-to-add
 
+        branch-delete-local = branch -D
+        branch-delete-origin = push -d origin
+        branch-delete-everywhere = !git branch-delete-local $1 && git branch-delete-origin $1
+
 [init]
 	defaultBranch = main
