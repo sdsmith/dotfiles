@@ -126,7 +126,7 @@ plugins=(
     zsh-syntax-highlighting
 )
 
-source $ZSH/oh-my-zsh.sh
+source "$ZSH/oh-my-zsh.sh"
 
 # User configuration
 
@@ -172,26 +172,27 @@ function _get_env_vsdevenv()
     #
     # If no vars are provided, prints all the vars with names.
     # If multiple vars are provided, each is seperated by newline.
-    local envvars=$*
+    local envvars="$*"
 
     pushd . > /dev/null 2>&1
-    cd "/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/Tools"
+    cd "/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/Tools" || exit
     cmd /c "VsDevCmd.bat -no_logo -arch=amd64 -host_arch=amd64 > nul 2>&1 && c:/cygwin64/bin/bash -c 'printenv $envvars'"
-    popd > /dev/null 2>&1
+    popd > /dev/null 2>&1 || exit
 }
 
 function vsdevenv()
 {
     # Sets up the Visual Studio developer environment on Windows.
 
-    local envvars=$(_get_env_vsdevenv)
+    local envvars
+    envvars=$(_get_env_vsdevenv)
     while IFS= read -r line; do
-        local name=${line%%=*}
-        local value=${line#*=}
+        local name="${line%%=*}"
+        local value="${line#*=}"
         # Only set valid linux env var names
-        if [[ "$name" =~ '^[^!()]+$' ]]; then
+        if [[ "$name" =~ ^[^!()]+$ ]]; then
             # If the variable is not readonly, set it
-            $(unset "$name" 2>/dev/null) && export "$name"="$value"
+            unset "$name" 2>/dev/null && export "$name"="$value"
         fi
     done <<< "$envvars"
 }
@@ -222,7 +223,7 @@ function is_os_ubuntu()
 
 function is_os_raspbian()
 {
-    if [[ "`get_linux_distro | cut -c2- | cut -f1 -d' '`" == "Raspbian" ]]; then
+    if [[ "$(get_linux_distro | cut -c2- | cut -f1 -d' ')" == "Raspbian" ]]; then
         return 0
     else
         return 1
@@ -240,7 +241,7 @@ function cygwin_pkg_installed()
     # https://www.gnu.org/software/bash/manual/html_node/ANSI_002dC-Quoting.html
 
     local pkg_name=$1
-    if [[ ! -z `cygcheck -c -d ${pkg_name} | cut -d$'\n' -f 3` ]]; then
+    if [[ -n $(cygcheck -c -d "${pkg_name}" | cut -d$'\n' -f 3) ]]; then
         return 0
     else
         return 1
@@ -258,38 +259,41 @@ function is_platform_wsl()
 
 function is_platform_wsl_v1() {
     # ref: https://askubuntu.com/questions/1177729/wsl-am-i-running-version-1-or-version-2
-    local KERNEL_VER=$(uname -r)
-    local MAJOR_VER=$(echo $KERNEL_VER | cut -d. -f1)
-    local MINOR_VER=$(echo $KERNEL_VER | cut -d. -f2)
+    local KERNEL_VER
+    KERNEL_VER=$(uname -r)
+    local MAJOR_VER
+    MAJOR_VER=$(echo "$KERNEL_VER" | cut -d. -f1)
+    local MINOR_VER
+    MINOR_VER=$(echo "$KERNEL_VER" | cut -d. -f2)
 
-    if (( $MAJOR_VER <= 4 )) && (( $MINOR_VER < 19 )) ; then
+    if (( "$MAJOR_VER" <= 4 )) && (( "$MINOR_VER" < 19 )) ; then
         return 0
     else
         return 1
     fi
 }
 
-if is_platform_wsl ; then
-    # Forward graphical applications to Windows xserver
-    # ref: https://wiki.ubuntu.com/WSL
+# if is_platform_wsl ; then
+#     # Forward graphical applications to Windows xserver
+#     # ref: https://wiki.ubuntu.com/WSL
 
-    if is_platform_wsl_v1 ; then
-        export DISPLAY=:0
-    else
-        # WSL2
-        export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0
-    fi
-    export LIBGL_ALWAYS_INDIRECT=1
+#     if is_platform_wsl_v1 ; then
+#         export DISPLAY=:0
+#     else
+#         # WSL2
+#         export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0
+#     fi
+#     export LIBGL_ALWAYS_INDIRECT=1
 
-    # WSL aliases
-fi
+#     # WSL aliases
+# fi
 
 function o()
 {
     local FILEPATH=$1
     # Opens a file
     if is_platform_wsl ; then
-        explorer.exe `wslpath -aw ${FILEPATH}`
+        explorer.exe "$(wslpath -aw "${FILEPATH}")"
     else
         echo "Unsupported terminal/OS combo"
         return 1
@@ -300,29 +304,29 @@ alias emacsserver="emacs --daemon"
 alias enw="emacsclient -a='' -t"
 alias l="ls --color -F"
 
-alias yr="yarn run $*"
-alias ya="yarn add $*"
-alias yad="yarn add --dev $*"
-alias yrm="yarn remove $*"
+alias yr=yarn run "$*"
+alias ya=yarn add "$*"
+alias yad=yarn add --dev "$*"
+alias yrm=yarn remove "$*"
 
 function ssh_gen_key()
 {
-    ssh-keygen -t rsa -b 4096 -C $EMAIL_PERSONAL
+    ssh-keygen -t rsa -b 4096 -C "$EMAIL_PERSONAL"
 }
 
 function ssh_add_key()
 {
-    eval $(ssh-agent -s)
-    ssh-add $*
+    eval "$(ssh-agent -s)"
+    ssh-add "$*"
 }
 
 ssh_remove_auth_key()
 {
-    if test -f $HOME/.ssh/authorized_keys; then
-        if grep -v "$1" $HOME/.ssh/authorized_keys > $HOME/.ssh/tmp; then
-            cat $HOME/.ssh/tmp > $HOME/.ssh/authorized_keys && rm $HOME/.ssh/tmp;
+    if test -f "$HOME/.ssh/authorized_keys"; then
+        if grep -v "$1" "$HOME/.ssh/authorized_keys" > "$HOME/.ssh/tmp"; then
+            cat "$HOME/.ssh/tmp" > "$HOME/.ssh/authorized_keys" && rm "$HOME/.ssh/tmp"
         else
-            rm $HOME/.ssh/authorized_keys && rm $HOME/.ssh/tmp;
+            rm "$HOME/.ssh/authorized_keys && rm $HOME/.ssh/tmp"
         fi;
     fi
 }
@@ -342,7 +346,7 @@ function mosh_server_killall()
 {
     # Kills all mosh-servers except the last one created (so we don't kill our own server!)
     # Assuming that the last server created is the one we are using.
-    kill $(ps --no-headers --sort=start_time -C mosh-server -o pid | head -n -1)
+    kill "$(ps --no-headers --sort=start_time -C mosh-server -o pid | head -n -1)"
 }
 
 function remove_files_with_extension_recursive()
@@ -355,7 +359,7 @@ function remove_files_with_extension_recursive()
         return 1
     fi
 
-    find ${START_PATH} -name "*.${EXTENSION}" -type f -delete
+    find "${START_PATH}" -name "*.${EXTENSION}" -type f -delete
 }
 
 function enwgdb()
@@ -366,22 +370,22 @@ function enwgdb()
 
 function kbn()
 {
+    # Kill By Name (kbn)
     # Kill processes that match the given name.
-    # TODO: Why did I name it kbn??
-    ps ux | grep $1 | cut -d' ' -f2 | xargs kill -9
+    pgrep "$1" | xargs kill -9
 }
 
 function get_nvidia_gpu_driver()
 {
     # Find the driver that is associated with the NVIDIA VGA device (GPU) on
     # the system.
-    find /sys | grep driver.*$(lspci | grep NV | grep VGA | cut -d ' ' -f1)
+    find /sys | grep "driver.*$(lspci | grep NV | grep VGA | cut -d ' ' -f1)"
 }
 
 function color_palette()
 {
     for i in {0..255}; do
-        printf "\x1b[38;5;${i}mcolour${i}\x1b[0m\n"
+        printf "\x1b[38;5;%smcolour%s\x1b[0m\n" "${i}" "${i}"
     done
 }
 
@@ -393,7 +397,7 @@ function kill_proc_on_port()
     fi
 
     local port=$1
-    kill -9 $(lsof -n -i | grep ${port} | awk '{print $2}')
+    kill -9 "$(lsof -n -i | grep "${port}" | awk '{print $2}')"
 }
 
 function replace_text_recursive() {
@@ -401,6 +405,10 @@ function replace_text_recursive() {
         echo "Usage: replace_text_recursive <old-word> <new-word> <path>"
         return 1
     fi
+
+    local old_word="$1"
+    local new_word="$2"
+    local path="$3"
 
     grep -rli "$old_word" "$path" | xargs -i@ sed -i "s/$old_word/$new_word/g" @
 }
@@ -415,12 +423,16 @@ export VISUAL="emacsclient -c -a emacs" # opens in GUI mode
 autoload -U compinit && compinit
 
 # zsh-syntax-highlighting
-source $DOTFILES/oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source "$DOTFILES/oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 alias tmux_reload_config='tmux source-file ~/.tmux.conf'
 alias tml='tmux list-session'
-alias tmk='tmux kill-session -t $*'
-alias tma='tmux attach -t $*'
+function tmk() {
+    tmux kill-session -t "$*"
+}
+function tma() {
+    tmux attach -t "$*"
+}
 
 ## tmux control mode (best used with iterm2)
 # create
@@ -428,7 +440,9 @@ alias tmc='tmux -CC'
 # resume (and detatch from any other clients connected to session)
 alias tmcresume='tmux -CC a -d'
 # resume/new named session
-alias tmca='tmux -CC new-session -AD -s $*'
+function tmca() {
+    tmux -CC new-session -AD -s "$*"
+}
 
 # Work config
 if [ -f "$HOME/.workdotfiles/.zshrc" ]; then
@@ -439,7 +453,7 @@ fi
 function _fzf_setup_cygwin() {
     # Check that packages exist
     # TODO(sdsmith): this should go into install.sh
-    if [[ `cygwin_pkg_installed fzf-zsh` && `cygwin_pkg_installed fzf-zsh-completion` ]]; then
+    if [[ $(cygwin_pkg_installed fzf-zsh) && $(cygwin_pkg_installed fzf-zsh-completion) ]]; then
         echo "ERROR: install the cygwin packages: fzf-zsh fzf-zsh-completion"
     else
         source /etc/profile.d/fzf.zsh
