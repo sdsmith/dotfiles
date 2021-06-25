@@ -129,4 +129,7 @@ tar -xf fonts/liberation-mono.tar.gz -C "$fonts_dir"
 tar -xf fonts/meslolgs.tar.gz -C "$fonts_dir"
 
 # Make utilities
-(cd utils || make)
+(
+    cd utils || exit
+    make
+)
