@@ -3,7 +3,7 @@ set -e
 
 if [ $# -lt 2 ];
 then
-        echo "Usage: `basename $0` <remote> <script> [script_args...]"
+        echo "Usage: $(basename "$0") <remote> <script> [script_args...]"
         exit 1
 fi
 
@@ -12,4 +12,4 @@ SCRIPT=$2
 
 shift
 shift
-ssh -t $REMOTE 'bash -s' -- < $SCRIPT $*
+ssh -t "$REMOTE" 'bash -s' -- < "$SCRIPT" "$*"

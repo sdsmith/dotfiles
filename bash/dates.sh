@@ -22,8 +22,8 @@ function last_workday()
     if [[ "$#" != "0" ]]; then
         fmt=$1
     fi
-    
-    day_num=`date +%w`
+
+    day_num=$(date +%w)
 
     offset=1
     case "$day_num" in
@@ -31,7 +31,7 @@ function last_workday()
         7) offset=2;;
     esac
 
-    echo `date -v -${offset}d "+$fmt"`
+    date -v -${offset}d "+$fmt"
 }
 
 function next_workday()
@@ -43,7 +43,7 @@ function next_workday()
         fmt=$1
     fi
 
-    day_num=`date +%w`
+    day_num=$(date +%w)
 
     offset=1
     case "$day_num" in
@@ -51,6 +51,5 @@ function next_workday()
         6) offset=2;;
     esac
 
-    echo `date -v +${offset}d "+$fmt"`
-
+    date -v +${offset}d "+$fmt"
 }
