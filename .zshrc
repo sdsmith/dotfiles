@@ -190,7 +190,7 @@ function vsdevenv()
         local name="${line%%=*}"
         local value="${line#*=}"
         # Only set valid linux env var names
-        if [[ "$name" =~ ^[^!()]+$ ]]; then
+        if [[ "$name" =~ "^[^!()]+$" ]]; then
             # If the variable is not readonly, set it
             unset "$name" 2>/dev/null && export "$name"="$value"
         fi
