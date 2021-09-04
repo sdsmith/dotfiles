@@ -54,6 +54,10 @@ git clone https://github.com/powerline/fonts.git --depth=1 $POWERLINE_FONTS_DIR
 rm -rf $POWERLINE_FONTS_DIR
 
 echo "Creating utils..."
+if ! command -v make >/dev/null; then
+    echo "ERROR: Please install make!"
+    exit 1
+fi
 (
     cd utils || exit
     make BUILD=release
