@@ -161,6 +161,6 @@ function get_nvidia_gpu_driver()
 ### Additional config files
 source "${HOME}/.dotfiles/bash/dates.sh"
 
-if [ -f "${HOME}/.workdotfiles/.bashrc_work" ]; then
-    source "${HOME}/.workdotfiles/.bashrc_work"
+if [ -f "${HOME}/.workdotfiles/.bashrc" ]; then
+    source "${HOME}/.workdotfiles/.bashrc"
 fi
