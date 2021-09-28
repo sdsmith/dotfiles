@@ -39,7 +39,7 @@ function create_home_symlink() {
     ln -sf "$ABS_PATH" "$DEST"
 }
 
-
+create_home_symlink .bash_profile
 create_home_symlink .bashrc
 
 create_home_symlink .emacs
