@@ -58,12 +58,21 @@ blue=$(tput setaf 4)
 reset=$(tput sgr0)
 export PS1="\h \[$green\]\${P4_WS_NAME}\[$reset\] \W> "
 
+function bell() {
+    echo -e '\a'
+}
+alias notify=bell
+
 ### Alias ###
 # General
 alias emacsserver="emacs --daemon"
 alias enw="emacsclient -a='' -t"
-alias l="ls --color -F"
+alias l="ls --color=auto"
+alias ls="ls --color=auto"
+alias la="ls -la --color=auto"
+alias ll="la -la --color=auto"
 alias p4_clean_tree="p4 clean; find . -type d -empty -delete"
+alias prettyjson="python -m json.tool"
 
 ssh_remove_auth_key()
 {
@@ -151,6 +160,7 @@ function p4c()
         p4 changes -u stewarts -m $MAX_NUM_DISPLAY -s $*
     fi
 }
+alias p4o="p4 opened $*"
 
 function fix_terminal()
 {
