@@ -41,8 +41,8 @@ export TERM=xterm-256color
 
 # Default editor
 export ALTERNATE_EDITOR=""
-export EDITOR="emacsclient -t"          # opens in term
-export VISUAL="emacsclient -c -a emacs" # opens in GUI mode
+export EDITOR="nano"          # opens in term
+#export VISUAL="emacsclient -c -a emacs" # opens in GUI mode
 
 # Set terminal prompt
 # \d - current date
@@ -58,11 +58,21 @@ blue=$(tput setaf 4)
 reset=$(tput sgr0)
 export PS1="\h \[$green\]\${P4_WS_NAME}\[$reset\] \W> "
 
+function bell() {
+    echo -e '\a'
+}
+alias notify=bell
+
 ### Alias ###
 # General
-alias enw="emacsclient -t"
-alias l="ls --color -F"
+alias emacsserver="emacs --daemon"
+alias enw="emacsclient -a='' -t"
+alias l="ls --color=auto"
+alias ls="ls --color=auto"
+alias la="ls -la --color=auto"
+alias ll="la -la --color=auto"
 alias p4_clean_tree="p4 clean; find . -type d -empty -delete"
+alias prettyjson="python -m json.tool"
 
 ssh_remove_auth_key()
 {
@@ -75,7 +85,7 @@ ssh_remove_auth_key()
     fi
 }
 
-p4_synced_to_cl() {
+p4_synced_cl() {
     p4 cstat ...#have | grep change | awk '$3 > x { x = $3 };END { print x }'
 }
 
@@ -100,6 +110,45 @@ alias tmcresume='tmux -CC a -d'
 # resume/new named session
 alias tmca='tmux -CC new-session -AD -s $*'
 
+# Bash Function To Extract File Archives Of Various Types
+function extract () {
+     if [ -f $1 ] ; then
+         case $1 in
+             *.tar.bz2)   tar xjf $1     ;;
+             *.tar.gz)    tar xzf $1     ;;
+             *.bz2)       bunzip2 $1     ;;
+             *.rar)       rar x $1       ;;
+             *.gz)        gunzip $1      ;;
+             *.tar)       tar xf $1      ;;
+             *.tar.xz)    tar xf $1      ;;
+             *.tbz2)      tar xjf $1     ;;
+             *.tgz)       tar xzf $1     ;;
+             *.zip)       unzip $1       ;;
+             *.Z)         uncompress $1  ;;
+             *.7z)        7z x $1    ;;
+             *)           echo "'$1' cannot be extracted via extract()" ;;
+         esac
+     else
+         echo "'$1' is not a valid file"
+     fi
+}
+
+function tar_see() {
+    tar -tvf $1
+}
+
+function tgz_all() {
+    local FILEPATH="$1"
+    local NAME=$(basename "$FILEPATH")
+    tar -czvf "$NAME.tgz" "$FILEPATH"
+}
+
+function tgz_content() {
+    local FILEPATH="$1"
+    local NAME=$(basename "$FILEPATH")
+    tar -czvf "$NAME.tgz" -C "$FILEPATH" "."
+}
+
 function p4c()
 {
     # $1 type of change to view (arg to 'p4 changes -s <arg>')
@@ -111,6 +160,7 @@ function p4c()
         p4 changes -u stewarts -m $MAX_NUM_DISPLAY -s $*
     fi
 }
+alias p4o="p4 opened $*"
 
 function fix_terminal()
 {
@@ -146,8 +196,8 @@ function enwgdb()
 
 function kbn()
 {
+    # Kill By Name (KBN)
     # Kill processes that match the given name.
-    # TODO: Why did I name it kbn??
     ps ux | grep $1 | cut -d' ' -f2 | xargs kill -9
 }
 
@@ -161,6 +211,31 @@ function get_nvidia_gpu_driver()
 ### Additional config files
 source "${HOME}/.dotfiles/bash/dates.sh"
 
-if [ -f "${HOME}/.workdotfiles/.bashrc_work" ]; then
-    source "${HOME}/.workdotfiles/.bashrc_work"
+if [ -f "${HOME}/.workdotfiles/.bashrc" ]; then
+    source "${HOME}/.workdotfiles/.bashrc"
 fi
+
+function mount_my_cifs()
+{
+    if [ $# -ne 2 ]; then
+        echo "Usage: mount_my_cifs <cifs_path> <mount_point>"
+        return
+    fi
+
+    read -s -p "Password:" password
+    mount -t cifs -o domain=nvidia.com,noperm,user=stewarts,passwd=$password $1 $2
+}
+
+# Switch to zsh if available
+# NOTE: could optimize so that all the env stuff is factored out and the bash stuff is skipped, but that's too much rn
+#if [ -z "${NOZSH}" ] && [ $TERM = "xterm" -o $TERM = "xterm-256color" -o $TERM = "screen" ] && type zsh &> /dev/null
+#then
+#    export SHELL=$(which zsh)
+#    if [[ -o login ]]
+#    then
+#        exec zsh -l
+#    else
+#        exec zsh
+#    fi
+#fi
+

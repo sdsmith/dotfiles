@@ -187,22 +187,22 @@ function _get_env_vsdevenv()
     popd > /dev/null 2>&1 || exit
 }
 
-# function vsdevenv()
-# {
-#     # Sets up the Visual Studio developer environment on Windows.
+function vsdevenv()
+{
+    # Sets up the Visual Studio developer environment on Windows.
 
-#     local envvars
-#     envvars=$(_get_env_vsdevenv)
-#     while IFS= read -r line; do
-#         local name="${line%%=*}"
-#         local value="${line#*=}"
-#         # Only set valid linux env var names
-#         if [[ "$name" =~ ^[^!()]+$ ]]; then
-#             # If the variable is not readonly, set it
-#             unset "$name" 2>/dev/null && export "$name"="$value"
-#         fi
-#     done <<< "$envvars"
-# }
+    local envvars
+    envvars=$(_get_env_vsdevenv)
+    while IFS= read -r line; do
+        local name="${line%%=*}"
+        local value="${line#*=}"
+        # Only set valid linux env var names
+        if [[ "$name" =~ "^[^!()]+$" ]]; then
+            # If the variable is not readonly, set it
+            unset "$name" 2>/dev/null && export "$name"="$value"
+        fi
+    done <<< "$envvars"
+}
 
 function is_platform_cygwin()
 {

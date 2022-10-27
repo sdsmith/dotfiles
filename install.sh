@@ -39,7 +39,7 @@ function create_home_symlink() {
     ln -sf "$ABS_PATH" "$DEST"
 }
 
-
+create_home_symlink .bash_profile
 create_home_symlink .bashrc
 
 create_home_symlink .emacs
@@ -129,6 +129,10 @@ tar -xf fonts/liberation-mono.tar.gz -C "$fonts_dir"
 tar -xf fonts/meslolgs.tar.gz -C "$fonts_dir"
 
 # Make utilities
+if ! command -v make >/dev/null; then
+    echo "ERROR: Please install make!"
+    exit 1
+fi
 (
     cd utils || exit
     make

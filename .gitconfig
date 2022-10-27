@@ -16,7 +16,10 @@
         diffw = diff --color-words
         diffc = diff --color-words=.
 
+        aa = add -A
+        cm = commit -m
         amend = commit --amend
+        amend-now = commit --amend --no-edit
 
         exec = '!exec '
 
