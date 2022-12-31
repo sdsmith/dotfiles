@@ -2,6 +2,7 @@
 *.elc
 *~
 *.pyc
+/install_cache
 /.vnc/*
 !/.vnc/config.d
 /.vnc/config.d/*
