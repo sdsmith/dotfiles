@@ -17,6 +17,7 @@
         diffc = diff --color-words=.
 
         aa = add -A
+        ap = add --patch
         cm = commit -m
         amend = commit --amend
         amend-now = commit --amend --no-edit
