@@ -31,13 +31,15 @@ function create_home_symlink() {
     ABS_PATH=$($CMD_READLINK -f "$FILE")
     local DEST="$HOME/$FILE"
 
-    if [ -f "$DEST" ] && [ ! -h "$DEST" ]; then
-        echo "$DEST already exists and is not a symlink"
+    if [ -e "$DEST" ] && [ ! "$(stat -L -c %d:%i "$DEST")" = "$(stat -L -c %d:%i "$ABS_PATH")" ]; then
+        echo "WARNING: $DEST already exists and does not point to the right file"
         return 1
     fi
 
     # Create parent dir then the symlink
     mkdir -p "$(dirname "$DEST")" && ln -sf "$ABS_PATH" "$DEST"
+
+    return $?
 }
 
 create_home_symlink .bash_profile
