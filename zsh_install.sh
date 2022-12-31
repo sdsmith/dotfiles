@@ -16,10 +16,11 @@ if ! command -v zsh >/dev/null; then
 fi
 
 echo "Installing oh-my-zsh..."
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
-
-echo "Upgrading oh-my-zsh..."
-upgrade_oh_my_zsh
+if [ ! -d "$ZSH" ]; then
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
+else
+    echo "ZSH directory $ZSH already exists, skipping"
+fi
 
 ## ZSH plugins
 echo "Installing oh-my-zsh plugins..."
@@ -82,6 +83,8 @@ echo "Installing custom oh-my-zsh configs..."
     ./install.sh
 )
 
-echo "Done. Starting new shell."
+echo "To updating oh-my-zsh, run `omz update`"
+
+echo "Done. Starting new shell..."
 
 env zsh -l # login shell
