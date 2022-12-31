@@ -36,7 +36,8 @@ function create_home_symlink() {
         return 1
     fi
 
-    ln -sf "$ABS_PATH" "$DEST"
+    # Create parent dir then the symlink
+    mkdir -p "$(dirname "$DEST")" && ln -sf "$ABS_PATH" "$DEST"
 }
 
 create_home_symlink .bash_profile
