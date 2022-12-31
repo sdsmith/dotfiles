@@ -12,7 +12,7 @@ function create_home_symlink_global_gitignore() {
     local DEST
     DEST="$HOME/.gitignore"
 
-    create_home_symlink "$ABS_PATH" "$DEST"
+    create_symlink "$ABS_PATH" "$DEST"
 }
 
 echo "Checking for package dependencies..."

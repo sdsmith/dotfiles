@@ -9,6 +9,21 @@ if uname -a | grep -qE "Darwin" &> /dev/null ; then
     CMD_READLINK="greadlink"
 fi
 
+function create_symlink() {
+    local FILE_PATH="$1"  # File path
+    local DEST="$2"       # Destination path
+
+    if [ -e "$DEST" ] && [ ! "$(stat -L -c %d:%i "$DEST")" = "$(stat -L -c %d:%i "$FILE_PATH")" ]; then
+        echo "WARNING: $DEST already exists and does not point to the right file"
+        return 1
+    fi
+
+    # Create parent dir then the symlink
+    mkdir -p "$(dirname "$DEST")" && ln -sf "$ABS_PATH" "$DEST"
+
+    return $?
+}
+
 function create_home_symlink() {
     # Create a symlink starting fome HOME that mimics the given file's path structure.
     local FILE="$1"
@@ -16,13 +31,7 @@ function create_home_symlink() {
     ABS_PATH=$($CMD_READLINK -f "$FILE")
     local DEST="$HOME/$FILE"
 
-    if [ -e "$DEST" ] && [ ! "$(stat -L -c %d:%i "$DEST")" = "$(stat -L -c %d:%i "$ABS_PATH")" ]; then
-        echo "WARNING: $DEST already exists and does not point to the right file"
-        return 1
-    fi
-
-    # Create parent dir then the symlink
-    mkdir -p "$(dirname "$DEST")" && ln -sf "$ABS_PATH" "$DEST"
+    create_symlink "$ABS_PATH" "$DEST"
 
     return $?
 }
@@ -38,7 +47,8 @@ function create_root_home_symlink() {
     ABS_PATH=$($CMD_READLINK -f "$FILE")
     DEST="$HOME/$HOME_FILE"
 
-    create_home_symlink "$ABS_PATH" "$DEST"
+    create_symlink "$ABS_PATH" "$DEST"
+
     return $?
 }
 
