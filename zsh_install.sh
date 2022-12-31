@@ -94,4 +94,4 @@ echo "To updating oh-my-zsh, run 'omz update'"
 
 echo "Done. Starting new shell..."
 
-env zsh -l # login shell
+exec env zsh -l # login shell
