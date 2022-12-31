@@ -16,12 +16,8 @@ function create_root_home_symlink() {
     ABS_PATH=$($CMD_READLINK -f "$FILE")
     DEST="$HOME/$HOME_FILE"
 
-    if [ -f "$DEST" ] && [ ! -h "$DEST" ]; then
-        echo "$DEST already exists and is not a symlink"
-        return 1
-    fi
-
-    ln -sf "$ABS_PATH" "$DEST"
+    create_home_symlink "$ABS_PATH" "$DEST"
+    return $?
 }
 
 function create_home_symlink() {
