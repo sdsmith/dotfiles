@@ -76,10 +76,12 @@ function try_git_clone() {
 try_git_clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
 create_home_symlink .tmux.conf
 mkdir -p "$HOME/.tmux.d"
-find ./.tmux.d -type f -print0 |
-    while IFS= read -r -d '' line; do
-        create_home_symlink "$line"
-    done
+if [ -d "./.tmux.d" ]; then
+    find "./.tmux.d" -type f -print0 |
+        while IFS= read -r -d '' line; do
+            create_home_symlink "$line"
+        done
+fi
 tmux new-session -d -s "_tmux_install" "$HOME/.tmux/plugins/tpm/bin/install_plugins"
 
 create_home_symlink .gdbinit
