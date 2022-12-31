@@ -57,8 +57,27 @@ find ./.emacs.d -type f -print0 |
 # emacs -Q --batch --eval '(byte-compile-file "~/.emacs" 0)'
 # emacs -Q --batch --eval '(byte-recompile-directory "~/.emacs.d" 0)'
 
+function try_git_clone() {
+    local REPO_URL="$1"
+    local DEST="$2"
+
+    # If already cloned, skip
+    if [ -e "$DEST" ]; then
+        if [[ -d "$DEST" && -d "$DEST/.git" ]]; then
+            echo "Repo $REPO_URL already cloned to $DEST, skipping"
+            return 0
+        else
+            echo "Failed to clone $REPO_URL: $DEST already exists and is not a git repo"
+            return 1
+        fi
+    fi
+
+    git clone "$REPO_URL" "$DEST"
+    return $?
+}
+
 # Setup tmux with Tmux Package Manager (TPM)
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+try_git_clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
 create_home_symlink .tmux.conf
 mkdir -p "$HOME/.tmux.d"
 find ./.tmux.d -type f -print0 |
