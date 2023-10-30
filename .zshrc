@@ -1,5 +1,12 @@
 #!/bin/zsh
 
+# Disable the powerlevel prompt config wizard from popping up on start
+#
+# When loading .zshrc with oh-my-zsh on startup, if there is a typo or error that terminates the
+# script early, it won't load the .p10k.zsh config. Env vars that the wizard looks for to see if
+# configed won't be defined, and the wizard will trigger. Annoying.
+export POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.

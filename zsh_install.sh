@@ -1,6 +1,12 @@
-#!/bin/sh
+#!/bin/bash
+
+#
+# ZSH setup script
+#
 
 # NOTE: Must be run in the dotfiles directory!!
+
+source ./install_helper.sh
 
 DOTFILES_DIR="$(pwd)"
 
@@ -16,25 +22,25 @@ if ! command -v zsh >/dev/null; then
 fi
 
 echo "Installing oh-my-zsh..."
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
-
-echo "Upgrading oh-my-zsh..."
-upgrade_oh_my_zsh
+if [ ! -d "$ZSH" ]; then
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
+else
+    echo "ZSH directory $ZSH already exists, skipping"
+fi
 
 ## ZSH plugins
 echo "Installing oh-my-zsh plugins..."
 cd "$ZSH/custom/plugins" || exit
 
 # zsh-completions
-# ref: git clone https://github.com/zsh-users/zsh-completions
-git clone https://github.com/zsh-users/zsh-completions
+try_git_clone https://github.com/zsh-users/zsh-completions
 
 # zsh-syntax-highlighting
 # ref: https://github.com/zsh-users/zsh-syntax-highlighting
 # TODO:
 #   - change colors
 #   - change path underlining (obscures underscores in file names)
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
+try_git_clone https://github.com/zsh-users/zsh-syntax-highlighting.git
 
 cd "$DOTFILES_DIR" || exit
 
@@ -43,15 +49,17 @@ if [ "$(basename "$SHELL")" != "zsh" ]; then
     chsh -s "$(command -v zsh)"
 fi;
 
+INSTALL_CACHE_DIR="./install_cache"
+mkdir -p "$INSTALL_CACHE_DIR"
+
 # ref: https://github.com/powerline/fonts
 echo "Installing powerline-fonts..."
-POWERLINE_FONTS_DIR="powerline-fonts"
-git clone https://github.com/powerline/fonts.git --depth=1 $POWERLINE_FONTS_DIR
+POWERLINE_FONTS_DIR="$INSTALL_CACHE_DIR/powerline-fonts"
+try_git_clone https://github.com/powerline/fonts.git $POWERLINE_FONTS_DIR
 (
     cd $POWERLINE_FONTS_DIR || exit
     ./install.sh
 )
-rm -rf $POWERLINE_FONTS_DIR
 
 echo "Creating utils..."
 if ! command -v make >/dev/null; then
@@ -73,7 +81,7 @@ fi;
 if [ ! -f "$ZSH_CUSTOM/themes/powerlevel10k" ]; then
     echo "Installing powerline10k theme..."
     # Powerline 10k
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM}/themes/powerlevel10k"
+    try_git_clone https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM}/themes/powerlevel10k"
 fi
 
 echo "Installing custom oh-my-zsh configs..."
@@ -82,6 +90,8 @@ echo "Installing custom oh-my-zsh configs..."
     ./install.sh
 )
 
-echo "Done. Starting new shell."
+echo "To updating oh-my-zsh, run 'omz update'"
 
-env zsh -l # login shell
+echo "Done. Starting new shell..."
+
+exec env zsh -l # login shell

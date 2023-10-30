@@ -1,76 +1,10 @@
 #!/bin/bash
 
-CMD_READLINK="readlink"
-if uname -a | grep -qE "Darwin" &> /dev/null ; then
-    CMD_READLINK="greadlink"
-fi
+#
+# Bash setup script
+#
 
-function create_root_home_symlink() {
-    # Create a symlink in HOME that ignores the given file's path structure.
-    local HOME_FILE
-    local FILE
-    local DEST
-    local ABS_PATH
-    HOME_FILE=$(basename "$1")
-    FILE="$1"
-    ABS_PATH=$($CMD_READLINK -f "$FILE")
-    DEST="$HOME/$HOME_FILE"
-
-    if [ -f "$DEST" ] && [ ! -h "$DEST" ]; then
-        echo "$DEST already exists and is not a symlink"
-        return 1
-    fi
-
-    ln -sf "$ABS_PATH" "$DEST"
-}
-
-function create_home_symlink() {
-    # Create a symlink starting fome HOME that mimics the given file's path structure.
-    local FILE="$1"
-    local ABS_PATH
-    ABS_PATH=$($CMD_READLINK -f "$FILE")
-    local DEST="$HOME/$FILE"
-
-    if [ -f "$DEST" ] && [ ! -h "$DEST" ]; then
-        echo "$DEST already exists and is not a symlink"
-        return 1
-    fi
-
-    ln -sf "$ABS_PATH" "$DEST"
-}
-
-create_home_symlink .bash_profile
-create_home_symlink .bashrc
-
-create_home_symlink .emacs
-mkdir -p "$HOME/.emacs.d"
-find ./.emacs.d -type f -print0 |
-    while IFS= read -r -d '' line; do
-        create_home_symlink "$line"
-    done
-# Byte compile emacs files
-# TODO(stewarts): Doesn't handle require statements outside of the
-# main .emacs file well...
-# emacs -Q --batch --eval '(byte-compile-file "~/.emacs" 0)'
-# emacs -Q --batch --eval '(byte-recompile-directory "~/.emacs.d" 0)'
-
-# Setup tmux with Tmux Package Manager (TPM)
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-create_home_symlink .tmux.conf
-mkdir -p "$HOME/.tmux.d"
-find ./.tmux.d -type f -print0 |
-    while IFS= read -r -d '' line; do
-        create_home_symlink "$line"
-    done
-tmux new-session -d -s "_tmux_install" "$HOME/.tmux/plugins/tpm/bin/install_plugins"
-
-create_home_symlink .gdbinit
-create_home_symlink .vimrc
-create_home_symlink .vnc
-create_home_symlink .zshrc
-create_root_home_symlink zsh/.p10k.zsh
-create_home_symlink .ptconfig.toml
-create_home_symlink .inputrc
+source ./install_helper.sh
 
 function create_home_symlink_global_gitignore() {
     local ABS_PATH
@@ -78,16 +12,10 @@ function create_home_symlink_global_gitignore() {
     local DEST
     DEST="$HOME/.gitignore"
 
-    if [ -f "$DEST" ] && [ ! -h "$DEST" ]; then
-        echo "$DEST already exists and is not a symlink"
-        return 1
-    fi
-
-    ln -sf "$ABS_PATH" "$DEST"
+    create_symlink "$ABS_PATH" "$DEST"
 }
 
-create_home_symlink .gitconfig
-create_home_symlink_global_gitignore
+echo "Checking for package dependencies..."
 
 # xclip
 if ! command -v xclip >/dev/null; then
@@ -121,6 +49,56 @@ if ! command -v pt >/dev/null; then
     rm -r "$tmp_dir"
 fi
 
+# emacs
+if ! command -v emacs >/dev/null; then
+    echo "WARNING: Please install emacs!"
+fi
+
+if ! command -v make >/dev/null; then
+    echo "ERROR: Please install make!"
+    exit 1
+fi
+
+echo "Installing dotfiles..."
+
+create_home_symlink .bash_profile
+create_home_symlink .bashrc
+create_home_symlink .gdbinit
+create_home_symlink .vimrc
+create_home_symlink .vnc
+create_home_symlink .zshrc
+create_root_home_symlink zsh/.p10k.zsh
+create_home_symlink .ptconfig.toml
+create_home_symlink .inputrc
+create_home_symlink .gitconfig
+create_home_symlink_global_gitignore
+
+create_home_symlink .emacs
+mkdir -p "$HOME/.emacs.d"
+find ./.emacs.d -type f -print0 |
+    while IFS= read -r -d '' line; do
+        create_home_symlink "$line"
+    done
+
+# Byte compile emacs files
+# TODO(stewarts): Doesn't handle require statements outside of the
+# main .emacs file well...
+# emacs -Q --batch --eval '(byte-compile-file "~/.emacs" 0)'
+# emacs -Q --batch --eval '(byte-recompile-directory "~/.emacs.d" 0)'
+
+# Setup tmux with Tmux Package Manager (TPM)
+echo "Setting up tmux..."
+try_git_clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
+create_home_symlink .tmux.conf
+mkdir -p "$HOME/.tmux.d"
+if [ -d "./.tmux.d" ]; then
+    find "./.tmux.d" -type f -print0 |
+        while IFS= read -r -d '' line; do
+            create_home_symlink "$line"
+        done
+fi
+tmux new-session -d -s "_tmux_install" "$HOME/.tmux/plugins/tpm/bin/install_plugins"
+
 # Install fonts
 echo "Installing fonts..."
 fonts_dir="$HOME/.local/share/fonts"
@@ -128,12 +106,13 @@ mkdir -p "$fonts_dir"
 tar -xf fonts/liberation-mono.tar.gz -C "$fonts_dir"
 tar -xf fonts/meslolgs.tar.gz -C "$fonts_dir"
 
-# Make utilities
-if ! command -v make >/dev/null; then
-    echo "ERROR: Please install make!"
-    exit 1
-fi
+
+echo "Building optional utilities..."
 (
     cd utils || exit
-    make
+    build_log=$(mktemp "/tmp/dotfiles_install_build.XXXXXX")
+    make > "$build_log" 2>&1
+    if [ ! $? -eq 0 ]; then
+        echo "WARNING: failed to compile optional utilities, log: $build_log"
+    fi
 )
