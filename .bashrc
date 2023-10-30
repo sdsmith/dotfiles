@@ -111,26 +111,48 @@ alias tmcresume='tmux -CC a -d'
 alias tmca='tmux -CC new-session -AD -s $*'
 
 # Bash Function To Extract File Archives Of Various Types
-function extract () {
+function my_extract () {
      if [ -f $1 ] ; then
          case $1 in
-             *.tar.bz2)   tar xjf $1     ;;
-             *.tar.gz)    tar xzf $1     ;;
-             *.bz2)       bunzip2 $1     ;;
-             *.rar)       rar x $1       ;;
-             *.gz)        gunzip $1      ;;
-             *.tar)       tar xf $1      ;;
-             *.tar.xz)    tar xf $1      ;;
-             *.tbz2)      tar xjf $1     ;;
-             *.tgz)       tar xzf $1     ;;
-             *.zip)       unzip $1       ;;
-             *.Z)         uncompress $1  ;;
-             *.7z)        7z x $1    ;;
-             *)           echo "'$1' cannot be extracted via extract()" ;;
+            *.tar.bz2|*.tbz2)   tar xjf $1      ;;
+            *.tar.gz|*.tgz)     tar xzf $1      ;;
+            *.tar.xz)           tar xf $1       ;;
+            *.tar)              tar xf $1       ;;
+            *.bz2)              bunzip2 $1      ;;
+            *.rar)              rar x $1        ;;
+            *.gz)               gunzip $1       ;;
+            *.zip)              unzip $1        ;;
+            *.Z)                uncompress $1   ;;
+            *.7z)               7z x $1         ;;
+            *)                  echo "'$1' cannot be extracted via extract()" ;;
          esac
      else
          echo "'$1' is not a valid file"
+         return 1
      fi
+}
+
+function my_compress() {
+    if [ ! $# -ge 2 ]; then
+        echo "Usage: compress <destination_w_extension> <files>"
+        return 1
+    fi
+    local DESTFILE="$1"
+    local FILES="$2"
+
+    case "$1" in
+        *.tar.bz2|*.tbz2)   tar -cjSf "$DESTFILE" "$FILES"  ;;
+        *.tar.gz|*.tgz)     tar -czf "$DESTFILE" "$FILES"   ;;
+        *.tar.xz)           tar -cJf "$DESTFILE" "$FILES"   ;;
+        *.tar)              tar -cf "$DESTFILE" "$FILES"    ;;
+        *.bz2)              bzip2 -c "$FILES" > "$DESTFILE" ;;
+        *.rar)              rar a "$DESTFILE" "$FILES"      ;;
+        *.gz)               gzip -c "$FILES" > "$DESTFILE"  ;;
+        *.zip)              zip -r "$DESTFILE" "$FILES"     ;;
+        *.Z)                compress "$FILES"               ;; # Compresses each file individually
+        *.7z)               7z a "$DESTFILE" "$FILES"       ;;
+        *)                  echo "Compression format of '$1' is not supported by compress()" ;;
+    esac
 }
 
 function tar_see() {
@@ -224,6 +246,30 @@ function mount_my_cifs()
 
     read -s -p "Password:" password
     mount -t cifs -o domain=nvidia.com,noperm,user=stewarts,passwd=$password $1 $2
+}
+
+### Compiler and toolchain helpers
+#
+
+# Compiler default include search directories
+#
+# ref: https://stackoverflow.com/questions/4980819/what-are-the-gcc-default-include-directories
+# -x selects the language, C or C++ respectively
+# -E makes gcc to run the preprocessor only, so no compilation takes place
+# -v prints all the commands run, which is the key to dumping the standard paths
+# - is the "input file" to preprocess, as a convention - stands for stdin (or stdout, depending on the context);
+# echo | feeds an empty string to gcc so effectively we preprocess an empty file generated on the fly
+function gcc_include_dirs() {
+    echo | gcc -xc -E -v -
+}
+function g++_inlude_dirs() {
+    echo | gcc -xc++ -E -v -
+}
+function clang_include_dirs() {
+    echo | clang -xc -E -v -
+}
+function clang++_include_dirs() {
+    echo | clang++ -xc++ -E -v -
 }
 
 # Switch to zsh if available
