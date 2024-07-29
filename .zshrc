@@ -487,6 +487,9 @@ elif is_os_ubuntu; then
     _fzf_setup_ubuntu
 elif is_os_raspbian; then
     _fzf_setup_raspian
+elif [ -d $HOME/.fzf ]; then
+    echo "Found home fzf installation in '.fzf', using that"
+    source $HOME/.fzf.zsh
 else
     echo "WARNING: unknown platform/os, unable to setup fzf"
 fi
