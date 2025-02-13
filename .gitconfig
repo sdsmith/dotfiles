@@ -7,6 +7,7 @@
 	autocrlf = input
 
 [alias]
+        # Smart logs - pretty printed commit graphs
         sl1 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
         sl2 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
         sl3 = log --graph --abbrev-commit --decorate --format=format:'%C(yellow)%h%C(reset)%C(auto)%d%C(reset) %C(normal)%s%C(reset) %C(dim white)%an%C(reset) %C(dim blue)(%ar)%C(reset)' --all
@@ -20,6 +21,7 @@
         ap = add --patch
         cm = commit -m
         amend = commit --amend
+        # Amends last commit + skips editing the commit message
         amend-now = commit --amend --no-edit
 
         exec = '!exec '
@@ -28,14 +30,19 @@
         diffw-staged = diffw --cached
         diffc-staged = diffc --cached
 
+        # Unstage a file without modifying the files on disk. Useful as an "undo" option for a "git add".
         unstage = reset
+        # Undo last commit without modifying the files on disk.
+        #   Not useful if you've already pushed to remote.
         undo-commit = reset --soft HEAD~1
         pull-rebase = pull --rebase
 
+        # Show repo root path
         root = rev-parse --show-toplevel
 
         rm-all-changes = !git checkout -f && git clean -fd
 
+        # Enable you to use git diff with files that haven't been added to the Git repository yet
         track = add --intent-to-add
 
         branch-delete-local = branch -D
