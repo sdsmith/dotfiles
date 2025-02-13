@@ -237,6 +237,15 @@ function is_os_raspbian()
     fi
 }
 
+function is_os_fedora()
+{
+    if [[ "$(get_linux_distro | cut -c1- | cut -f1 -d' ')" == "Fedora" ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 function cygwin_pkg_installed()
 {
     if [ $# -ne 1 ]; then
@@ -315,6 +324,8 @@ alias yr=yarn run "$*"
 alias ya=yarn add "$*"
 alias yad=yarn add --dev "$*"
 alias yrm=yarn remove "$*"
+
+alias rpm_pkgloc=rpm -ql "$*"
 
 function ssh_gen_key()
 {
@@ -481,12 +492,19 @@ function _fzf_setup_raspbian() {
     source /usr/share/zsh/vendor-completions/_fzf
 }
 
+function _fzf_setup_fedora() {
+    source /usr/share/fzf/shell/key-bindings.zsh
+    source /usr/share/zsh/site-functions/_fzf
+}
+
 if is_platform_cygwin; then
     _fzf_setup_cygwin
 elif is_os_ubuntu; then
     _fzf_setup_ubuntu
 elif is_os_raspbian; then
     _fzf_setup_raspian
+elif is_os_fedora; then
+    _fzf_setup_fedora
 elif [ -d $HOME/.fzf ]; then
     echo "Found home fzf installation in '.fzf', using that"
     source $HOME/.fzf.zsh
