@@ -512,5 +512,12 @@ else
     echo "WARNING: unknown platform/os, unable to setup fzf"
 fi
 
+# 1password
+if command -v op 2>&1 >/dev/null; then
+    # enable auto complete
+    # ref: https://developer.1password.com/docs/cli/reference/
+    eval "$(op completion zsh)"; compdef _op op
+fi
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
