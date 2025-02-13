@@ -30,7 +30,7 @@ export TERM=xterm-256color
 export DOTFILES="$HOME/.dotfiles"
 export DOTFILES_UTILS="$DOTFILES/utils"
 
-export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.homebrew/bin:$DOTFILES/zsh/:$PATH"
+export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.homebrew/bin:$DOTFILES/zsh:$DOTFILES/shell:$PATH"
 
 export EMAIL_PERSONAL="stewart.dryden.smith@gmail.com"
 

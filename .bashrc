@@ -1,6 +1,8 @@
 shopt -s expand_aliases
 
-export PATH=/usr/local/homebrew/bin:${PATH}
+export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.homebrew/bin:$DOTFILES/bash:$DOTFILES/shell:$PATH"
+# TODO: this was used but I want to move to using ".local/bin" instead of /usr/local/. Will break some configs, but move them as needed.
+#    was: "/usr/local/homebrew/bin:$PATH"
 
 function is_running_cygwin()
 {
@@ -284,4 +286,3 @@ function clang++_include_dirs() {
 #        exec zsh
 #    fi
 #fi
-
