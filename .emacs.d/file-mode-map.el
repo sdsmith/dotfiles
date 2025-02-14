@@ -5,6 +5,7 @@
 (require 'json-mode)
 (require 'glsl-mode)
 (require 'asm-mode)
+(require 'yaml-mode)
 (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
 
 ;; Associate file extentions and their appropriate modes

@@ -7,46 +7,66 @@
 ;; Merge tool: smerge
 (setq smerge-command-pefix (kbd "C-c v"))
 
-(defvar git-gutter+-mode-map)
 (defun add-git ()
-  ;; ref: https://github.com/nonsequitur/git-gutter-plus
-  (require 'git-gutter+)
+  ;; ref: https://ianyepan.github.io/posts/emacs-git-gutter/
+  (use-package git-gutter
+    :ensure t
+    :hook (prog-mode . git-gutter-mode)
+    :config
+    ;; Value in seconds. Perf implications. Defaults to 0, meaning update on save.
+    (setq git-gutter:update-interval 0.02))
+  (use-package git-gutter-fringe
+    :ensure t
+    :config
+    ;; Mimic VSCode's git indicators
+    (define-fringe-bitmap 'git-gutter-fr:added [224] nil nil '(center repeated))
+    (define-fringe-bitmap 'git-gutter-fr:modified [224] nil nil '(center repeated))
+    (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom)))
 
-  ;; NOTE(stewarts): On tty mode with line numbers enabled, the git status
-  ;; indicators will shift the line numbers right, truncating them. It is what
-  ;; it is.
 
-  (global-git-gutter+-mode)
-  (global-set-key (kbd "C-x g") 'git-gutter+-mode) ; toggle in current buffer
-  (global-set-key (kbd "C-x G") 'global-git-gutter+-mode) ; Turn on/off globally
+;; NOTE(sdsmith): git-gutter+ is a dead project. Last change was 10 years ago. git-gutter and git-gutter-fringe are now king.
+;; (defvar git-gutter+-mode-map)
+;; (defun add-git ()
+;;   ;; ref: https://github.com/nonsequitur/git-gutter-plus
+;;   (require 'git-gutter+)
 
-  (eval-after-load 'git-gutter+
-    '(progn
-     ;;; Jump between hunks
-       (define-key git-gutter+-mode-map
-         (kbd "C-x n") 'git-gutter+-next-hunk)
-       (define-key git-gutter+-mode-map
-         (kbd "C-x p") 'git-gutter+-previous-hunk)
+;;   ;; NOTE(stewarts): On tty mode with line numbers enabled, the git status
+;;   ;; indicators will shift the line numbers right, truncating them. It is what
+;;   ;; it is.
 
-     ;;; Act on hunks
-       (define-key git-gutter+-mode-map (kbd "C-x g v") 'git-gutter+-show-hunk)
-       (define-key git-gutter+-mode-map (kbd "C-x g r") 'git-gutter+-revert-hunks)
-       ;; Stage hunk at point.
-       ;; If region is active, stage all hunk lines within the region.
-       (define-key git-gutter+-mode-map (kbd "C-x g t") 'git-gutter+-stage-hunks)
-       (define-key git-gutter+-mode-map (kbd "C-x g c") 'git-gutter+-commit)
-       (define-key git-gutter+-mode-map
-         (kbd "C-x g C") 'git-gutter+-stage-and-commit)
-       (define-key git-gutter+-mode-map
-         (kbd "C-x g C-y") 'git-gutter+-stage-and-commit-whole-buffer)
-       (define-key git-gutter+-mode-map
-         (kbd "C-x g U") 'git-gutter+-unstage-whole-buffer)))
+;;   (global-git-gutter+-mode)
+;;   (global-set-key (kbd "C-x g") 'git-gutter+-mode) ; toggle in current buffer
+;;   (global-set-key (kbd "C-x G") 'global-git-gutter+-mode) ; Turn on/off globally
 
-  ;; Fringe display for git-gutter+
-  ;; ref: https://github.com/nonsequitur/git-gutter-fringe-plus
-  ;; Only works in GUI mode (ie. non-tty)
-  (when (display-graphic-p)
-    (require 'git-gutter-fringe+)))
+;;   (eval-after-load 'git-gutter+
+;;     '(progn
+;;      ;;; Jump between hunks
+;;        (define-key git-gutter+-mode-map
+;;          (kbd "C-x n") 'git-gutter+-next-hunk)
+;;        (define-key git-gutter+-mode-map
+;;          (kbd "C-x p") 'git-gutter+-previous-hunk)
+
+;;      ;;; Act on hunks
+;;        (define-key git-gutter+-mode-map (kbd "C-x g v") 'git-gutter+-show-hunk)
+;;        (define-key git-gutter+-mode-map (kbd "C-x g r") 'git-gutter+-revert-hunks)
+;;        ;; Stage hunk at point.
+;;        ;; If region is active, stage all hunk lines within the region.
+;;        (define-key git-gutter+-mode-map (kbd "C-x g t") 'git-gutter+-stage-hunks)
+;;        (define-key git-gutter+-mode-map (kbd "C-x g c") 'git-gutter+-commit)
+;;        (define-key git-gutter+-mode-map
+;;          (kbd "C-x g C") 'git-gutter+-stage-and-commit)
+;;        (define-key git-gutter+-mode-map
+;;          (kbd "C-x g C-y") 'git-gutter+-stage-and-commit-whole-buffer)
+;;        (define-key git-gutter+-mode-map
+;;          (kbd "C-x g U") 'git-gutter+-unstage-whole-buffer)))
+
+;;   ;; Fringe display for git-gutter+
+;;   ;; ref: https://github.com/nonsequitur/git-gutter-fringe-plus
+;;   ;; Only works in GUI mode (ie. non-tty)
+;;   (when (display-graphic-p)
+;;     (require 'git-gutter-fringe+)))
+
+
 
 (defun add-perforce ()
   ;;; Perforce
