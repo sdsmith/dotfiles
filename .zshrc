@@ -327,9 +327,10 @@ alias yrm="yarn remove"
 
 alias rpm_pkgloc="rpm -ql"
 
+
 function ssh_gen_key()
 {
-    ssh-keygen -t rsa -b 4096 -C "$EMAIL_PERSONAL"
+    ssh-keygen -t ed25519 -C "$EMAIL_PERSONAL"
 }
 
 function ssh_add_key()
@@ -338,7 +339,7 @@ function ssh_add_key()
     ssh-add "$*"
 }
 
-ssh_remove_auth_key()
+function ssh_remove_auth_key()
 {
     if test -f "$HOME/.ssh/authorized_keys"; then
         if grep -v "$1" "$HOME/.ssh/authorized_keys" > "$HOME/.ssh/tmp"; then
