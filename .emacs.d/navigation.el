@@ -38,8 +38,8 @@
 ;;
 ;; Tips:
 ;; - during helm finer window, C-j to expand current candidate
+;; - good inspo: https://github.com/thierryvolpiatto/emacs-config/blob/main/init-helm.el
 (require 'helm)
-(require 'helm-config)
 (global-set-key (kbd "M-x") #'helm-M-x)
 (global-set-key (kbd "C-x r b") #'helm-filtered-bookmarks)
 (global-set-key (kbd "C-x C-f") #'helm-find-files)
