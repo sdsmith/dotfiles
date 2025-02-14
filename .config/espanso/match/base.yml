@@ -1,5 +1,8 @@
 # espanso match file
 
+# NOTE(sdsmith):
+# - Can have multiple defs for the same trigger. Pops up selection window.
+
 # For a complete introduction, visit the official docs at: https://espanso.org/docs/
 
 # You can use this file to define the base matches (aka snippets)
@@ -23,7 +26,14 @@ matches:
       - name: mydate
         type: date
         params:
-          format: "%m/%d/%Y"
+          format: "%Y-%m-%d"
+  - trigger: ":now"
+    replace: "{{time}}"
+    vars:
+      - name: time
+        type: date
+        params:
+          format: "%H:%M"
 
   # Print the output of a shell command
   - trigger: ":shell"
@@ -35,3 +45,28 @@ matches:
           cmd: "echo 'Hello from your shell'"
 
   # And much more! For more information, visit the docs: https://espanso.org/docs/
+
+  - trigger: ":em"
+    replace: "stewart.dryden.smith@gmail.com"
+  - trigger: ":sig"
+    replace: "Regards,\nStewart"
+
+  - trigger: ":todo"
+    replace: "TODO(sdsmith): "
+  - trigger: ":note"
+    replace: "NOTE(sdsmith): "
+  - trigger: ":doc"
+    replace: "DOC(sdsmith): "
+  - trigger: ":debug"
+    replace: "DEBUG(sdsmith): "
+  - trigger: ":war"
+    form: "WAR([[id]]): "
+
+
+  # TODO(sdsmith): doesn't work but will fix later
+  - trigger: ":feedback-request"
+    form: "Focal feedback for [[first_name]] [[last_name]]\tHi [[requestee_first_name]], [[first_name]] has worked with you over the last year. Can you provide some feedback on them based on your experience in the last year?\n\nAreas:\nOwnership\n\nCommunication & Leadership\n\nTechnical Strengths\n\nImprovement Opportunities\n\n\nA few bullet points are fine. If needed, I can set up a meeting with you as well.\n\nNOTE: Feedback you share will be anonymous and would be used as source of information to appreciate contributions and communicate improvement areas."
+
+
+  - trigger: ":allergy"
+    form: "peanut allergy"
