@@ -26,9 +26,15 @@
 
         exec = '!exec '
 
+        # Diff stage file - lines
         diff-staged = diff --cached
+        # Diff stage file - words
         diffw-staged = diffw --cached
+        # Diff stage file - characters
         diffc-staged = diffc --cached
+        # Diff last commit
+        # NOTE: @ => HEAD, ~1 post-fix => 1 before
+        diff-last-commit = diff @~1 @
 
         # Unstage a file without modifying the files on disk. Useful as an "undo" option for a "git add".
         unstage = reset
