@@ -22,4 +22,5 @@
 /.emacs.d/server/*
 /.emacs.d/transient/*
 /.emacs.d/eshell/*
+/.emacs.d/artifacts/*
 .\#*

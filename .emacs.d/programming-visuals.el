@@ -6,8 +6,10 @@
 (if (version< emacs-version "26.1")
     (use-package 'linum
       :config
-      (add-hook 'prog-mode-hook (lambda () (linum-mode 1))))
-  (add-hook 'prog-mode-hook #'display-line-numbers-mode))
+      (my/add-to-multiple-hooks '(lambda () (linum-mode 1))
+                                '(prog-mode-hook text-mode-hook)))
+  (my/add-to-multiple-hooks #'display-line-numbers-mode
+                            '(prog-mode-hook text-mode-hook)))
 
 ;; Vertical indentation guidelines
 (require 'highlight-indent-guides)
