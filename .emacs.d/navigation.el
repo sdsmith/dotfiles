@@ -25,6 +25,9 @@
 ;; tree representation of changes to walk the undo/redo graph. "C-x u" to open tree for current file.
 (require 'undo-tree)
 (global-undo-tree-mode)
+;; Prevent undo tree files from polluting filesystem
+;; NOTE: By default it creates a <filename>.~undo-tree~ file in the same directory as the edited file.
+(setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/artifacts/undo-tree")))
 
 ;; Helm - general completion (commands, lists, etc.)
 ;;
