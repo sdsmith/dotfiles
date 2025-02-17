@@ -14,13 +14,6 @@
 /utils/in_hg
 /utils/benchmark
 .DS_Store
-/.emacs.d/.lsp-*
-/.emacs.d/elpa/*
-/.emacs.d/history
-/.emacs.d/projectile*
-/.emacs.d/recentf
-/.emacs.d/server/*
-/.emacs.d/transient/*
-/.emacs.d/eshell/*
-/.emacs.d/artifacts/*
+/.emacs.d/*
+!/.emacs.d/myconfig
 .\#*

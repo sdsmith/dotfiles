@@ -8,7 +8,7 @@
  ;; If there is more than one, they won't work right.
  '(org-agenda-files nil)
  '(package-selected-packages
-   '(helpful which-key use-package company-glsl vimrc-mode helm-xref cquery lsp-mode toml-mode xclip auto-compile cyphejor pt helm-company helm-projectile clang-format helm company git-gutter-fringe highlight-indent-guides undo-tree goto-last-change cmake-mode highlight-doxygen json-mode p4 cuda-mode matlab-mode glsl-mode php-mode git-gutter yaml-mode))
+   '(helpful which-key use-package company-glsl vimrc-mode helm-xref cquery lsp-mode toml-mode xclip auto-compile cyphejor pt helm-company helm-projectile clang-format helm company git-gutter-fringe highlight-indent-guides undo-tree goto-last-change cmake-mode highlight-doxygen json-mode p4 cuda-mode matlab-mode glsl-mode php-mode git-gutter yaml-mode hierarchy))
  '(reb-re-syntax 'string))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

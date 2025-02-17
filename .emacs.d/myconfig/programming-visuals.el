@@ -4,7 +4,7 @@
 ;; Line numbers
 ;; NOTE: linum has major perf issues, so prefer built-in display-line-numbers. Available in emacs v26.1. linum deprecated in v29.1.
 (if (version< emacs-version "26.1")
-    (use-package 'linum
+    (use-package linum
       :config
       (my/add-to-multiple-hooks '(lambda () (linum-mode 1))
                                 '(prog-mode-hook text-mode-hook)))

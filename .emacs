@@ -19,7 +19,7 @@
 (setq package--init-file-ensured t)
 
 ;; Setup customize system
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(setq custom-file (expand-file-name "myconfig/custom.el" user-emacs-directory))
 (load custom-file)
 
 (defconst user-init-dir
@@ -30,7 +30,7 @@
         (t "~/.emacs.d/"))
   "Emacs init directory for current user")
 
-(defconst user-workfiles-init-dir "~/.workdotfiles/.emacs.d/"
+(defconst user-workfiles-init-dir "~/.workdotfiles/.emacs.d/myconfig"
   "Emacs work files init directory for current user")
 
 (defun expand-user-file (file)
@@ -49,10 +49,10 @@
   "Load a file in the current user's work files configuration directory"
   (load-file (expand-user-work-file file)))
 
-(load-user-file "utils.el")
+(load-user-file "myconfig/utils.el")
 
 ;; NOTE(sdsmith): ALWAYS DO THIS BEFORE ANY PACKAGE CUSTOMIZATION
-(load-user-file "package.el")
+(load-user-file "myconfig/package.el")
 (eval-when-compile
   (require 'use-package))
 
@@ -61,22 +61,25 @@
 (auto-compile-on-load-mode)
 (auto-compile-on-save-mode)
 
-(load-user-file "visuals.el")
-(load-user-file "emacs-behaviour.el")
-(load-user-file "clipboard-integration.el")
-(load-user-file "default-buffers.el")
-(load-user-file "frame.el")
-(load-user-file "navigation.el")
-(load-user-file "abbrevs.el")
+(load-user-file "myconfig/visuals.el")
+(load-user-file "myconfig/emacs-behaviour.el")
+(load-user-file "myconfig/clipboard-integration.el")
+(load-user-file "myconfig/default-buffers.el")
+(load-user-file "myconfig/frame.el")
+(load-user-file "myconfig/navigation.el")
+(load-user-file "myconfig/abbrevs.el")
 
-(load-user-file "file-mode-map.el")
-(load-user-file "programming-faces.el")
-(load-user-file "programming-visuals.el")
-(load-user-file "programming-systems.el")
-(load-user-file "source-control.el")
-(load-user-file "org-mode.el")
-(load-user-file "shorten-major-mode-names.el")
-(load-user-file "shell-integration.el")
+(load-user-file "myconfig/file-mode-map.el")
+(load-user-file "myconfig/programming-faces.el")
+(load-user-file "myconfig/programming-visuals.el")
+(load-user-file "myconfig/programming-systems.el")
+(load-user-file "myconfig/source-control.el")
+(load-user-file "myconfig/org-mode.el")
+(load-user-file "myconfig/shorten-major-mode-names.el")
+(load-user-file "myconfig/shell-integration.el")
 
-;;(load-user-file "instance-persistence.el")
-;;(load-user-file "nvidia-mods.el")
+;;(load-user-file "myconfig/instance-persistence.el")
+;;(load-user-file "myconfig/nvidia-mods.el")
+
+;; Utils
+(load-user-file "myconfig/external/hierarchy-major-modes.el")

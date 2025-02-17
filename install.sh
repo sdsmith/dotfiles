@@ -73,11 +73,7 @@ create_home_symlink .inputrc
 create_home_symlink .gitconfig
 create_home_symlink_global_gitignore
 create_home_symlink .emacs
-mkdir -p "$HOME/.emacs.d"
-find ./.emacs.d -type f -print0 |
-    while IFS= read -r -d '' line; do
-        create_home_symlink "$line"
-    done
+create_home_symlink .emacs.d
 create_home_symlink .config/espanso
 
 # Byte compile emacs files
