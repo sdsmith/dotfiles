@@ -18,10 +18,16 @@
 
         # Default smart log
         sl = !"git sl1"
+
         # Commit description + condensed summary of extended header information such as file creations or deletions ("new" or "gone", optionally "+l" if it’s a symlink) and mode changes ("+x" or "-x" for adding or removing executable bit respectively) in diffstat.
         summary = show --compact-summary
-        # Last commit description
-        last = show --compact-summary HEAD
+        # Last commit description + changes
+        last = show HEAD
+        # Commit description + changes
+        #show                  # Built in command
+        # Commit changes only
+        #       Usage: changes [commit]
+        changes = git show --color --pretty=format:%b
 
         #######################################################################
         # Working with current changes
