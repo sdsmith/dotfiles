@@ -7,53 +7,97 @@
 	autocrlf = input
 
 [alias]
+        #######################################################################
+        # Viewing history
+        #######################################################################
+
         # Smart logs - pretty printed commit graphs
         sl1 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
         sl2 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
         sl3 = log --graph --abbrev-commit --decorate --format=format:'%C(yellow)%h%C(reset)%C(auto)%d%C(reset) %C(normal)%s%C(reset) %C(dim white)%an%C(reset) %C(dim blue)(%ar)%C(reset)' --all
 
+        # Default smart log
         sl = !"git sl1"
+        # Commit description + condensed summary of extended header information such as file creations or deletions ("new" or "gone", optionally "+l" if it’s a symlink) and mode changes ("+x" or "-x" for adding or removing executable bit respectively) in diffstat.
+        summary = show --compact-summary
+        # Last commit description
+        last = show --compact-summary HEAD
 
-        diffw = diff --color-words
-        diffc = diff --color-words=.
+        #######################################################################
+        # Working with current changes
+        #######################################################################
+
+        st = status
+
+        # Stash any files not staged for commit. Includes untracked files.
+        stash-unstaged = git stash --keep-index -u
+        # Stash all files, including untracked and staged files.
+        stash-all = git stash -u
 
         aa = add -A
         ap = add --patch
+	# Add all tracked files. Ignore untracked.
+	at = add -u
+	add-tracked = add -u
+
+        # Track an untracked file without staging it.
+        # Enables git diff with files that haven't been added to the Git repository yet
+        track = add --intent-to-add
+
+        # Unstage a file without modifying the files on disk. Useful as an "undo" option for a "git add".
+        unstage = reset
+
         cm = commit -m
         amend = commit --amend
         # Amends last commit + skips editing the commit message
         amend-now = commit --amend --no-edit
+        # Undo last commit without modifying the files on disk.
+        #   *Not useful if you've already pushed to remote.
+        undo-commit = reset --soft HEAD~1
 
-        exec = '!exec '
+        #######################################################################
+        # Diffing changes
+        #######################################################################
 
+        diffw = diff --color-words
+        diffc = diff --color-words=.
         # Diff stage file - lines
         diff-staged = diff --cached
         # Diff stage file - words
         diffw-staged = diffw --cached
         # Diff stage file - characters
         diffc-staged = diffc --cached
-        # Diff last commit
+        # Diff against the last commit
         # NOTE: @ => HEAD, ~1 post-fix => 1 before
         diff-last-commit = diff @~1 @
 
-        # Unstage a file without modifying the files on disk. Useful as an "undo" option for a "git add".
-        unstage = reset
-        # Undo last commit without modifying the files on disk.
-        #   Not useful if you've already pushed to remote.
-        undo-commit = reset --soft HEAD~1
-        pull-rebase = pull --rebase
-
-        # Show repo root path
-        root = rev-parse --show-toplevel
-
-        rm-all-changes = !git checkout -f && git clean -fd
-
-        # Enable you to use git diff with files that haven't been added to the Git repository yet
-        track = add --intent-to-add
+        #######################################################################
+        # Branches
+        #######################################################################
 
         branch-delete-local = branch -D
         branch-delete-origin = push -d origin
         branch-delete-everywhere = !git branch-delete-local $1 && git branch-delete-origin $1
 
+        #
+        # Working with remote
+        #
+        # NOTE: Unnecessary if you make the default pull method rebase via "pull.rebase=true"
+        pull-rebase = pull --rebase
+
+        #######################################################################
+        # Misc
+        #######################################################################
+
+        # Show repo root path
+        root = rev-parse --show-toplevel
+
+        exec = '!exec '
+
+        rm-all-changes = !git checkout -f && git clean -fd
+
 [init]
 	defaultBranch = main
+
+[pull]
+        rebase = true
