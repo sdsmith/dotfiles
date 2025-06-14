@@ -522,5 +522,11 @@ if command -v op 2>&1 >/dev/null; then
     eval "$(op completion zsh)"; compdef _op op
 fi
 
+# # load setup-cpp installs by default
+# # NOTE: need this for vscode remote attach, otherwise the tools aren't on the PATH
+# if [ -f "$HOME/.cpprc" ]; then
+#     source "$HOME/.cpprc"
+# fi
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
