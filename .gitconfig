@@ -47,7 +47,11 @@
 	add-tracked = add -u
 
         # Track an untracked file without staging it.
-        # Enables git diff with files that haven't been added to the Git repository yet
+        # Usage tips:
+        # - Stage parts of new files:
+        #       git track <...>
+        #       git ap <...>
+        # - Git diff with files that haven't been added to the Git repository yet
         track = add --intent-to-add
 
         # Unstage a file without modifying the files on disk. Useful as an "undo" option for a "git add".
