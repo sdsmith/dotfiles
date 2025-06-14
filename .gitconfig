@@ -65,14 +65,26 @@
         # Diffing changes
         #######################################################################
 
+        # Diff unstaged - lines
+        #diff                  # built-in
+        d = diff
+        # Diff unstaged - words
         diffw = diff --color-words
+        dw = diffw
+        # Diff unstaged - characters
         diffc = diff --color-words=.
+        dc = diffc
+
         # Diff stage file - lines
         diff-staged = diff --cached
+        ds = diff-staged
         # Diff stage file - words
         diffw-staged = diffw --cached
+        dsw = diffw-staged
         # Diff stage file - characters
         diffc-staged = diffc --cached
+        dsc = diffc-staged
+
         # Diff against the last commit
         # NOTE: @ => HEAD, ~1 post-fix => 1 before
         diff-last-commit = diff @~1 @
