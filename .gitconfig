@@ -33,7 +33,7 @@
         # Working with current changes
         #######################################################################
 
-        st = status
+        s = status
 
         # Stash any files not staged for commit. Includes untracked files.
         stash-unstaged = git stash --keep-index -u
