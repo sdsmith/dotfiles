@@ -27,7 +27,7 @@
         #show                  # Built in command
         # Commit changes only
         #       Usage: changes [commit]
-        changes = git show --color --pretty=format:%b
+        changes = show --color --pretty=format:%b
 
         #######################################################################
         # Working with current changes
@@ -36,10 +36,27 @@
         s = status
 
         # Stash any files not staged for commit. Includes untracked files.
-        stash-unstaged = git stash --keep-index -u
+        stash-unstaged = stash --keep-index -u
         # Stash all files, including untracked and staged files.
-        stash-all = git stash -u
+        stash-all = stash -u
 
+        # Diff current against last stash
+        # TODO: this isn't right. need to diff against the working copy. stash-diff = diff stash@{0}^1 stash@{0}
+
+        # NOTE: Unstashing
+        #
+        # Prefer `stash apply`, `stash drop` over `stash pop`.
+        #
+        # - stash pop: stages changes + drops stash entry
+        # - stash apply: applies changes + keeps the stash entry
+        # - stash drop: drops the stash entry
+
+        # Unstage part of last stash unstaged
+        #   Usage: stash-apply-patch [filepath]
+        #   - if `filepath` is supplied, limit to that file
+        stash-apply-patch = checkout --patch 'stash@{0}'
+
+        a = add
         aa = add -A
         ap = add --patch
 	# Add all tracked files. Ignore untracked.
@@ -57,6 +74,9 @@
         # Unstage a file without modifying the files on disk. Useful as an "undo" option for a "git add".
         unstage = reset
 
+        c = commit
+        # Commit part of staged changes. Like add --patch.
+        cp = commit -p
         cm = commit -m
         amend = commit --amend
         # Amends last commit + skips editing the commit message
@@ -96,6 +116,8 @@
         #######################################################################
         # Branches
         #######################################################################
+
+        co = checkout
 
         branch-delete-local = branch -D
         branch-delete-origin = push -d origin
