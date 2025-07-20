@@ -51,8 +51,22 @@ set history filename ~/.gdb_history
 # Display instructions in Intel format
 set disassembly-flavor intel
 
+# Print settings: https://ftp.gnu.org/old-gnu/Manuals/gdb/html_node/gdb_57.html
 # Readable structure prints
 set print pretty on
+# When displaying a pointer to an object, identify the actual (derived) type of the object rather than the declared type, using the virtual function table.
+set print object on
+# Demangle C++ symbols
+set print demangle on
+# Print C++ names in their source form rather than their mangled form, even in assembler code printouts such as instruction disassemblies. The default is off.
+set print asm-demangle on
+# Allow GDB to choose a decoding style by inspecting your program.
+set demangle-style auto
+
+set python print-stack full
+
+# Use debuginfod
+set debuginfod enabled on
 
 # Skip STL files
 skip file allocator.h
@@ -106,18 +120,30 @@ define hookpost-stop
   refresh
 end
 
-# STL pretty printer
+# Pretty printers
 python
 import sys, os
 
 dotfiles_path = os.getenv("DOTFILES")
 if dotfiles_path:
+  print("Adding pretty printers...")
+
+  #### libstdc++ ##############################################################
+  print("\tlibstdc++")
   sys.path.insert(0, f'{dotfiles_path}/gdb/printers/stlprettyprinter/python')
   from libstdcxx.v6.printers import register_libstdcxx_printers
   #sys.path.insert(0, '/home/scratch.stewarts_sw/gdb/printers')
   #from stlprettyprinter.python.libstdcxx.v6.printers import register_libstdcxx_printers
   register_libstdcxx_printers(None)
 
+  #### libc++ (LLVM) ##########################################################
+  print("\tlibc++")
+  sys.path.insert(0, f'{dotfiles_path}/gdb/printers/libcxx-pretty-printers/src')
+  from libcxx.v1.printers import register_libcxx_printers
+  register_libcxx_printers(None)
+
+  #### type_safe ##############################################################
+  print("\ttype_safe")
   # TODO: add type_safe::strong_typedef pretty printers
   # - not tirggering. Try: http://forums.codeblocks.org/index.php?topic=22216.0
   import gdb.printing
@@ -125,4 +151,10 @@ if dotfiles_path:
   from type_safe_pretty_printer import build_pretty_printer as build_type_safe_printer
   gdb.printing.register_pretty_printer(gdb.current_objfile(), build_type_safe_printer())
 
+  #### glm (glm_pp) ###########################################################
+  print("\tglm")
+  sys.path.insert(0, f'{dotfiles_path}/gdb/printers/glm')
+  import glm_pp
+
+  print("Adding pretty printers... done")
 end
