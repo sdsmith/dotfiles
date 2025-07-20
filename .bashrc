@@ -286,3 +286,10 @@ function clang++_include_dirs() {
 #        exec zsh
 #    fi
 #fi
+
+# Debug info on demand service "debuginfod"
+# ref: https://documentation.ubuntu.com/server/explanation/debugging/about-debuginfod/index.html
+export DEBUGINFOD_URLS="https://debuginfod.ubuntu.com"
+local GDB_CACHE_PATH="$HOME/.cache/gdbcache"
+mkdir -p "${GDB_CACHE_PATH}"
+export DEBUGINFOD_CACHE_PATH="${GDB_CACHE_PATH}"
