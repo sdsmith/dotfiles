@@ -504,6 +504,12 @@ if is_platform_cygwin; then
     _fzf_setup_cygwin
 elif is_os_ubuntu; then
     _fzf_setup_ubuntu
+    # Debug info on demand service "debuginfod"
+    # ref: https://documentation.ubuntu.com/server/explanation/debugging/about-debuginfod/index.html
+    export DEBUGINFOD_URLS="https://debuginfod.ubuntu.com"
+    local GDB_CACHE_PATH="$HOME/.cache/gdbcache"
+    mkdir -p "${GDB_CACHE_PATH}"
+    export DEBUGINFOD_CACHE_PATH="${GDB_CACHE_PATH}"
 elif is_os_raspbian; then
     _fzf_setup_raspian
 elif is_os_fedora; then
