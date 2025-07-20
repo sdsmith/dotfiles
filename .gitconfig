@@ -74,6 +74,9 @@
         # Unstage a file without modifying the files on disk. Useful as an "undo" option for a "git add".
         unstage = reset
 
+        # Checkout patch. Selectively revert changes in a file in working directory
+        cop = checkout -p
+
         c = commit
         # Commit part of staged changes. Like add --patch.
         cp = commit -p
@@ -113,6 +116,11 @@
         # NOTE: @ => HEAD, ~1 post-fix => 1 before
         diff-last-commit = diff @~1 @
 
+        # Beyond compare integration
+        #
+        # Diff the directory
+        diff-bc-dir = difftool --dir-diff
+
         #######################################################################
         # Branches
         #######################################################################
@@ -145,3 +153,6 @@
 
 [pull]
         rebase = true
+
+[diff]
+        tool = bc
