@@ -121,6 +121,9 @@
         # Diff the directory
         diff-bc-dir = difftool --dir-diff
 
+        # Beyond Compare (GUI)
+        bc = difftool -t bc --no-prompt --dir-diff --no-symlinks
+
         #######################################################################
         # Branches
         #######################################################################
