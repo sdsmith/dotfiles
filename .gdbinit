@@ -68,6 +68,9 @@ set python print-stack full
 # Use debuginfod
 set debuginfod enabled on
 
+# gdb to auto-download debuginfo when available
+set debuginfod enabled off
+
 # Skip STL files
 skip file allocator.h
 skip file auto_ptr.h
