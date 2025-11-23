@@ -34,6 +34,21 @@ matches:
         type: date
         params:
           format: "%H:%M"
+  - trigger: ":timestamp"
+    replace: "{{timestamp}}"
+    vars:
+      - name: timestamp
+        type: date
+        params:
+          format: "%Y-%m-%d_%H:%M%Z"
+  - trigger: ":day"
+    replace: "{{mydate}}"
+    vars:
+      - name: mydate
+        type: date
+        params:
+          format: "%-m/%-d"
+
 
   # Print the output of a shell command
   - trigger: ":shell"
