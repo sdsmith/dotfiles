@@ -1,0 +1,9 @@
+#!/bin/sh
+
+SEARCH_DIR=$1
+SYMBOL=$2
+
+# NOTE:
+# nm -C: demangle symbol name
+# nm -g: only show global (exported) symbols
+find ${SEARCH_DIR} -iname '*.o' -o -iname '*.so*' -o -iname '*.a' -exec nm -A -C -g {} \; | grep --color=always "${SYMBOL}"
