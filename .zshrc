@@ -466,8 +466,12 @@ function tmca() {
 }
 
 # Work config
-if [ -f "$HOME/.workdotfiles/.zshrc" ]; then
-    source "$HOME/.workdotfiles/.zshrc"
+if [ -f "$HOME/.dotfiles.work/.zshrc" ]; then
+    source "$HOME/.dotfiles.work/.zshrc"
+fi
+# Machine specific config
+if [ -f "$HOME/.dotfiles.machine/.zshrc" ]; then
+    source "$HOME/.dotfiles.machine/.zshrc"
 fi
 
 # FZF
@@ -500,6 +504,14 @@ function _fzf_setup_fedora() {
     source /usr/share/zsh/site-functions/_fzf
 }
 
+function _samba_helper_fedora() {
+    alias samba_list_users='pdbedit -L -v' # requires sudo
+    alias samba_start='systemctl start smb'
+    alias samba_stop='systemctl stop smb'
+    alias samba_startup_disable='systemctl disable smb'
+    alias samba_startup_enable='systemctl enable --now smb'
+}
+
 if is_platform_cygwin; then
     _fzf_setup_cygwin
 elif is_os_ubuntu; then
@@ -514,6 +526,7 @@ elif is_os_raspbian; then
     _fzf_setup_raspian
 elif is_os_fedora; then
     _fzf_setup_fedora
+    _samba_helper_fedora
 elif [ -d $HOME/.fzf ]; then
     echo "Found home fzf installation in '.fzf', using that"
     source $HOME/.fzf.zsh
