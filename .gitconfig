@@ -1,6 +1,7 @@
 [user]
 	email = stewart.dryden.smith@gmail.com
 	name = Stewart Smith
+	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBIAc8QuDO7ikNwEUG/CjyBQPmuf9Ef9BJV98z6VyPSr
 
 [core]
         excludesfile = ~/.gitignore
@@ -159,3 +160,9 @@
 
 [diff]
         tool = bc
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	program = /opt/1Password/op-ssh-sign
+[commit]
+	gpgsign = true
