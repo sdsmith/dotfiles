@@ -128,7 +128,9 @@ setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording en
 plugins=(
     git
     mercurial
-    ssh-agent
+    # Use password manager CLI integration instead. Uncomment this and
+    # update/remove ~/.ssh/config to use this ssh agent.
+    #ssh-agent
     zsh-completions
     zsh-syntax-highlighting
 )
