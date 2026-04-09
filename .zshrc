@@ -331,6 +331,8 @@ alias yrm="yarn remove"
 
 alias rpm_pkgloc="rpm -ql"
 
+# Tweak `less` command
+export LESS='--quit-if-one-screen --ignore-case --LONG-PROMPT --RAW-CONTROL-CHARS --HILITE-UNREAD --tabs=4 --no-init --window=-4'
 
 function ssh_gen_key()
 {
