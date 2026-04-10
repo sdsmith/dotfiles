@@ -224,17 +224,29 @@
   :custom
   (corfu-auto t)
   (corfu-auto-delay 0.2)
-  (corfu-auto-prefix 2)
+  (corfu-auto-prefix 3)
+  (corfu-on-excat-match nil) ; don't auto-accept on single candidate lists
+  (corfu-preselect 'promp)  ; cursor stays at prompt, don't preselect first candidate
   (corfu-cycle t)
   (corfu-quit-no-match t)
   :init
-  (global-corfu-mode))
+  (global-corfu-mode)
+  :bind (:map corfu-map
+              ("C-g" . corfu-quit)
+              ("<escape>" . corfu-quit)))
 
 ;; Icons and type info in the completion popup
 (use-package kind-icon
   :after corfu
   :custom (kind-icon-default-face 'corfu-default)
   :config (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+
+(use-package yasnippet
+  :config
+  (yas-global-mode 1))
+;; Community snippets
+(use-package yasnippet-snippets
+  :after yasnippet)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Project management
@@ -439,7 +451,17 @@
 ;; Remember recently edited files
 ;;
 ;; M-x recentf-open-files
-(recentf-mode 1)
+(use-package recentf
+  :init (recentf-mode 1)
+  :custom
+  (recentf-max-saved-item 200)
+  (recentf-save-file "~/.emacs.d/artifcats/recentf")
+  ;; file exclusion list
+  (recentf-exclude
+   '("~/.emacs.d/elpa/"
+     "~/.emacs.d/artifacts/"
+     "/tmp/"
+     "/ssh:")))
 
 ;; save-place-mode: reopen files to the last place visited
 (save-place-mode 1)
@@ -626,8 +648,6 @@
 
 ;; Delete all trailing whitespace on changed lines
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
-
-;; TODO: lookup the emacs reddit thread that had all the helpful QoL features
 
 ;; TODO: pkg helpful?
 
