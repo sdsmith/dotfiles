@@ -18,7 +18,7 @@
 ;;
 ;; Remote shell:
 ;; - ssh via vterm
-;; - for persistent remote session, on remote machine `tmux attach || tmux new` 
+;; - for persistent remote session, on remote machine `tmux attach || tmux new`
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Custom file
@@ -28,7 +28,6 @@
 (when (file-exists-p custom-file)
   (load custom-file))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Platform detection
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -37,17 +36,34 @@
 (defconst IS-WINDOWS (eq system-type 'windows-nt))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Theme
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+(load-theme 'sdsmith t)
+
+;; set display-line-numbers-mode faces after packages have loaded. something is overriding them
+(add-hook 'after-init-hook
+          (lambda ()
+            (set-face-attribute 'line-number nil :background "#000000" :foreground "gray40")
+            (set-face-attribute 'line-number-current-line nil :background "#000000" :foreground "gray60" :weight 'bold)))
+
+
+;; highlight current line
+(global-hl-line-mode 1)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Package bootstrap
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(add-to-list 'package-archives '("gnu" . "https://elpa.gun.org/package/") t)
+(add-to-list 'package-archives '("gnu" . "https://elpa.gnu
+.org/package/") t)
 (add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/") t)
 (package-initialize)
 
 ;; Refresh archive contents on first run (new machine setup)
 (unless package-archive-contents
-  (package-refresh-contonets))
+  (package-refresh-contents))
 
 ;; Install packages if they are missing
 ;; NOTE: use-package is built-in from Emacs 29
@@ -56,7 +72,7 @@
 (setq use-package-always-ensure t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Terminal workflow
+;;; Terminal workflow
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -118,14 +134,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; TRAMP: remote file editing
 ;; open as /ssh:user@host:/path/to/file
-;; NOTE: lsp backend (ie clangd) should run on the remote machine 
+;; NOTE: lsp backend (ie clangd) should run on the remote machine
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TODO: verify and check best practices
 (use-package tramp
   :custom
   ;; SSH uses existing ~/.ssh/config, including ControlMaster multiplexing for fast reconnects
   (tramp-default-method "ssh")
-  ;; @perf Don't re-read remote directory contents
+  ;; Don't re-read remote directory contents
   (tramp-completion-reread-directory-timeout nil)
   ;; Preserve SSH ControlMaster setting from ssh config. Reuse connections so each file open doesn't re-handshake
   (tramp-ssh-controlmaster-options
@@ -145,18 +161,27 @@
 ;;
 ;; | Package        | Job                                                      |
 ;; | -------------- | ---------------------------------------------------------|
-;; | **Vertico**    | Renders the vertical candidate list in the minibuffer    |
-;; | **Orderless**  | Matching: space-separated tokens, any order              |
-;; | **Marginalia** | Annotations on candidates (file sizes, signatures,       |
+;; | Vertico        | Renders the vertical candidate list in the minibuffer    |
+;; | Orderless      | Matching: space-separated tokens, any order              |
+;; | Marginalia     | Annotations on candidates (file sizes, signatures,       |
 ;; |                |   keybindings)                                           |
-;; | **Consult**    | Enhanced commands: buffer switcher, grep, line search,   |
+;; | Consult        | Enhanced commands: buffer switcher, grep, line search,   |
 ;; |                |   with live preview                                      |
-;; | **Embark**     | Actions on a candidate while the minibuffer is open      |
+;; | Embark         | Actions on a candidate while the minibuffer is open      |
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package vertico
   :init (vertico-mode))
+
+;; Set sort behaviour based on command
+(use-package vertico-multiform
+  :after vertico
+  :ensure nil ; ships with vertico
+  :init (vertico-multiform-mode)
+  :custom
+  (vertico-multiform-commands
+   '((find-file (vertico-sort-function . vertico-sort-alpha)))))
 
 (use-package orderless
   :custom
@@ -332,25 +357,26 @@
 ;; ${workspaceFolder} resolves to the lsp-mode workspace root — which is your project root where compile_commands.json lives, so it's effectively the same as (projectile-project-root).
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(use-package dap-mode
-  :after lsp-mode
-  :config
-  (dap-auto-configure-mode)
-  (require 'dap-lldb)
-  (require 'dap-gdb-lldb)
-  ;; IMPORTANT: Run once to download the lldb-vscode DAP adapter:
-  ;; M-x dap-gdb-lldb-setup
-  (setq dap-auto-configure-features
-	'(sessions locals breakpoints expressions tooltip))
-  :bind-keymap ("C-c d" . dap-mode-map)
-  :bind (:map dap-mode-map
-	      ("d" . dap-debug)
-	      ("b" . dap-breakpoint-toggle)
-	      ("n" . dap-next)
-	      ("i" . dap-step-in)
-	      ("o" . dap-step-out)
-	      ("c" . dap-continue)
-	      ("e" . dap-eval-thing-at-point)))
+;; IMPORTANT: Run once to download the lldb-vscode DAP adapter:
+;; M-x dap-gdb-lldb-setup
+;; TODO: DAP, when activeted, is capturing all the input from the :bind keys so you can't type them...
+;; (use-package dap-mode
+;;   :after lsp-mode
+;;   :config
+;;   (require 'dap-lldb)
+;;   (require 'dap-gdb-lldb)
+;;   (setq dap-auto-configure-features
+;; 	    '(sessions locals breakpoints expressions tooltip))
+;;   (dap-auto-configure-mode)
+;;   :bind-keymap ("C-c d" . dap-mode-map)
+;;   :bind (:map dap-mode-map
+;; 	      ("d" . dap-debug)
+;; 	      ("b" . dap-breakpoint-toggle)
+;; 	      ("n" . dap-next)
+;; 	      ("i" . dap-step-in)
+;; 	      ("o" . dap-step-out)
+;; 	      ("c" . dap-continue)
+;; 	      ("e" . dap-eval-thing-at-point)))
 
 ;; IMPORTANT: put project-specific template in `.dir-locals.el` at the
 ;; project root and configure it as you would launch.json
@@ -365,11 +391,51 @@
 
 ;; magit: git interface
 (use-package magit
-  :bind ("C-c m" . magit-status))
+  :bind ("C-c v" . magit-status))
+
+;; Git diff indicator in gutter
+(use-package diff-hl
+  :hook
+  (prog-mode . diff-hl-mode)
+  ;; update after magit operations
+  (magit-post-refresh . diff-hl-magit-post-refresh)
+  :custom
+  ;; show diff in margin instead of fringe
+  ;; (diff-hl-side 'left)
+  (diff-hl-show-staged-changes nil) ; only show unstaged changes
+  :config
+  ;; highlight on-the-fly when editing
+  (diff-hl-flydiff-mode 1)
+  ;; show diff in margin when running in the terminal (no fringe available)
+  (unless (display-graphic-p)
+    (diff-hl-margin-mode 1)))
 
 ;; hl-todo: highlights TODO/FIXME/NOTE/HACK comments
 (use-package hl-todo
   :hook (prog-mode . hl-todo-mode))
+(setq hl-todo-keyword-faces
+      '(("TODO"      . "#CC8844")
+        ("FIXME"     . "#CC6644")
+        ("BUG"       . "#CC4444")
+        ("XXX"       . "#CC4444")
+        ("NOTE"      . "#88AA55")
+        ("IMPORTANT" . "#DDB76B")
+        ("STUDY"     . "#8888CC")
+        ("README"    . "#8888CC")
+        ("DEBUG"     . "#FFB347")
+        ("DOC"       . "#7EC8E3")
+        ("WAR"       . "#AA55AA")
+        ("HACK"      . "#AA55AA")
+        ("@perf"     . "#DDB76B")))
+
+;; Highlight custom annotation keywords
+(defun sdsmith/add-comment-annotations ()
+  (font-lock-add-keywords
+   nil
+   '(("\\(@perf\\|@safety\\)"
+      0 '(:foreground "#7EC8E3" :weight bold) t))
+   'append))
+(add-hook 'prog-mode-hook #'sdsmith/add-comment-annotations)
 
 ;; clang-format: format on save only if .clang-format exists
 (use-package clang-format
@@ -402,13 +468,114 @@
 (setq auto-window-vscroll nil)
 
 ;; C-g should quit whatever is happening
-(defun my/keyboard-quit-dwim ()
+(defun sdsmith/keyboard-quit-dwim ()
   "Do What I Mean and quit the minibuffer or current command."
   (interactive)
   (if (> (minibuffer-depth) 0)
       (abort-recursive-edit)
     (keyboard-quit)))
-(global-set-key (kbd "C-g") #'my/keyboard-quit-dwim)
+(global-set-key (kbd "C-g") #'sdsmith/keyboard-quit-dwim)
+
+;; Make scratch buffer empty
+(setq initial-scratch-message "")
+
+;; Inhbit startup screen/messages
+(setq inhibit-startup-message t)
+(setq inhibit-startup-echo-area-message t)
+
+;; Show full file path as window title
+(setq frame-title-format
+      (list (format "%s %%S: %%j" (system-name))
+	    '(buffer-file-name "%f"
+			       (dired-directory dired-directory "%b"))))
+
+;; Stop beeping and flashing
+(setq visible-bell 1)
+
+;; Use y/n for yes and no
+(setopt use-short-answers t)
+
+;; Disable dialog boxes from GUI Emacs
+(setopt use-dialog-box nil)
+
+;; Set undo limit very high
+(setq undo-limit 20000000)
+(setq undo-strong-limit 40000000)
+
+;; TODO: change artifact paths to reference emacs home
+
+;; Move backup file (*.~) to separate directory
+(when (not (file-directory-p "~/.emacs.d/artifacts/backups"))
+  (make-directory "~/.emacs.d/artifacts/backups"))
+(setq backup-directory-alist '((".*" . "~/.emacs.d/artifacts/backups/"))
+      backup-by-copying t ; don't delink hardlinks
+      version-control t ; use version numbers of backups
+      delete-old-versions t ; auto delete excess backups
+      kept-new-versions 20 ; how many new version to keep
+      kept-old-versions 5) ; how many old to keep
+
+;; Move autosave files (#*#) to separate directory
+(when (not (file-directory-p "~/.emacs.d/artifacts/autosaves"))
+  (make-directory "~/.emacs.d/artifacts/autosaves"))
+(setq auto-save-file-name-transforms
+      '((".*" "~/.emacs.d/artifacts/autosaves/" t)))
+
+;; 80 column limit for programming
+(add-hook 'prog-mode-hook (lambda () (set-fill-column 80)))
+
+;; Try to abide by project style settings by looking for .editorconfig
+(use-package editorconfig
+  :config (editorconfig-mode 1))
+;; For identation, if no .editorconfig, sniff the file to determine tabs vs spaces
+(use-package dtrt-indent
+  :config (dtrt-indent-global-mode 1))
+;; Default to spaces and 4 indent
+(setq-default
+ indent-tabs-mode nil ; spaces by default
+ tab-width 4)
+
+;; Delete all trailing whitespace on changed lines
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+;; TODO: lookup the emacs reddit thread that had all the helpful QoL features
+
+;; TODO: pkg helpful?
+
+;; Column numbers in mode line display
+(column-number-mode 1)
+
+;; Line numbers
+(add-hook 'prog-mode-hook #'display-line-numbers-mode)
+
+;; Better n/p/f/b navigation
+(global-set-key (kbd "M-p") 'backward-paragraph)
+(global-set-key (kbd "M-n") 'forward-paragraph)
+
+;; Multiple cursors
+;;
+;; NOTE: see .emacs.d/.mc-lists.el for preferences on running commands once per cursor or not
+(use-package multiple-cursors
+  :bind
+  ;; Add cursor above/below
+  ("C-S-<up>" . mc/mark-previous-line-this)
+  ("C-S-<down>" . mc/mark-next-like-this)
+  ;; Mark all occurrences of word/region
+  ("C-c m a"    . mc/mark-all-like-this)
+  ("C-c m d"    . mc/mark-all-dwim)
+  ;; Add cursor at each line in region
+  ("C-c m l"    . mc/edit-lines))
+
+;; highlight-indent-guides: show indentation
+(use-package highlight-indent-guides
+  :config
+  (setq highlight-indent-guides-method 'character)
+  (setq highlight-indent-guides-character ?\|)
+  (setq highlight-indent-guides-auto-enabled nil)
+  (set-face-background 'highlight-indent-guides-odd-face "#474747")
+  (set-face-background 'highlight-indent-guides-even-face "#161616")
+  (set-face-foreground 'highlight-indent-guides-character-face "gray30"))
+(add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; macOS settings
@@ -440,3 +607,4 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (when IS-LINUX
   (setq x-super-keysym 'super))
+(put 'upcase-region 'disabled nil)
