@@ -15,5 +15,7 @@
 /utils/benchmark
 .DS_Store
 /.emacs.d/*
-!/.emacs.d/myconfig
+!/.emacs.d/*.el
+/.emacs.d.old/*
+!/.emacs.d.old/myconfig
 .\#*
