@@ -318,10 +318,11 @@ function o()
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+alias e='emacsclient -c -a ""'
+alias enw="emacsclient -a='' -t"
 alias emacsserver_start="systemctl --user start emacs"
 alias emacsserver_restart="systemctl --user restart emacs"
 alias emacsserver_stop="systemctl --user stop emacs"
-alias enw="emacsclient -a='' -t"
 alias l="ls --color -F"
 
 alias yr="yarn run"
