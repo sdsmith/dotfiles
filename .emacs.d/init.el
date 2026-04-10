@@ -382,6 +382,86 @@
 ;; project root and configure it as you would launch.json
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Perf tweaks
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Disable bidirectional text scanning for perf
+;;
+;; Bidirection text scanning is used for right-to-left languages, which I don't
+;; read. Just do left to right.
+(setq-default bidi-display-reordering 'left-to-right
+              bidi-paragraph-direction 'left-to-right)
+(setq bidi-inhibit-bpa t)
+
+;; Skip fontification during input
+;;
+;; Emacs does syntax highlighting (fontification) while typing/changing
+;; which can cause micro stutters. Scrolling should be faster.
+(setq redisplay-skip-fontification-on-input t)
+
+;; Increase process output buffer for LSP
+;;
+;; Default is 64KB, low. Bumping this reduces the amount of read calls
+(setq read-process-output-max (* 4 1024 1024)) ; 4MB
+
+;; Don't render cursors in non-focused windows
+;;
+;; NOTE: minimal perf impact for renderer, more a visual preference that happens
+;; to be faster
+(setq-default cursor-in-non-selected-windows nil)
+(setq highlight-nonselected-windows nil)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Persistance
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; savehist: save ring and command history between shutdowns
+(use-package savehist
+  :init (savehist-mode 1)
+  :custom
+  (savehist-file "~/.emacs.d/artifacts/savehist")
+  (history-length 1000)
+  (history-delete-duplicates t)
+  (savehist-save-minibuffer-history t)
+  (savehist-autosave-interval 60) ; save every 60 seconds
+  ;; Extra variables to persist beyond minibuffer history
+  (savehist-additional-variables
+   '(search-ring
+     regexp-search-ring
+     kill-ring
+     projectile-project-command-history)))
+;; Remove text properties (fonts, overlays, ...) that bloat savehist file before saving
+(add-hook 'savehist-save-hook
+          (lambda ()
+            (setq kill-ring
+                  (mapcar #'substring-no-properties
+                          (cl-remove-if-not #'stringp kill-ring)))))
+
+;; Remember recently edited files
+;;
+;; M-x recentf-open-files
+(recentf-mode 1)
+
+;; save-place-mode: reopen files to the last place visited
+(save-place-mode 1)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Kill ring and clipboard
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Save clipboard before killing
+;;
+;; Save existing clipboard to kill ring before overwriting it.
+;;
+;; Example scenario: copy URL from browser, switch to Emacs, kill a line with
+;; C-k, then try to yank URL with C-y. It would normally be gone and replaced by
+;; the kill. With this change, C-y is the kill, M-y gets yu back to the URL.
+(setq save-interprogram-paste-before-kill t)
+
+;; No dups in kill ring
+(setq kill-do-not-save-duplicates t)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Quality of life
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -459,6 +539,16 @@
 
 ;; winner-mode: C-c left/right to undo/redo window layout changes
 (winner-mode 1)
+;; Reversible C-x 1 (delete other windows)
+(defun toggle-delete-other-windows ()
+  "Delete other windows in frame, if any, or restor previous window config."
+  (interactive)
+  (if (and winner-mode
+           (equal (selected-window) (next-window)))
+      (winner-undo)
+    (delete-other-windows)))
+
+(global-set-key (kbd "C-x 1") #'toggle-delete-other-windows)
 
 ;; windmove: S-arrow to move between windows
 (windmove-default-keybindings)
@@ -576,6 +666,79 @@
   (set-face-foreground 'highlight-indent-guides-character-face "gray30"))
 (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
 
+;; Auto-chmod scripts on save if file starts with #!
+(add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
+
+;; Sane re-builder syntax (M-x re-builder)
+;;
+;; Avoids need to double escape. Changes syntax from `\\(...\\)` to `\(...\)`.
+(setq reb-re-syntax 'string)
+
+;; Prevent ffap from pining hostnames
+;;
+;; find-file-at-point will try to ping anything at the point that looks like a
+;; hostname (ie something.com). This causes a multi-second hang if it's
+;; unreachable.
+(setq ffap-machine-p-known 'reject)
+
+;; Proportional window resizing
+;;
+;; Rebalances windows when doing splits
+(setq window-combination-resize t)
+
+;; Faster mark popping for navigation
+;;
+;; Every time you jump somewhere, last location is added to the mark ring. Go to
+;; last location with C-u C-SPC. This allows you to keep pressing C-SPC to
+;; continue popping.
+(setq set-mark-command-repeat-pop t)
+
+;; TODO: save-place pkg
+;; Recenter after save-place restores position
+;;
+;;
+(advice-add 'save-place-file-file-hook :after
+            (lambda (&rest _)
+              (when buffer-file-name (ignore-errors (recenter)))))
+
+;; Auto-select help windows when opened
+(setq help-window-select 1)
+
+;; Only show relevant command in command buffer list
+(setq read-extended-command-predicate
+      #'command-completion-default-include-p)
+
+;; Revert buffers if file on disc changes
+;;
+;; Monitors open files on disc and reverts them if they've changed on disc
+;; outside of emacs.
+(global-auto-revert-mode 1)
+(setq global-auto-revert-non-file-buffers t) ; helpful for dired buffers
+
+;; Repeat mode
+;;
+;; Allows you to repeat the last key of the last command to repeat that
+;; command. Supports a lot of common commands out of the box:
+;; C-x o                cycling windows
+;; C-x { / C-x }        shrink/grow window horizontally
+;; C-x ^                grow window vertically
+;; C-x u                undo
+;; C-x <left> / C-x <right>     cycle through buf history
+;; M-g n / M-g p        jump through next error results
+;;
+;; Example, undo x 3:
+;; - before: C-x u C-x u C-x u
+;; - after: C-x u u u
+;;
+;; NOTE: Can define your own repeat-maps to support additional or custom
+;; commands.
+;;
+;; TODO: should I not do undo-tree now? this makes undo much better
+(repeat-mode 1)
+(setq repeat-exit-timeout 5) ; exit after 5s of inactivity
+
+;; Remove emacs GUI elements
+(tool-bar-mode -1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; macOS settings
