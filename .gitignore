@@ -16,6 +16,7 @@
 .DS_Store
 /.emacs.d/*
 !/.emacs.d/*.el
+!/.emacs.d/themes/
 /.emacs.d.old/*
 !/.emacs.d.old/myconfig
 .\#*
