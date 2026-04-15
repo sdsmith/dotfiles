@@ -517,27 +517,28 @@ function _samba_helper_fedora() {
     alias samba_startup_enable='systemctl enable --now smb'
 }
 
-if is_platform_cygwin; then
-    _fzf_setup_cygwin
-elif is_os_ubuntu; then
-    _fzf_setup_ubuntu
-    # Debug info on demand service "debuginfod"
-    # ref: https://documentation.ubuntu.com/server/explanation/debugging/about-debuginfod/index.html
-    export DEBUGINFOD_URLS="https://debuginfod.ubuntu.com"
-    local GDB_CACHE_PATH="$HOME/.cache/gdbcache"
-    mkdir -p "${GDB_CACHE_PATH}"
-    export DEBUGINFOD_CACHE_PATH="${GDB_CACHE_PATH}"
-elif is_os_raspbian; then
-    _fzf_setup_raspian
-elif is_os_fedora; then
-    _fzf_setup_fedora
-    _samba_helper_fedora
-elif [ -d $HOME/.fzf ]; then
-    echo "Found home fzf installation in '.fzf', using that"
-    source $HOME/.fzf.zsh
-else
-    echo "WARNING: unknown platform/os, unable to setup fzf"
-fi
+source <(fzf --zsh)
+#if is_platform_cygwin; then
+#    _fzf_setup_cygwin
+#elif is_os_ubuntu; then
+#    _fzf_setup_ubuntu
+#    # Debug info on demand service "debuginfod"
+#    # ref: https://documentation.ubuntu.com/server/explanation/debugging/about-debuginfod/index.html
+#    export DEBUGINFOD_URLS="https://debuginfod.ubuntu.com"
+#    local GDB_CACHE_PATH="$HOME/.cache/gdbcache"
+#    mkdir -p "${GDB_CACHE_PATH}"
+#    export DEBUGINFOD_CACHE_PATH="${GDB_CACHE_PATH}"
+#elif is_os_raspbian; then
+#    _fzf_setup_raspian
+#elif is_os_fedora; then
+#    _fzf_setup_fedora
+#    _samba_helper_fedora
+#elif [ -d $HOME/.fzf ]; then
+#    echo "Found home fzf installation in '.fzf', using that"
+#    source $HOME/.fzf.zsh
+#else
+#    echo "WARNING: unknown platform/os, unable to setup fzf"
+#fi
 
 # 1password
 if command -v op 2>&1 >/dev/null; then
