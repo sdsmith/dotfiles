@@ -80,6 +80,10 @@
 ;;; Terminal workflow
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; Add terminal mouse support
+(when (not (display-graphics-p))
+  (xterm-mouse-mode 1))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; vterm: full terminal emulator inside emacs
 ;;
