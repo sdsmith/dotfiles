@@ -207,7 +207,7 @@
   :bind
   ("C-x b" . consult-buffer)
   ("C-s" . consult-line)
-  ("C-c g" . consult-reipgrep)
+  ("C-c g" . consult-ripgrep)
   ("M-g g" . consult-goto-line)
   ("M-g i" . consult-imenu)
   :custom
@@ -237,8 +237,8 @@
   (corfu-auto t)
   (corfu-auto-delay 0.2)
   (corfu-auto-prefix 3)
-  (corfu-on-excat-match nil) ; don't auto-accept on single candidate lists
-  (corfu-preselect 'promp)  ; cursor stays at prompt, don't preselect first candidate
+  (corfu-on-exact-match nil) ; don't auto-accept on single candidate lists
+  (corfu-preselect 'prompt)  ; cursor stays at prompt, don't preselect first candidate
   (corfu-cycle t)
   (corfu-quit-no-match t)
   :init
@@ -466,8 +466,8 @@
 (use-package recentf
   :init (recentf-mode 1)
   :custom
-  (recentf-max-saved-item 200)
-  (recentf-save-file "~/.emacs.d/artifcats/recentf")
+  (recentf-max-saved-items 200)
+  (recentf-save-file "~/.emacs.d/artifacts/recentf")
   ;; file exclusion list
   (recentf-exclude
    '("~/.emacs.d/elpa/"
@@ -808,20 +808,21 @@
        (relname (if fullname (file-relative-name fullname root) fullname))
        (should-strip (and root (not include-prefix))))
     (if should-strip relname fullname)))
+
+
+(defun sdsmith/mood-line-segment-project-advice (oldfun)
+  "Advice to use project-relative file names where possible."
+  (let
+      ((project-relative (ignore-errors (sdsmith/project-relative-file-name nil))))
+    (if
+        (and (project-current) (not (and (boundp 'org-src-mode) org-src-mode)) project-relative)
+        (propertize (format "%s  " project-relative) 'face 'mood-line-buffer-name)
+      (funcall oldfun))))
+
 (use-package mood-line
   :config
-  (defun pt/mood-line-segment-project-advice (oldfun)
-    "Advice to use project-relative file names where possible."
-    (let
-        ((project-relative (ignore-errors (pt/project-relative-file-name nil))))
-      (if
-          (and (project-current) (not org-src-mode) project-relative)
-          (propertize (format "%s  " project-relative) 'face 'mood-line-buffer-name)
-        (funcall oldfun))))
-
-  (advice-add 'mood-line-segment-buffer-name :around #'pt/mood-line-segment-project-advice)
+  (advice-add 'mood-line-segment-buffer-name :around #'sdsmith/mood-line-segment-project-advice)
   (mood-line-mode))
-
 
 ;; Highlight bracket pairs
 (use-package rainbow-delimiters
@@ -849,13 +850,16 @@
 ;;; macOS settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TODO: verify macOS settings
+;;
+;; IMPORTANT: Requires the mac build of emacs and only works for GUI. Terminal
+;; relies on the terminal emulator to provide the expected key combos.
 (when IS-MAC
   (setq mac-command-modifier 'super
 	mac-options-modifier 'meta
 	mac-right-option-modifier nil)
 
   ;; Enable pixel-level smooth scrolling
-  (setq mac-mouse-wheel-smooth-scroll t)
+  (setq pixel-scroll-precision-mode t)
 
   ;; Use system trach instead of permanent delete
   (setq delete-by-moving-to-trash t
