@@ -1,0 +1,10 @@
+# INTENDED FOR MAC ONLY
+#
+# swap control with command
+#
+# NOTE: Funny enough, ghostty does have good keybind defaults on Mac. This issue is that everything else doesn't. Using Karabiner to swap control and command leads to the ghostty bindings being bad. So, swap them back!
+key-remap = ctrl=super
+key-remap = super=ctrl
+
+# makes alt work for Emacs's meta key
+macos-option-as-alt=true
