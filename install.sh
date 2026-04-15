@@ -72,9 +72,9 @@ create_home_symlink .ptconfig.toml
 create_home_symlink .inputrc
 create_home_symlink .gitconfig
 create_home_symlink_global_gitignore
-create_home_symlink .emacs
 create_home_symlink .emacs.d
 create_home_symlink .config/espanso
+# TODO: add support for per-OS config (chezmoi a better solution??)
 
 # Byte compile emacs files
 # TODO(stewarts): Doesn't handle require statements outside of the
