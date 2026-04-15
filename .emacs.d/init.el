@@ -49,7 +49,12 @@
 
 
 ;; highlight current line
-(global-hl-line-mode 1)
+;;
+;; NOTE: can have issues in vterm buffers, so only use in programming or text
+;; modes
+(require 'hl-line)
+(add-hook 'prog-mode-hook #'hl-line-mode)
+(add-hook 'text-mode-hook #'hl-line-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Package bootstrap
@@ -130,6 +135,13 @@
   :bind
   ("C-c b" . compile)
   ("C-c B" . recompile)) ; rerun last compile
+
+;; Support colors in compilation
+(use-package fancy-compilation
+  :config (fancy-compilation-mode))
+
+;; wrap lines in compilation buffers
+(add-hook 'compilation-mode-hook 'visual-line-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; TRAMP: remote file editing
@@ -466,22 +478,6 @@
 ;; save-place-mode: reopen files to the last place visited
 (save-place-mode 1)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Kill ring and clipboard
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Save clipboard before killing
-;;
-;; Save existing clipboard to kill ring before overwriting it.
-;;
-;; Example scenario: copy URL from browser, switch to Emacs, kill a line with
-;; C-k, then try to yank URL with C-y. It would normally be gone and replaced by
-;; the kill. With this change, C-y is the kill, M-y gets yu back to the URL.
-(setq save-interprogram-paste-before-kill t)
-
-;; No dups in kill ring
-(setq kill-do-not-save-duplicates t)
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Quality of life
@@ -489,7 +485,9 @@
 
 ;; which-key: shows available key continuations after any prefix
 (use-package which-key
-  :init (which-key-mode))
+  :init (which-key-mode)
+  :custom
+  (which-key-enable-extended-define-key t))
 
 ;; magit: git interface
 (use-package magit
@@ -552,12 +550,11 @@
 (use-package goto-last-change
   :bind ("C-q" . goto-last-change))
 
-;; undo-tree: visualize undo history as a tree (C-x u)
-(use-package undo-tree
-  :init (global-undo-tree-mode)
-  :custom
-  ;; Store undo history files outside of source tree
-  (undo-tree-history-directory-alist '(("." . "~/.emacs.d/artifacts/undo-tree"))))
+;; Undo-tree is unmaintained, use Vundo
+(use-package vundo
+  :diminish
+  :bind* (("C-c _" . vundo))
+  :custom (vundo-glyph-alist vundo-unicode-symbols))
 
 ;; winner-mode: C-c left/right to undo/redo window layout changes
 (winner-mode 1)
@@ -591,24 +588,12 @@
 ;; Make scratch buffer empty
 (setq initial-scratch-message "")
 
-;; Inhbit startup screen/messages
-(setq inhibit-startup-message t)
-(setq inhibit-startup-echo-area-message t)
-
 ;; Show full file path as window title
 (setq frame-title-format
       (list (format "%s %%S: %%j" (system-name))
 	    '(buffer-file-name "%f"
 			       (dired-directory dired-directory "%b"))))
 
-;; Stop beeping and flashing
-(setq visible-bell 1)
-
-;; Use y/n for yes and no
-(setopt use-short-answers t)
-
-;; Disable dialog boxes from GUI Emacs
-(setopt use-dialog-box nil)
 
 ;; Set undo limit very high
 (setq undo-limit 20000000)
@@ -721,13 +706,6 @@
             (lambda (&rest _)
               (when buffer-file-name (ignore-errors (recenter)))))
 
-;; Auto-select help windows when opened
-(setq help-window-select 1)
-
-;; Only show relevant command in command buffer list
-(setq read-extended-command-predicate
-      #'command-completion-default-include-p)
-
 ;; Revert buffers if file on disc changes
 ;;
 ;; Monitors open files on disc and reverts them if they've changed on disc
@@ -758,7 +736,114 @@
 (setq repeat-exit-timeout 5) ; exit after 5s of inactivity
 
 ;; Remove emacs GUI elements
-(tool-bar-mode -1)
+(when (window-system)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (tooltip-mode -1)
+  (pixel-scroll-mode)) ; scroll pixel-by-pixel
+
+;; Increase garbage collection threshold
+(setq gc-cons-threshold 100000000) ; 10MB
+
+;; Tweak Emacs defaults
+(setq
+ ;; Inhbit startup screen/messages
+ inhibit-startup-message t
+ inhibit-startup-echo-area-message t
+ ;; don't put double space after period
+ sentence-end-double-space nil
+ ;; Stop beeping and flashing
+ visible-bell 1
+ ;; Use y/n for yes and no
+ use-short-answers t
+ ;; Disable dialog boxes from GUI Emacs
+ use-dialog-box nil
+ ;; Save existing clipboard to kill ring before overwriting it.
+ ;;
+ ;; Example scenario: copy URL from browser, switch to Emacs, kill a line with
+ ;; C-k, then try to yank URL with C-y. It would normally be gone and replaced by
+ ;; the kill. With this change, C-y is the kill, M-y gets yu back to the URL.
+ save-interprogram-paste-before-kill t
+ ;; No dups in kill ring
+ kill-do-not-save-duplicates t
+ ;; C-k delete whole line
+ kill-whole-line t
+ ;; More scroll perf
+ fast-but-imprecise-scrolling t
+ ;; Prefer newer elisp files
+ load-prefer-newer t
+ ;; Quit without precess termination confirmation, if process is running (ex vterm)
+ confirm-kill-processes nil
+ ;; Auto-select help windows when opened
+ help-window-select 1
+ ;; Only show relevant command in command buffer list
+ read-extended-command-predicate  #'command-completion-default-include-p
+ ;; Keep point in the same place while scrolling
+ scroll-preserve-screen-position t
+ ;; More info in completions
+ completions-detailed t
+ ;; Highlight error messages more aggressively
+ next-error-message-highlight t
+ ;; Keep window formatting the same when using minibuffer
+ read-minibuffer-restore-windows t)
+
+;; UTF-8 as default encoding
+(set-charset-priority 'unicode)
+(prefer-coding-system 'utf-8-unix)
+
+;; Delete/replace selected text if we start typing
+(delete-selection-mode t)
+
+;; De-clutter modeline with diminish.el
+(use-package diminish
+  :config
+  (diminish 'visual-line-mode))
+
+;; mood-line: better looking modeline
+(defun sdsmith/project-relative-file-name (include-prefix)
+  "Return the project-relative filename, or the full path if INCLUDE_PREFIX is t."
+  (letrec
+      ((fullname (if (equal major-mode 'dired-mode) default-directory (buffer-file-name)))
+       (root (project-root (project-current)))
+       (relname (if fullname (file-relative-name fullname root) fullname))
+       (should-strip (and root (not include-prefix))))
+    (if should-strip relname fullname)))
+(use-package mood-line
+  :config
+  (defun pt/mood-line-segment-project-advice (oldfun)
+    "Advice to use project-relative file names where possible."
+    (let
+        ((project-relative (ignore-errors (pt/project-relative-file-name nil))))
+      (if
+          (and (project-current) (not org-src-mode) project-relative)
+          (propertize (format "%s  " project-relative) 'face 'mood-line-buffer-name)
+        (funcall oldfun))))
+
+  (advice-add 'mood-line-segment-buffer-name :around #'pt/mood-line-segment-project-advice)
+  (mood-line-mode))
+
+
+;; Highlight bracket pairs
+(use-package rainbow-delimiters
+  :disabled
+  :hook ((prog-mode . rainbow-delimiters-mode)))
+
+;; Highlight URLs
+(global-goto-address-mode)
+
+;; Use tree-sitter for improved syntax highlighting
+(use-package tree-sitter
+  :config (global-tree-sitter-mode))
+(use-package tree-sitter-langs)
+
+;; Open init.el file shortcut
+(defun open-init-file ()
+  "Open init.el"
+  (interactive)
+  (find-file "~/.emacs.d/init.el"))
+(bind-key "C-c E" #'open-init-file)
+
+;; TODO: kill-buffer should just kill the current buffer
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; macOS settings
