@@ -1,12 +1,47 @@
-term = xterm-256color
-
 # INTENDED FOR MAC ONLY
 #
-# swap control with command
+# Evenything is this file assumes the following:
+# - Karabiner is swapping cmd and control keys
+# - Using emacs in terminal (not GUI emacs, not that that matters too much, it just only applies to terminal emacs)
 #
-# NOTE: Funny enough, ghostty does have good keybind defaults on Mac. This issue is that everything else doesn't. Using Karabiner to swap control and command leads to the ghostty bindings being bad. So, swap them back!
+# Interpret keybinds as the following unless o/w stated:
+#     Config key -> HID event key (in this instance, post modification from Karabiner)
+#     super -> cmd
+#     ctrl -> control/ctrl
+#     alt -> option/alt
+#
+# NOTE: Funny enough, ghostty does have good keybind defaults on Mac.
+# This issue is that everything else doesn't. Using Karabiner to swap
+# control and command leads to the ghostty bindings being bad. So,
+# swap them back!
+#
+# Helpful commands:
+#     ghostty +list-keybinds [--default]    # List keybindings
+#     ghostty +list-actions                 # List available actions
+#     physical keys super+shift+,           # Reload config
+#
+# Tips:
+# - You can't have an inline comment with the config lines. Can only start a line with comments.
+
+# swap control with command
 key-remap = ctrl=super
 key-remap = super=ctrl
 
 # makes alt work for Emacs's meta key
 macos-option-as-alt=true
+
+term = xterm-256color
+
+################################################################################
+# Resolve emacs key conflicts
+################################################################################
+
+# select_all text. default super-a conflicts with emacs C-a go to beginning of line
+# I'll use the mouse to copy terminal output
+keybind = super+a=unbind
+# close_window conflicts with emacs copy C-w
+keybind = super+w=unbind
+# new_window conflicts with emacs text navigation C-n
+keybind = super+n=unbind
+# close_all_windows, unbind just in case
+keybind = super+alt+shift+w=unbind
