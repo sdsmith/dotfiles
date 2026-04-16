@@ -80,9 +80,13 @@
 ;;; Terminal workflow
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Add terminal mouse support
-(when (not (display-graphic-p))
-  (xterm-mouse-mode 1))
+;; NOTE: Do not add terminal mouse support with xterm-mouse-mode. This causes
+;; mouse to be handled by emacs instead of the terminal emulator, meaning
+;; selecting text on the terminal with the mouse is not handled by the system so
+;; we can't copy/paste or use the right click menu.
+;;
+;; (when (not (display-graphic-p))
+;;   (xterm-mouse-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; vterm: full terminal emulator inside emacs
