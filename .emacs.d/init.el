@@ -852,10 +852,26 @@
 ;; Highlight URLs
 (global-goto-address-mode)
 
-;; Use tree-sitter for improved syntax highlighting
-(use-package tree-sitter
-  :config (global-tree-sitter-mode))
-(use-package tree-sitter-langs)
+;; Use tree sitter for improved syntax highlighting
+(if (treesit-available-p)
+    ;; tree sitter is built in to emacs, prefer that
+    (progn
+      (use-package treesit-auto
+        :custom
+        ;; Auto install tree sitter grammars
+        (treesit-auto-install 'prompt) ; or t to auto-install silently
+        :config
+        ;; Enable treesit mode (*-ts-mode) when appropriate automatically
+        ;; NOTE: verify with M-x describe-mode in open buffer
+        (treesit-auto-add-to-auto-mode-alist 'all)
+        (global-treesit-auto-mode)))
+  ;; eles use third party tree-sitter
+  (progn
+   (use-package tree-sitter
+     :config (global-tree-sitter-mode))
+   (use-package tree-sitter-langs)))
+
+;; BLOCKED: Use combobulate for tree sitter based (AST-based) structural navigation. Blocker is no C/C++ support yet.
 
 ;; Open init.el file shortcut
 (defun open-init-file ()
