@@ -30,7 +30,20 @@ key-remap = super=ctrl
 # makes alt work for Emacs's meta key
 macos-option-as-alt=true
 
-term = xterm-256color
+# Setup TERMINFO
+# ref: https://ghostty.org/docs/help/terminfo
+#
+# Ghostty's terminfo entry is available in ncurses 6.5-20241228.
+#
+# NOTE: Leaving this as the default xterm-ghostty may not play well
+# with some systems. That's ok generally. For systems that don't like
+# it over ssh, in `.ssh/config` for that host use `SetEnv
+# TERM=xterm-256color` to force it to a well supported term.
+#
+# Sometimes sudo doesn't play well with xterm-ghostty due to resetting envvars. Use shell integration to resolve it:
+shell-integration-features = sudo
+# Use this if things start to get complicated and removed anything related to fixing xterm-ghostty handling:
+#term = xterm-256color
 
 ################################################################################
 # Resolve emacs key conflicts
