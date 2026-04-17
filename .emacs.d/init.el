@@ -80,6 +80,26 @@
 ;;; Terminal integration
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; TODO: doesn't work
+;;
+;; NOTE: system clipboard syncing when tmux is used on the remote will never
+;; work automatically. tmux is architecturally broken for this. tmux always
+;; responds to OSC 52 from its own buffer for reads (paste,getSelection), which
+;; means it will never forwards it back to the terminal.
+;;
+;; WAR: use `sdsmith/sync-clipboard-from-terminal` to request that tmux sync
+;; back. this uses `tmux refresh-client -l` under the hood.
+;;
+;; (defun sdsmith/sync-clipboard-from-terminal ()
+;;   (interactive)
+;;   (if (getenv "TMUX")
+;;       (progn
+;;         (call-process "tmux" nil nil nil "refrest-client" "-l")
+;;         (message "%s" "syncing tmux clipboard to terminal...")
+;;         (sleep-for 0.1) ; give it a second to sync
+;;         (message "%s" "syncing tmux clipboard to terminal... done"))
+;;     (message "%s" "attempt to sync clipboard to terminal but tmux is not active, nothing to do")))
+
 (when (not (display-graphic-p))
   ;; NOTE: Do not add terminal mouse support with xterm-mouse-mode. This causes
   ;; mouse to be handled by emacs instead of the terminal emulator, meaning
