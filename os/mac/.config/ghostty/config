@@ -46,8 +46,11 @@ shell-integration-features = sudo
 #term = xterm-256color
 
 ################################################################################
-# Resolve emacs key conflicts
+# Keybinds
 ################################################################################
+
+# Resolve emacs key conflicts
+#
 
 # select_all text. default super-a conflicts with emacs C-a go to beginning of line
 # I'll use the mouse to copy terminal output
@@ -58,3 +61,8 @@ keybind = super+w=unbind
 keybind = super+n=unbind
 # close_all_windows, unbind just in case
 keybind = super+alt+shift+w=unbind
+
+# Disable potentially confusing keybinds
+#
+# paste_from_selection can be confused with paste_from_clipboard, which is typically what I would expect
+keybind = super+shift+v=unbind
