@@ -77,16 +77,28 @@
 (setq use-package-always-ensure t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Terminal workflow
+;;; Terminal integration
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; NOTE: Do not add terminal mouse support with xterm-mouse-mode. This causes
-;; mouse to be handled by emacs instead of the terminal emulator, meaning
-;; selecting text on the terminal with the mouse is not handled by the system so
-;; we can't copy/paste or use the right click menu.
-;;
-;; (when (not (display-graphic-p))
-;;   (xterm-mouse-mode 1))
+(when (not (display-graphic-p))
+  ;; NOTE: Do not add terminal mouse support with xterm-mouse-mode. This causes
+  ;; mouse to be handled by emacs instead of the terminal emulator, meaning
+  ;; selecting text on the terminal with the mouse is not handled by the system
+  ;; so we can't copy/paste or use the right click menu.
+  ;;
+  ;;   (xterm-mouse-mode 1)
+
+  (setq xterm-extra-capabilities
+        '(modifyOtherKeys ; enable complex keybinding that terms can't generally process like C-, or C-;
+          setSelection ; save killed text directly to the system's selection/clipboard using the OSC 52 escape sequence
+          ;; Yank from the system clipboard.
+          ;;
+          ;; NOTE: Disable this for a couple of reasons:
+          ;;   1) Ghostty triggers security prompt to read the clipboard. Completely breaks flow of every kill/yank.
+          ;;   2) Allowing this blindly in ghostty is a securing risk when accessing untrusted remote systems. No per system permissions support.
+          ;;   3) Emacs handling on OSC 52 on yank from system clipboard is totally broken and needs a custom handler to call pbpaste (mac) / xclip (linux).
+          ;; getSelection
+          )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; vterm: full terminal emulator inside emacs
