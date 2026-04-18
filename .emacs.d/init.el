@@ -700,16 +700,33 @@
   ;; Add cursor at each line in region
   ("C-c m l"    . mc/edit-lines))
 
-;; highlight-indent-guides: show indentation
-(use-package highlight-indent-guides
-  :config
-  (setq highlight-indent-guides-method 'character)
-  (setq highlight-indent-guides-character ?\|)
-  (setq highlight-indent-guides-auto-enabled nil)
-  (set-face-background 'highlight-indent-guides-odd-face "#474747")
-  (set-face-background 'highlight-indent-guides-even-face "#161616")
-  (set-face-foreground 'highlight-indent-guides-character-face "gray30"))
-(add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+;; indent-bars: show indentation
+;;
+;; When used in emacs GUI, uses stipples (`:stipple` support). In emacs terminal
+;; implies use of character display - don't need to specify.
+;;
+;; NOTE: Can highlight based on tree sitter and even specify which nodes should
+;; or shouldn't be highlighted. https://github.com/jdtsmith/indent-bars#tree-sitter-support
+;;
+;; ref: https://github.com/jdtsmith/indent-bars
+;; example settings: https://github.com/jdtsmith/indent-bars/blob/main/examples.md
+(use-package indent-bars
+  :hook (('prog-mode-hook . 'indent-bars-mode))
+  :custom
+  ;; Prevent extra bars in nested lists + skip intermediate bars
+  ;;(indent-bars-no-descend-lists 'skip)
+
+  ;; Whether to display bars on blak lines contiguous with lines already showing
+  ;; bars.
+  (indent-bars-display-on-blank-lines 'least)
+
+  ;; Don't rainbow highlight indentation
+  (indent-bars-color-by-depth nil)
+  (indent-bars-color '(font-lock-comment-face :blend 0.5))
+
+  ;; Highlight current depth - can be noisey
+  ;;(indent-bars-highlight-current-depth '(:face default :blend 0.4))
+)
 
 ;; Auto-chmod scripts on save if file starts with #!
 (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
