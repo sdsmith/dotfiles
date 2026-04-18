@@ -77,6 +77,19 @@
 (setq use-package-always-ensure t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Project management
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package projectile
+  :init (projectile-mode +1)
+  :bind-keymap ("C-c p" . projectile-command-map)
+  :custom
+  (projectile-completion-system 'default)
+  (projectile-project-search-path '("~/src" "~/projects"))
+  ;; Don't index remote filesystems. TRAMP defadvice handles this, but extra safety
+  (projectile-enable-caching t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Terminal integration
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -299,19 +312,6 @@
 ;; Community snippets
 (use-package yasnippet-snippets
   :after yasnippet)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Project management
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(use-package projectile
-  :init (projectile-mode +1)
-  :bind-keymap ("C-c p" . projectile-command-map)
-  :custom
-  (projectile-completion-system 'default)
-  (projectile-project-search-path '("~/src" "~/projects"))
-  ;; Don't index remote filesystems. TRAMP defadvice handles this, but extra safety
-  (projectile-enable-caching t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Language server
