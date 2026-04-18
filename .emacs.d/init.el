@@ -523,6 +523,11 @@
 ;;; Quality of life
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; Unbind my tmux prefix (C--), was bound to negative-argument
+(global-unset-key (kbd "C--"))
+;; Was bound to negative-argument as well, get unbind for ergonomics
+(global-unset-key (kbd "C-M--"))
+
 ;; which-key: shows available key continuations after any prefix
 (use-package which-key
   :init (which-key-mode)
