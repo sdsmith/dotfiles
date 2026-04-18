@@ -1,6 +1,14 @@
 # INTENDED FOR MAC ONLY
 #
-# Evenything is this file assumes the following:
+
+# swap control with command
+key-remap = ctrl=super
+key-remap = super=ctrl
+
+# makes alt work for Emacs's meta key
+macos-option-as-alt=true
+
+# Everything is this file assumes the following:
 # - Karabiner is swapping cmd and control keys
 # - Using emacs in terminal (not GUI emacs, not that that matters too much, it just only applies to terminal emacs)
 #
@@ -23,12 +31,6 @@
 # Tips:
 # - You can't have an inline comment with the config lines. Can only start a line with comments.
 
-# swap control with command
-key-remap = ctrl=super
-key-remap = super=ctrl
-
-# makes alt work for Emacs's meta key
-macos-option-as-alt=true
 
 # Setup TERMINFO
 # ref: https://ghostty.org/docs/help/terminfo
