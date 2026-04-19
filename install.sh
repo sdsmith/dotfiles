@@ -59,6 +59,22 @@ if ! command -v make >/dev/null; then
     exit 1
 fi
 
+
+function try_create_machine_gitconfig() {
+    GIT_CONFIG_PATH="$HOME/.gitconfig"
+    if [ -f $GIT_CONFIG_PATH ]; then
+        echo "WARNING: found existing '${GIT_CONFIG_PATH}', unable to hook up dotfile configs"
+        return
+    fi
+
+    echo << EOF > $GIT_CONFIG_PATH
+[include]
+    path = ~/.dotfiles/git/base.gitconfig
+EOF
+
+    echo '~/.gitconfig: add relevant include paths from ~/.dotfiles/git/*'
+}
+
 echo "Installing dotfiles..."
 
 create_home_symlink .bash_profile
@@ -70,10 +86,11 @@ create_home_symlink .zshrc
 create_root_home_symlink zsh/.p10k.zsh
 create_home_symlink .ptconfig.toml
 create_home_symlink .inputrc
-create_home_symlink .gitconfig
 create_home_symlink_global_gitignore
 create_home_symlink .emacs.d
 create_home_symlink .config/espanso
+try_create_machine_gitconfig
+
 # TODO: add support for per-OS config (chezmoi a better solution??)
 
 # Byte compile emacs files
