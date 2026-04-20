@@ -150,8 +150,5 @@
 [init]
         defaultBranch = main
 
-[pull]
-        rebase = true
-
 [diff]
         tool = bc
