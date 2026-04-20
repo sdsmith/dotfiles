@@ -28,6 +28,7 @@ umask 022
 export TERM=xterm-256color
 
 export DOTFILES="$HOME/.dotfiles"
+export DOTFILES_WORK="${DOTFILES}.work"
 export DOTFILES_UTILS="$DOTFILES/utils"
 
 export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.homebrew/bin:$DOTFILES/zsh:$DOTFILES/shell:$PATH"
@@ -332,6 +333,10 @@ alias yrm="yarn remove"
 
 alias rpm_pkgloc="rpm -ql"
 
+alias dotfiles="cd ${DOTFILES}"
+alias workdotfiles="cd ${DOTFILES_WORK}"
+alias dotfiles-work="cd ${DOTFILES_WORK}"
+
 # Tweak `less` command
 export LESS='--quit-if-one-screen --ignore-case --LONG-PROMPT --RAW-CONTROL-CHARS --HILITE-UNREAD --tabs=4 --no-init --window=-4'
 
@@ -440,6 +445,7 @@ function replace_text_recursive() {
 }
 
 # Allow emacs GUI colours in terminal
+# TODO: probably only want to do this if not set
 export TERM=xterm-256color
 
 export EDITOR="emacsclient -a='' -t"          # opens in term
