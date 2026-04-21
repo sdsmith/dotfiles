@@ -282,6 +282,9 @@
 ;; clangd's (or other backend's completions).
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; corfu: core completion package. Uses child frames, so it won't appear in
+;; terminal mode. See corfu-terminal.
+;;
 ;; NOTE: `(lsp-completion-provider :none)` causes lsp-mode to not
 ;; activate company-mode, routing completions through
 ;; `completion-at-point` which Corfu picks up automatically.
@@ -299,6 +302,16 @@
   :bind (:map corfu-map
               ("C-g" . corfu-quit)
               ("<escape>" . corfu-quit)))
+
+;; corfu-terminal: display corfu completion menus in the terminal
+;;
+;; NOTE: corfu-terminal is smart enough to no-op in GUI mode. Enable it always
+;; for the case of server/daemon mode where both a GUI and terminal client are
+;; connected.
+(use-package corfu-terminal
+  :after corfu
+  :config
+  (corfu-terminal-mode +1))
 
 ;; Icons and type info in the completion popup
 (use-package kind-icon
