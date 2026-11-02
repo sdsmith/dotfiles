@@ -1,0 +1,222 @@
+#!/usr/bin/env python3
+"""shelley-move-repo — move a repo directory on disk and keep every Shelley
+session attached to it.
+
+Shelley binds a conversation to a repo through exactly one stored value: the
+absolute `conversations.cwd`. Everything the UI shows about the repo — the
+drawer's cwd / git_repo grouping, the branch+commit chip, the diff and commit
+tour viewers, the tools' working directory — is derived from that path at read
+time (and, for live conversations, from the ConversationManager's in-memory
+copy of it). So a plain `mv` orphans every session: the rows still exist but
+point at a path that no longer exists.
+
+This tool rewrites the bindings in one transaction, plus the per-message path
+stamps that the UI resolves file references against:
+
+  conversations.cwd                 the binding itself
+  messages.user_data."$.cwd"        per-message emission cwd (file refs)
+  messages.user_data."$.worktree"   gitinfo rows (diff / commit-tour links),
+                                    plus the tildified path in their display text
+
+With --rewrite-history it also string-replaces the old prefix in the raw
+transcript columns (messages.llm_data / display_data, background_jobs.command),
+which makes old tool cards read consistently at the new path at the cost of
+editing the recorded history.
+
+Dry run by default. Usage:
+
+  shelley-move-repo OLD NEW [--db PATH] [--apply] [--rewrite-history] [--no-move]
+
+Stop the Shelley server first: a live ConversationManager holds its own cwd and
+would write the old path back on its next SetCwd, and the conversation-list git
+cache is keyed by the old path.
+"""
+
+from __future__ import annotations
+
+import argparse
+import datetime as dt
+import os
+import shutil
+import sqlite3
+import subprocess
+import sys
+
+DEFAULT_DB = os.path.expanduser("~/.config/shelley/shelley.db")
+
+
+def die(msg: str) -> "NoReturn":  # noqa: F821
+    print(f"error: {msg}", file=sys.stderr)
+    sys.exit(1)
+
+
+def under(col: str) -> str:
+    """SQL predicate: <col> is OLD itself or a path beneath it.
+
+    substr comparison, not LIKE: '_' and '%' are LIKE wildcards and repo paths
+    do contain underscores.
+    """
+    return (
+        f"(substr({col}, 1, length(:old)) = :old AND "
+        f"(length({col}) = length(:old) OR substr({col}, length(:old) + 1, 1) = '/'))"
+    )
+
+
+def json_under(key: str) -> str:
+    c = f"json_extract(user_data, '$.{key}')"
+    return f"(json_valid(user_data) AND {c} IS NOT NULL AND {under(c)})"
+
+
+def json_move(key: str) -> str:
+    c = f"json_extract(user_data, '$.{key}')"
+    return f"json_set(user_data, '$.{key}', :new || substr({c}, length(:old) + 1))"
+
+
+def tilde(path: str, home: str) -> str:
+    """The display form gitstate.String() bakes into a gitinfo row's text."""
+    return "~" + path[len(home):] if home and path.startswith(home) else path
+
+
+def server_running() -> str | None:
+    try:
+        out = subprocess.run(
+            ["pgrep", "-af", "shelley.*serve"], capture_output=True, text=True
+        ).stdout
+    except FileNotFoundError:
+        return None
+    lines = [l for l in out.splitlines() if "pgrep" not in l]
+    return lines[0] if lines else None
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(add_help=True)
+    ap.add_argument("old", help="current absolute path of the repo")
+    ap.add_argument("new", help="new absolute path of the repo")
+    ap.add_argument("--db", default=DEFAULT_DB)
+    ap.add_argument("--apply", action="store_true", help="actually write (default: dry run)")
+    ap.add_argument("--rewrite-history", action="store_true",
+                    help="also rewrite raw transcript columns (llm_data, display_data, background_jobs.command)")
+    ap.add_argument("--no-move", action="store_true", help="do not mv the directory; only fix the DB")
+    ap.add_argument("--force", action="store_true", help="proceed even if the server looks live")
+    args = ap.parse_args()
+
+    old = os.path.normpath(args.old)
+    new = os.path.normpath(args.new)
+    if not old.startswith("/") or not new.startswith("/"):
+        die("both paths must be absolute")
+    if old == new:
+        die("OLD and NEW are the same path")
+    if new.startswith(old + "/"):
+        die("NEW is inside OLD; move to a path outside the tree being moved")
+    if not os.path.exists(args.db):
+        die(f"no such database: {args.db}")
+
+    run = server_running()
+    if run and not args.force:
+        die(f"the Shelley server is running and will fight this rewrite:\n  {run}\n"
+            "  stop it (systemctl --user stop shelley) and re-run, or pass --force")
+    if run:
+        print(f"warning: server still running (--force): {run}")
+
+    old_exists = os.path.isdir(old)
+    if not args.no_move and not old_exists and os.path.isdir(new):
+        print(f"note: {old} is already gone and {new} exists — treating the move as done")
+    elif not args.no_move and not old_exists:
+        die(f"{old} does not exist (pass --no-move to only fix the database)")
+
+    conn = sqlite3.connect(args.db, isolation_level=None)
+    conn.execute("PRAGMA busy_timeout = 30000")
+    home = os.path.expanduser("~")
+    q = {"old": old, "new": new, "oldtilde": tilde(old, home), "newtilde": tilde(new, home)}
+
+    conv_rows = conn.execute(
+        f"SELECT conversation_id, cwd, user_initiated, archived, is_draft FROM conversations WHERE {under('cwd')}",
+        q,
+    ).fetchall()
+    cwd_msgs = conn.execute(f"SELECT count(*) FROM messages WHERE {json_under('cwd')}", q).fetchone()[0]
+    wt_msgs = conn.execute(f"SELECT count(*) FROM messages WHERE {json_under('worktree')}", q).fetchone()[0]
+
+    hist = 0
+    if args.rewrite_history:
+        for col in ("llm_data", "display_data"):
+            hist += conn.execute(
+                f"SELECT count(*) FROM messages WHERE instr({col}, :old) > 0", q
+            ).fetchone()[0]
+        hist += conn.execute(
+            "SELECT count(*) FROM background_jobs WHERE instr(command, :old) > 0", q
+        ).fetchone()[0]
+
+    print(f"db:   {args.db}")
+    print(f"move: {old} -> {new}" + ("  (directory left alone: --no-move)" if args.no_move else ""))
+    print(f"  conversations to rebind:      {len(conv_rows)}"
+          f"  ({sum(1 for r in conv_rows if r[2])} user, {sum(1 for r in conv_rows if not r[2])} subagent;"
+          f" {sum(1 for r in conv_rows if r[3])} archived, {sum(1 for r in conv_rows if r[4])} drafts)")
+    print(f"  messages with emission cwd:   {cwd_msgs}")
+    print(f"  gitinfo rows with worktree:   {wt_msgs}")
+    if args.rewrite_history:
+        print(f"  raw-history rows to rewrite:  {hist}  (llm_data/display_data/background_jobs)")
+    for _, cwd, *_ in conv_rows[:5]:
+        print(f"    e.g. {cwd}")
+    if len(conv_rows) > 5:
+        print(f"    ... and {len(conv_rows) - 5} more")
+    if not conv_rows:
+        print("  nothing to do: no conversation's cwd is at or under OLD")
+
+    if not args.apply:
+        print("\ndry run — nothing written. Re-run with --apply.")
+        return 0
+
+    stamp = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
+    backup = f"{args.db}.before-move-{stamp}"
+    print(f"\nbackup: {backup}")
+    with sqlite3.connect(args.db) as src, sqlite3.connect(backup) as dst:
+        src.backup(dst)
+
+    if not args.no_move and old_exists:
+        os.makedirs(os.path.dirname(new) or "/", exist_ok=True)
+        print(f"mv {old} {new}")
+        shutil.move(old, new)
+
+    moved_convs = cwd_msgs = wt_msgs = hist = 0
+    try:
+        conn.execute("BEGIN IMMEDIATE")
+        moved_convs = conn.execute(
+            f"UPDATE conversations SET cwd = :new || substr(cwd, length(:old) + 1) WHERE {under('cwd')}",
+            q,
+        ).rowcount
+        cwd_msgs = conn.execute(
+            f"UPDATE messages SET user_data = {json_move('cwd')} WHERE {json_under('cwd')}", q
+        ).rowcount
+        wt_msgs = conn.execute(
+            "UPDATE messages SET user_data = json_set("
+            f"json_set(user_data, '$.worktree', :new || substr(json_extract(user_data, '$.worktree'), length(:old) + 1)), "
+            "'$.text', replace(json_extract(user_data, '$.text'), :oldtilde, :newtilde))"
+            f" WHERE {json_under('worktree')}",
+            q,
+        ).rowcount
+        if args.rewrite_history:
+            for col in ("llm_data", "display_data"):
+                hist += conn.execute(
+                    f"UPDATE messages SET {col} = replace({col}, :old, :new) WHERE instr({col}, :old) > 0", q
+                ).rowcount
+            hist += conn.execute(
+                "UPDATE background_jobs SET command = replace(command, :old, :new) WHERE instr(command, :old) > 0", q
+            ).rowcount
+        conn.execute("COMMIT")
+    except Exception as exc:  # noqa: BLE001
+        conn.execute("ROLLBACK")
+        die(f"rolled back, database untouched (backup at {backup}): {exc}")
+
+    left = conn.execute(f"SELECT count(*) FROM conversations WHERE {under('cwd')}", q).fetchone()[0]
+    left_msgs = conn.execute(f"SELECT count(*) FROM messages WHERE {json_under('cwd')}", q).fetchone()[0]
+    print(f"\nrewrote {moved_convs} conversations, {cwd_msgs} message cwd stamps, "
+          f"{wt_msgs} gitinfo worktrees" + (f", {hist} raw-history rows" if args.rewrite_history else ""))
+    if left or left_msgs:
+        die(f"incomplete: {left} conversations / {left_msgs} messages still under OLD")
+    print("verified: nothing left under OLD")
+    print("restart Shelley (systemctl --user restart shelley) to clear the in-memory cwd and git caches.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
