@@ -447,6 +447,15 @@ function replace_text_recursive() {
     grep -rli "$old_word" "$path" | xargs -i@ sed -i "s/$old_word/$new_word/g" @
 }
 
+function diagnose_port() {
+    _port=$1
+    echo '==== ss -tulpn ===='
+    ss -tulpn | grep ${_port}
+    echo '==== ss -tan ===='
+    echo 'NOTE: Look for CLOSE-WAIT and the process holding it up'
+    ss -ptan | grep ${_port}
+}
+
 # Allow emacs GUI colours in terminal
 # TODO: probably only want to do this if not set
 export TERM=xterm-256color
