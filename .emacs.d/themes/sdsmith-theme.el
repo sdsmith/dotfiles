@@ -16,6 +16,7 @@
 
  ;; Syntax highlighting
  '(font-lock-builtin-face       ((t (:foreground "#DAB98F"))))
+ '(font-lock-doc-face           ((t (:foreground "gray60"))))
  '(font-lock-comment-face       ((t (:foreground "gray60"))))
  '(font-lock-constant-face      ((t (:foreground "DarkKhaki"))))
  '(font-lock-doc-face           ((t (:foreground "burlywood3"))))
