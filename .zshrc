@@ -338,6 +338,8 @@ alias dotfiles="cd ${DOTFILES}"
 alias workdotfiles="cd ${DOTFILES_WORK}"
 alias dotfiles-work="cd ${DOTFILES_WORK}"
 
+alias ghs="gh stack"
+
 # Tweak `less` command
 export LESS='--quit-if-one-screen --ignore-case --LONG-PROMPT --RAW-CONTROL-CHARS --HILITE-UNREAD --tabs=4 --no-init --window=-4'
 
