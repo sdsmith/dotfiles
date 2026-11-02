@@ -1,0 +1,5 @@
+/_archive
+!.agents.local/
+!AGENTS.local.md
+!CONTEXT.local.md
+/mongo-code-review
