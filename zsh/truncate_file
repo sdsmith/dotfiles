@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+# truncate_file - Print a portion of a file's lines to stdout.
+#
+# Usage: truncate_file [-b|--before N] [-a|--after N] [-h|--help] FILE
+#
+#   -b, --before N  Remove the first N lines (start output from line N+1).
+#                   With -a, outputs lines N+1 through the -a value.
+#   -a, --after N   Truncate after line N (stop output after line N).
+#                   With -b, outputs lines -b+1 through N.
+#   -h, --help      Show this help message.
+#
+# Examples:
+#   truncate_file -a 100 file.log        # output lines 1-100
+#   truncate_file -b 50 file.log         # output lines 51+
+#   truncate_file -b 10 -a 20 file.log   # output lines 11-20
+
+set -euo pipefail
+
+before=""
+after=""
+file=""
+
+print_help() {
+    sed -n '2,16p' "$0" | sed 's/^# \{0,1\}//'
+    exit 0
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -h|--help)
+            print_help
+            ;;
+        -b|--before)
+            before="$2"
+            shift 2
+            ;;
+        -a|--after)
+            after="$2"
+            shift 2
+            ;;
+        --)
+            shift
+            [[ $# -gt 0 ]] && file="$1"
+            break
+            ;;
+        -*)
+            echo "Unknown option: $1" >&2
+            exit 1
+            ;;
+        *)
+            file="$1"
+            shift
+            ;;
+    esac
+done
+
+if [[ -z "$file" ]]; then
+    echo "Error: no file specified" >&2
+    exit 1
+fi
+
+if [[ ! -f "$file" ]]; then
+    echo "Error: file not found: $file" >&2
+    exit 1
+fi
+
+if [[ -n "$before" && -n "$after" ]]; then
+    count=$((after - before))
+    if [[ $count -le 0 ]]; then
+        echo "Error: --after ($after) must be greater than --before ($before)" >&2
+        exit 1
+    fi
+    tail -n +"$((before + 1))" "$file" | head -n "$count"
+elif [[ -n "$before" ]]; then
+    tail -n +"$((before + 1))" "$file"
+elif [[ -n "$after" ]]; then
+    head -n "$after" "$file"
+else
+    cat "$file"
+fi
