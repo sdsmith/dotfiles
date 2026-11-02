@@ -32,7 +32,9 @@
 
 set pagination on
 
-# Log gdb output (gdb.txt in working dir)
+# Log gdb output (gdb.log in working dir)
+set logging file gdb.log
+#set logging overwrite on   # if off, appends
 set logging on
 
 # Log commands
