@@ -83,7 +83,8 @@ setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording en
 # export UPDATE_ZSH_DAYS=13
 
 # Uncomment the following line if pasting URLs and other text is messed up.
-# DISABLE_MAGIC_FUNCTIONS=true
+# NOTE: url-quote-magic auto quotes URLs causing them to be corrupted outside of raw pasting them in the terminal.
+DISABLE_MAGIC_FUNCTIONS=true
 
 # Uncomment the following line to disable colors in ls.
 # DISABLE_LS_COLORS="true"
